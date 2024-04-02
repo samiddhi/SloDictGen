@@ -1,0 +1,659 @@
+<lexicon>
+    <!-- noun -->
+    <entry>
+        <head>
+            <status>MANUAL</status>
+            <headword>
+                <lemma>retinoblastom</lemma>
+            </headword>
+            <lexicalUnit sloleksId="LE_501f8c320e13c2c1744eec00c02abda5" sloleksKey="S_retinoblastom" type="single">
+                <lexeme>retinoblastom</lexeme>
+            </lexicalUnit>
+            <grammar>
+                <category>noun</category>
+                <subcategory type="pronunciation">Slovene G2P</subcategory>
+                <grammarFeature name="type">common</grammarFeature>
+                <grammarFeature name="gender">masculine</grammarFeature>
+            </grammar>
+            <measureList>
+                <measure type="frequency" source="Gigafida 2.0">18</measure>
+            </measureList>
+            <relatedEntryList/>
+        </head>
+        <body>
+            <wordFormList>
+                <wordForm>
+                    <msd language="sl" system="JOS">Somei</msd>
+                    <grammarFeatureList>
+                        <grammarFeature name="number">singular</grammarFeature>
+                        <grammarFeature name="case">nominative</grammarFeature>
+                    </grammarFeatureList>
+                    <formRepresentations>
+                        <orthographyList>
+                            <orthography morphologyPatterns="Sm1.1.o">
+                                <form>retinoblastom</form>
+                                <measureList>
+                                    <measure type="frequency" source="Gigafida 2.0">9</measure>
+                                </measureList>
+                            </orthography>
+                        </orthographyList>
+                        <accentuationList type="dynamic">
+                            <accentuation>
+                                <form>retínoblastóm</form>
+                            </accentuation>
+                            <accentuation>
+                                <form>retinoblastóm</form>
+                            </accentuation>
+                        </accentuationList>
+                        <pronunciationList>
+                            <pronunciation>
+                                <form script="IPA">ɾɛˈtiːnɔblaˈstoːm</form>
+                                <form script="SAMPA">rE"ti:nObla"sto:m</form>
+                            </pronunciation>
+                            <pronunciation>
+                                <form script="IPA">ɾɛtinɔblaˈstoːm</form>
+                                <form script="SAMPA">rEtinObla"sto:m</form>
+                            </pronunciation>
+                        </pronunciationList>
+                    </formRepresentations>
+                </wordForm>
+                <wordForm>
+                    <msd language="sl" system="JOS">Somer</msd>
+                    <grammarFeatureList>
+                        <grammarFeature name="number">singular</grammarFeature>
+                        <grammarFeature name="case">genitive</grammarFeature>
+                    </grammarFeatureList>
+                    <formRepresentations>
+                        <orthographyList>
+                            <orthography morphologyPatterns="Sm1.1.o">
+                                <form>retinoblastoma</form>
+                                <measureList>
+                                    <measure type="frequency" source="Gigafida 2.0">3</measure>
+                                </measureList>
+                            </orthography>
+                        </orthographyList>
+                        <accentuationList type="dynamic">
+                            <accentuation>
+                                <form>retínoblastóma</form>
+                            </accentuation>
+                            <accentuation>
+                                <form>retinoblastóma</form>
+                            </accentuation>
+                        </accentuationList>
+                        <pronunciationList>
+                            <pronunciation>
+                                <form script="IPA">ɾɛˈtiːnɔblaˈstoːma</form>
+                                <form script="SAMPA">rE"ti:nObla"sto:ma</form>
+                            </pronunciation>
+                            <pronunciation>
+                                <form script="IPA">ɾɛtinɔblaˈstoːma</form>
+                                <form script="SAMPA">rEtinObla"sto:ma</form>
+                            </pronunciation>
+                        </pronunciationList>
+                    </formRepresentations>
+                </wordForm>
+                <wordForm>
+                    <msd language="sl" system="JOS">Somed</msd>
+                    <grammarFeatureList>
+                        <grammarFeature name="number">singular</grammarFeature>
+                        <grammarFeature name="case">dative</grammarFeature>
+                    </grammarFeatureList>
+                    <formRepresentations>
+                        <orthographyList>
+                            <orthography morphologyPatterns="Sm1.1.o">
+                                <form>retinoblastomu</form>
+                                <measureList>
+                                    <measure type="frequency" source="Gigafida 2.0">0</measure>
+                                </measureList>
+                            </orthography>
+                        </orthographyList>
+                        <accentuationList type="dynamic">
+                            <accentuation>
+                                <form>retínoblastómu</form>
+                            </accentuation>
+                            <accentuation>
+                                <form>retinoblastómu</form>
+                            </accentuation>
+                        </accentuationList>
+                        <pronunciationList>
+                            <pronunciation>
+                                <form script="IPA">ɾɛˈtiːnɔblaˈstoːmu</form>
+                                <form script="SAMPA">rE"ti:nObla"sto:mu</form>
+                            </pronunciation>
+                            <pronunciation>
+                                <form script="IPA">ɾɛtinɔblaˈstoːmu</form>
+                                <form script="SAMPA">rEtinObla"sto:mu</form>
+                            </pronunciation>
+                        </pronunciationList>
+                    </formRepresentations>
+                </wordForm>
+                <wordForm>
+                    <msd language="sl" system="JOS">Sometn</msd>
+                    <grammarFeatureList>
+                        <grammarFeature name="number">singular</grammarFeature>
+                        <grammarFeature name="case">accusative</grammarFeature>
+                        <grammarFeature name="animate">no</grammarFeature>
+                    </grammarFeatureList>
+                    <formRepresentations>
+                        <orthographyList>
+                            <orthography morphologyPatterns="Sm1.1.o">
+                                <form>retinoblastom</form>
+                                <measureList>
+                                    <measure type="frequency" source="Gigafida 2.0">3</measure>
+                                </measureList>
+                            </orthography>
+                        </orthographyList>
+                        <accentuationList type="dynamic">
+                            <accentuation>
+                                <form>retínoblastóm</form>
+                            </accentuation>
+                            <accentuation>
+                                <form>retinoblastóm</form>
+                            </accentuation>
+                        </accentuationList>
+                        <pronunciationList>
+                            <pronunciation>
+                                <form script="IPA">ɾɛˈtiːnɔblaˈstoːm</form>
+                                <form script="SAMPA">rE"ti:nObla"sto:m</form>
+                            </pronunciation>
+                            <pronunciation>
+                                <form script="IPA">ɾɛtinɔblaˈstoːm</form>
+                                <form script="SAMPA">rEtinObla"sto:m</form>
+                            </pronunciation>
+                        </pronunciationList>
+                    </formRepresentations>
+                </wordForm>
+                <wordForm>
+                    <msd language="sl" system="JOS">Somem</msd>
+                    <grammarFeatureList>
+                        <grammarFeature name="number">singular</grammarFeature>
+                        <grammarFeature name="case">locative</grammarFeature>
+                    </grammarFeatureList>
+                    <formRepresentations>
+                        <orthographyList>
+                            <orthography morphologyPatterns="Sm1.1.o">
+                                <form>retinoblastomu</form>
+                                <measureList>
+                                    <measure type="frequency" source="Gigafida 2.0">2</measure>
+                                </measureList>
+                            </orthography>
+                        </orthographyList>
+                        <accentuationList type="dynamic">
+                            <accentuation>
+                                <form>retínoblastómu</form>
+                            </accentuation>
+                            <accentuation>
+                                <form>retinoblastómu</form>
+                            </accentuation>
+                        </accentuationList>
+                        <pronunciationList>
+                            <pronunciation>
+                                <form script="IPA">ɾɛˈtiːnɔblaˈstoːmu</form>
+                                <form script="SAMPA">rE"ti:nObla"sto:mu</form>
+                            </pronunciation>
+                            <pronunciation>
+                                <form script="IPA">ɾɛtinɔblaˈstoːmu</form>
+                                <form script="SAMPA">rEtinObla"sto:mu</form>
+                            </pronunciation>
+                        </pronunciationList>
+                    </formRepresentations>
+                </wordForm>
+                <wordForm>
+                    <msd language="sl" system="JOS">Someo</msd>
+                    <grammarFeatureList>
+                        <grammarFeature name="number">singular</grammarFeature>
+                        <grammarFeature name="case">instrumental</grammarFeature>
+                    </grammarFeatureList>
+                    <formRepresentations>
+                        <orthographyList>
+                            <orthography morphologyPatterns="Sm1.1.o">
+                                <form>retinoblastomom</form>
+                                <measureList>
+                                    <measure type="frequency" source="Gigafida 2.0">0</measure>
+                                </measureList>
+                            </orthography>
+                        </orthographyList>
+                        <accentuationList type="dynamic">
+                            <accentuation>
+                                <form>retínoblastómom</form>
+                            </accentuation>
+                            <accentuation>
+                                <form>retinoblastómom</form>
+                            </accentuation>
+                        </accentuationList>
+                        <pronunciationList>
+                            <pronunciation>
+                                <form script="IPA">ɾɛˈtiːnɔblaˈstoːmɔm</form>
+                                <form script="SAMPA">rE"ti:nObla"sto:mOm</form>
+                            </pronunciation>
+                            <pronunciation>
+                                <form script="IPA">ɾɛtinɔblaˈstoːmɔm</form>
+                                <form script="SAMPA">rEtinObla"sto:mOm</form>
+                            </pronunciation>
+                        </pronunciationList>
+                    </formRepresentations>
+                </wordForm>
+                <wordForm>
+                    <msd language="sl" system="JOS">Somdi</msd>
+                    <grammarFeatureList>
+                        <grammarFeature name="number">dual</grammarFeature>
+                        <grammarFeature name="case">nominative</grammarFeature>
+                    </grammarFeatureList>
+                    <formRepresentations>
+                        <orthographyList>
+                            <orthography morphologyPatterns="Sm1.1.o">
+                                <form>retinoblastoma</form>
+                                <measureList>
+                                    <measure type="frequency" source="Gigafida 2.0">0</measure>
+                                </measureList>
+                            </orthography>
+                        </orthographyList>
+                        <accentuationList type="dynamic">
+                            <accentuation>
+                                <form>retínoblastóma</form>
+                            </accentuation>
+                            <accentuation>
+                                <form>retinoblastóma</form>
+                            </accentuation>
+                        </accentuationList>
+                        <pronunciationList>
+                            <pronunciation>
+                                <form script="IPA">ɾɛˈtiːnɔblaˈstoːma</form>
+                                <form script="SAMPA">rE"ti:nObla"sto:ma</form>
+                            </pronunciation>
+                            <pronunciation>
+                                <form script="IPA">ɾɛtinɔblaˈstoːma</form>
+                                <form script="SAMPA">rEtinObla"sto:ma</form>
+                            </pronunciation>
+                        </pronunciationList>
+                    </formRepresentations>
+                </wordForm>
+                <wordForm>
+                    <msd language="sl" system="JOS">Somdr</msd>
+                    <grammarFeatureList>
+                        <grammarFeature name="number">dual</grammarFeature>
+                        <grammarFeature name="case">genitive</grammarFeature>
+                    </grammarFeatureList>
+                    <formRepresentations>
+                        <orthographyList>
+                            <orthography morphologyPatterns="Sm1.1.o">
+                                <form>retinoblastomov</form>
+                                <measureList>
+                                    <measure type="frequency" source="Gigafida 2.0">0</measure>
+                                </measureList>
+                            </orthography>
+                        </orthographyList>
+                        <accentuationList type="dynamic">
+                            <accentuation>
+                                <form>retínoblastómov</form>
+                            </accentuation>
+                            <accentuation>
+                                <form>retinoblastómov</form>
+                            </accentuation>
+                        </accentuationList>
+                        <pronunciationList>
+                            <pronunciation>
+                                <form script="IPA">ɾɛˈtiːnɔblaˈstoːmɔu̯</form>
+                                <form script="SAMPA">rE"ti:nObla"sto:mOU</form>
+                            </pronunciation>
+                            <pronunciation>
+                                <form script="IPA">ɾɛtinɔblaˈstoːmɔu̯</form>
+                                <form script="SAMPA">rEtinObla"sto:mOU</form>
+                            </pronunciation>
+                        </pronunciationList>
+                    </formRepresentations>
+                </wordForm>
+                <wordForm>
+                    <msd language="sl" system="JOS">Somdd</msd>
+                    <grammarFeatureList>
+                        <grammarFeature name="number">dual</grammarFeature>
+                        <grammarFeature name="case">dative</grammarFeature>
+                    </grammarFeatureList>
+                    <formRepresentations>
+                        <orthographyList>
+                            <orthography morphologyPatterns="Sm1.1.o">
+                                <form>retinoblastomoma</form>
+                                <measureList>
+                                    <measure type="frequency" source="Gigafida 2.0">0</measure>
+                                </measureList>
+                            </orthography>
+                        </orthographyList>
+                        <accentuationList type="dynamic">
+                            <accentuation>
+                                <form>retínoblastómoma</form>
+                            </accentuation>
+                            <accentuation>
+                                <form>retinoblastómoma</form>
+                            </accentuation>
+                        </accentuationList>
+                        <pronunciationList>
+                            <pronunciation>
+                                <form script="IPA">ɾɛˈtiːnɔblaˈstoːmɔma</form>
+                                <form script="SAMPA">rE"ti:nObla"sto:mOma</form>
+                            </pronunciation>
+                            <pronunciation>
+                                <form script="IPA">ɾɛtinɔblaˈstoːmɔma</form>
+                                <form script="SAMPA">rEtinObla"sto:mOma</form>
+                            </pronunciation>
+                        </pronunciationList>
+                    </formRepresentations>
+                </wordForm>
+                <wordForm>
+                    <msd language="sl" system="JOS">Somdt</msd>
+                    <grammarFeatureList>
+                        <grammarFeature name="number">dual</grammarFeature>
+                        <grammarFeature name="case">accusative</grammarFeature>
+                    </grammarFeatureList>
+                    <formRepresentations>
+                        <orthographyList>
+                            <orthography morphologyPatterns="Sm1.1.o">
+                                <form>retinoblastoma</form>
+                                <measureList>
+                                    <measure type="frequency" source="Gigafida 2.0">0</measure>
+                                </measureList>
+                            </orthography>
+                        </orthographyList>
+                        <accentuationList type="dynamic">
+                            <accentuation>
+                                <form>retínoblastóma</form>
+                            </accentuation>
+                            <accentuation>
+                                <form>retinoblastóma</form>
+                            </accentuation>
+                        </accentuationList>
+                        <pronunciationList>
+                            <pronunciation>
+                                <form script="IPA">ɾɛˈtiːnɔblaˈstoːma</form>
+                                <form script="SAMPA">rE"ti:nObla"sto:ma</form>
+                            </pronunciation>
+                            <pronunciation>
+                                <form script="IPA">ɾɛtinɔblaˈstoːma</form>
+                                <form script="SAMPA">rEtinObla"sto:ma</form>
+                            </pronunciation>
+                        </pronunciationList>
+                    </formRepresentations>
+                </wordForm>
+                <wordForm>
+                    <msd language="sl" system="JOS">Somdm</msd>
+                    <grammarFeatureList>
+                        <grammarFeature name="number">dual</grammarFeature>
+                        <grammarFeature name="case">locative</grammarFeature>
+                    </grammarFeatureList>
+                    <formRepresentations>
+                        <orthographyList>
+                            <orthography morphologyPatterns="Sm1.1.o">
+                                <form>retinoblastomih</form>
+                                <measureList>
+                                    <measure type="frequency" source="Gigafida 2.0">0</measure>
+                                </measureList>
+                            </orthography>
+                        </orthographyList>
+                        <accentuationList type="dynamic">
+                            <accentuation>
+                                <form>retínoblastómih</form>
+                            </accentuation>
+                            <accentuation>
+                                <form>retinoblastómih</form>
+                            </accentuation>
+                        </accentuationList>
+                        <pronunciationList>
+                            <pronunciation>
+                                <form script="IPA">ɾɛˈtiːnɔblaˈstoːmix</form>
+                                <form script="SAMPA">rE"ti:nObla"sto:mix</form>
+                            </pronunciation>
+                            <pronunciation>
+                                <form script="IPA">ɾɛtinɔblaˈstoːmix</form>
+                                <form script="SAMPA">rEtinObla"sto:mix</form>
+                            </pronunciation>
+                        </pronunciationList>
+                    </formRepresentations>
+                </wordForm>
+                <wordForm>
+                    <msd language="sl" system="JOS">Somdo</msd>
+                    <grammarFeatureList>
+                        <grammarFeature name="number">dual</grammarFeature>
+                        <grammarFeature name="case">instrumental</grammarFeature>
+                    </grammarFeatureList>
+                    <formRepresentations>
+                        <orthographyList>
+                            <orthography morphologyPatterns="Sm1.1.o">
+                                <form>retinoblastomoma</form>
+                                <measureList>
+                                    <measure type="frequency" source="Gigafida 2.0">0</measure>
+                                </measureList>
+                            </orthography>
+                        </orthographyList>
+                        <accentuationList type="dynamic">
+                            <accentuation>
+                                <form>retínoblastómoma</form>
+                            </accentuation>
+                            <accentuation>
+                                <form>retinoblastómoma</form>
+                            </accentuation>
+                        </accentuationList>
+                        <pronunciationList>
+                            <pronunciation>
+                                <form script="IPA">ɾɛˈtiːnɔblaˈstoːmɔma</form>
+                                <form script="SAMPA">rE"ti:nObla"sto:mOma</form>
+                            </pronunciation>
+                            <pronunciation>
+                                <form script="IPA">ɾɛtinɔblaˈstoːmɔma</form>
+                                <form script="SAMPA">rEtinObla"sto:mOma</form>
+                            </pronunciation>
+                        </pronunciationList>
+                    </formRepresentations>
+                </wordForm>
+                <wordForm>
+                    <msd language="sl" system="JOS">Sommi</msd>
+                    <grammarFeatureList>
+                        <grammarFeature name="number">plural</grammarFeature>
+                        <grammarFeature name="case">nominative</grammarFeature>
+                    </grammarFeatureList>
+                    <formRepresentations>
+                        <orthographyList>
+                            <orthography morphologyPatterns="Sm1.1.o">
+                                <form>retinoblastomi</form>
+                                <measureList>
+                                    <measure type="frequency" source="Gigafida 2.0">0</measure>
+                                </measureList>
+                            </orthography>
+                        </orthographyList>
+                        <accentuationList type="dynamic">
+                            <accentuation>
+                                <form>retínoblastómi</form>
+                            </accentuation>
+                            <accentuation>
+                                <form>retinoblastómi</form>
+                            </accentuation>
+                        </accentuationList>
+                        <pronunciationList>
+                            <pronunciation>
+                                <form script="IPA">ɾɛˈtiːnɔblaˈstoːmi</form>
+                                <form script="SAMPA">rE"ti:nObla"sto:mi</form>
+                            </pronunciation>
+                            <pronunciation>
+                                <form script="IPA">ɾɛtinɔblaˈstoːmi</form>
+                                <form script="SAMPA">rEtinObla"sto:mi</form>
+                            </pronunciation>
+                        </pronunciationList>
+                    </formRepresentations>
+                </wordForm>
+                <wordForm>
+                    <msd language="sl" system="JOS">Sommr</msd>
+                    <grammarFeatureList>
+                        <grammarFeature name="number">plural</grammarFeature>
+                        <grammarFeature name="case">genitive</grammarFeature>
+                    </grammarFeatureList>
+                    <formRepresentations>
+                        <orthographyList>
+                            <orthography morphologyPatterns="Sm1.1.o">
+                                <form>retinoblastomov</form>
+                                <measureList>
+                                    <measure type="frequency" source="Gigafida 2.0">0</measure>
+                                </measureList>
+                            </orthography>
+                        </orthographyList>
+                        <accentuationList type="dynamic">
+                            <accentuation>
+                                <form>retínoblastómov</form>
+                            </accentuation>
+                            <accentuation>
+                                <form>retinoblastómov</form>
+                            </accentuation>
+                        </accentuationList>
+                        <pronunciationList>
+                            <pronunciation>
+                                <form script="IPA">ɾɛˈtiːnɔblaˈstoːmɔu̯</form>
+                                <form script="SAMPA">rE"ti:nObla"sto:mOU</form>
+                            </pronunciation>
+                            <pronunciation>
+                                <form script="IPA">ɾɛtinɔblaˈstoːmɔu̯</form>
+                                <form script="SAMPA">rEtinObla"sto:mOU</form>
+                            </pronunciation>
+                        </pronunciationList>
+                    </formRepresentations>
+                </wordForm>
+                <wordForm>
+                    <msd language="sl" system="JOS">Sommd</msd>
+                    <grammarFeatureList>
+                        <grammarFeature name="number">plural</grammarFeature>
+                        <grammarFeature name="case">dative</grammarFeature>
+                    </grammarFeatureList>
+                    <formRepresentations>
+                        <orthographyList>
+                            <orthography morphologyPatterns="Sm1.1.o">
+                                <form>retinoblastomom</form>
+                                <measureList>
+                                    <measure type="frequency" source="Gigafida 2.0">0</measure>
+                                </measureList>
+                            </orthography>
+                        </orthographyList>
+                        <accentuationList type="dynamic">
+                            <accentuation>
+                                <form>retínoblastómom</form>
+                            </accentuation>
+                            <accentuation>
+                                <form>retinoblastómom</form>
+                            </accentuation>
+                        </accentuationList>
+                        <pronunciationList>
+                            <pronunciation>
+                                <form script="IPA">ɾɛˈtiːnɔblaˈstoːmɔm</form>
+                                <form script="SAMPA">rE"ti:nObla"sto:mOm</form>
+                            </pronunciation>
+                            <pronunciation>
+                                <form script="IPA">ɾɛtinɔblaˈstoːmɔm</form>
+                                <form script="SAMPA">rEtinObla"sto:mOm</form>
+                            </pronunciation>
+                        </pronunciationList>
+                    </formRepresentations>
+                </wordForm>
+                <wordForm>
+                    <msd language="sl" system="JOS">Sommt</msd>
+                    <grammarFeatureList>
+                        <grammarFeature name="number">plural</grammarFeature>
+                        <grammarFeature name="case">accusative</grammarFeature>
+                    </grammarFeatureList>
+                    <formRepresentations>
+                        <orthographyList>
+                            <orthography morphologyPatterns="Sm1.1.o">
+                                <form>retinoblastome</form>
+                                <measureList>
+                                    <measure type="frequency" source="Gigafida 2.0">0</measure>
+                                </measureList>
+                            </orthography>
+                        </orthographyList>
+                        <accentuationList type="dynamic">
+                            <accentuation>
+                                <form>retínoblastóme</form>
+                            </accentuation>
+                            <accentuation>
+                                <form>retinoblastóme</form>
+                            </accentuation>
+                        </accentuationList>
+                        <pronunciationList>
+                            <pronunciation>
+                                <form script="IPA">ɾɛˈtiːnɔblaˈstoːmɛ</form>
+                                <form script="SAMPA">rE"ti:nObla"sto:mE</form>
+                            </pronunciation>
+                            <pronunciation>
+                                <form script="IPA">ɾɛtinɔblaˈstoːmɛ</form>
+                                <form script="SAMPA">rEtinObla"sto:mE</form>
+                            </pronunciation>
+                        </pronunciationList>
+                    </formRepresentations>
+                </wordForm>
+                <wordForm>
+                    <msd language="sl" system="JOS">Sommm</msd>
+                    <grammarFeatureList>
+                        <grammarFeature name="number">plural</grammarFeature>
+                        <grammarFeature name="case">locative</grammarFeature>
+                    </grammarFeatureList>
+                    <formRepresentations>
+                        <orthographyList>
+                            <orthography morphologyPatterns="Sm1.1.o">
+                                <form>retinoblastomih</form>
+                                <measureList>
+                                    <measure type="frequency" source="Gigafida 2.0">0</measure>
+                                </measureList>
+                            </orthography>
+                        </orthographyList>
+                        <accentuationList type="dynamic">
+                            <accentuation>
+                                <form>retínoblastómih</form>
+                            </accentuation>
+                            <accentuation>
+                                <form>retinoblastómih</form>
+                            </accentuation>
+                        </accentuationList>
+                        <pronunciationList>
+                            <pronunciation>
+                                <form script="IPA">ɾɛˈtiːnɔblaˈstoːmix</form>
+                                <form script="SAMPA">rE"ti:nObla"sto:mix</form>
+                            </pronunciation>
+                            <pronunciation>
+                                <form script="IPA">ɾɛtinɔblaˈstoːmix</form>
+                                <form script="SAMPA">rEtinObla"sto:mix</form>
+                            </pronunciation>
+                        </pronunciationList>
+                    </formRepresentations>
+                </wordForm>
+                <wordForm>
+                    <msd language="sl" system="JOS">Sommo</msd>
+                    <grammarFeatureList>
+                        <grammarFeature name="number">plural</grammarFeature>
+                        <grammarFeature name="case">instrumental</grammarFeature>
+                    </grammarFeatureList>
+                    <formRepresentations>
+                        <orthographyList>
+                            <orthography morphologyPatterns="Sm1.1.o">
+                                <form>retinoblastomi</form>
+                                <measureList>
+                                    <measure type="frequency" source="Gigafida 2.0">0</measure>
+                                </measureList>
+                            </orthography>
+                        </orthographyList>
+                        <accentuationList type="dynamic">
+                            <accentuation>
+                                <form>retínoblastómi</form>
+                            </accentuation>
+                            <accentuation>
+                                <form>retinoblastómi</form>
+                            </accentuation>
+                        </accentuationList>
+                        <pronunciationList>
+                            <pronunciation>
+                                <form script="IPA">ɾɛˈtiːnɔblaˈstoːmi</form>
+                                <form script="SAMPA">rE"ti:nObla"sto:mi</form>
+                            </pronunciation>
+                            <pronunciation>
+                                <form script="IPA">ɾɛtinɔblaˈstoːmi</form>
+                                <form script="SAMPA">rEtinObla"sto:mi</form>
+                            </pronunciation>
+                        </pronunciationList>
+                    </formRepresentations>
+                </wordForm>
+            </wordFormList>
+        </body>
+    </entry>
+</lexicon>

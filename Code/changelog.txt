@@ -1,0 +1,58 @@
+Phase Overview:
+
+I. Development
+ - grammar tables
+    - testing
+ - sskj
+    - testing
+    - translation
+       -very careful dev should be done in slow batches to ensure quality with regular testing of each
+ - combination
+
+II. Testing
+ - testing on randomly selected elements, reformatting as needed
+
+III. Launch
+ - Give it to myself who will be using it :)
+
+
+minor fixes:
+	- Comments
+	- Handle multiple word form types in table
+	- get rid of dict added entry
+	- grey top bar not aligned with table
+	- remove titles from table elements
+	- html/css variables to new module
+	- restructure code for consistency - e.g. Dict[] vs dict[]
+
+major:
+	-themes
+	  - Jugoslavija '81
+	  - Modern
+	-additional grammar table functions 
+		(wait until satisfied with noun+verb setup so it can be streamlined)
+
+(3.31.24) 11:40-3:30
+- WordForm converted to dataclass and back again
+- Line length to 79, pep 8 compliant
+- standard grammar name scheme (see README)
+- made grammarname_forms_dict an element of entry class
+    dictionary with key as grammar name and item as the WordForm object
+
+(4.1.24): 10:00-2:00
+- Made the code work again as is (formatting the html stuff, finishing the
+      migration to formatting.py NOUNS ONLY)
+- Entry and WordForm converted to dataclasses.
+    - now STRICTLY contain only data parsed from the XML - other nonsense
+      refactored to more sensible destinations
+        - refactoring formatting was a lot of effort!
+- XML parser became a class, packaged w/ Entry & WordForm in entry_parser.py
+
+(4.2.24): 12:00-
+- Created git repo
+
+Tomorrow:
+    - Airium for HTML editing: https://pypi.org/project/airium/
+    - minor fixes
+    - html/css variables to new module
+    - goldendict + dpd

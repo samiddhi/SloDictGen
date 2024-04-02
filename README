@@ -1,0 +1,12 @@
+grammar names standardized order:
+
+nouns:
+case_number
+
+verbs:
+vform_person_number
+vform_number_gender
+
+scheme:
+
+vform_case_person_number_gender

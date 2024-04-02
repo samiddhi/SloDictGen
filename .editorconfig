@@ -1,0 +1,8 @@
+root = true
+
+[*.py]
+max_line_length = 79
+
+[Code/formatting.py]
+max_line_length = 200
+
