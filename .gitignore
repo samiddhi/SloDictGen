@@ -1,45 +1,45 @@
-Resources/Sloleks.3.0/*
-Resources/Sloleks.3.0.zip
+data/Sloleks.3.0/*
+data/Sloleks.3.0.zip
 
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff
-Code/.ide/**/workspace.xml
-Code/.ide/**/tasks.xml
-Code/.ide/**/usage.statistics.xml
-Code/.ide/**/dictionaries
-Code/.ide/**/shelf
+.ide/**/workspace.xml
+.ide/**/tasks.xml
+.ide/**/usage.statistics.xml
+.ide/**/dictionaries
+.ide/**/shelf
 
 # AWS User-specific
-Code/.ide/**/aws.xml
+.ide/**/aws.xml
 
 # Generated files
-Code/.ide/**/contentModel.xml
+.ide/**/contentModel.xml
 
 # Sensitive or high-churn files
-Code/.ide/**/dataSources/
-Code/.ide/**/dataSources.ids
-Code/.ide/**/dataSources.local.xml
-Code/.ide/**/sqlDataSources.xml
-Code/.ide/**/dynamic.xml
-Code/.ide/**/uiDesigner.xml
-Code/.ide/**/dbnavigator.xml
+.ide/**/dataSources/
+.ide/**/dataSources.ids
+.ide/**/dataSources.local.xml
+.ide/**/sqlDataSources.xml
+.ide/**/dynamic.xml
+.ide/**/uiDesigner.xml
+.ide/**/dbnavigator.xml
 
 # Gradle
-Code/.ide/**/gradle.xml
-Code/.ide/**/libraries
+.ide/**/gradle.xml
+.ide/**/libraries
 
 # Gradle and Maven with auto-import
 # When using Gradle or Maven with auto-import, you should exclude module files,
 # since they will be recreated, and may cause churn.  Uncomment if using
 # auto-import.
-# Code/.ide/artifacts
-# Code/.ide/compiler.xml
-# Code/.ide/jarRepositories.xml
-# Code/.ide/modules.xml
-# Code/.ide/*.iml
-# Code/.ide/modules
+# .ide/artifacts
+# .ide/compiler.xml
+# .ide/jarRepositories.xml
+# .ide/modules.xml
+# .ide/*.iml
+# .ide/modules
 # *.iml
 # *.ipr
 
@@ -47,7 +47,7 @@ Code/.ide/**/libraries
 cmake-build-*/
 
 # Mongo Explorer plugin
-Code/.ide/**/mongoSettings.xml
+.ide/**/mongoSettings.xml
 
 # File-based project format
 *.iws
@@ -56,16 +56,16 @@ Code/.ide/**/mongoSettings.xml
 out/
 
 # mpeltonen/sbt-idea plugin
-Code/.ide_modules/
+.ide_modules/
 
 # JIRA plugin
 atlassian-ide-plugin.xml
 
 # Cursive Clojure plugin
-Code/.ide/replstate.xml
+.ide/replstate.xml
 
 # SonarLint plugin
-Code/.ide/sonarlint/
+.ide/sonarlint/
 
 # Crashlytics plugin (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml
@@ -74,7 +74,7 @@ crashlytics-build.properties
 fabric.properties
 
 # Editor-based Rest Client
-Code/.ide/httpRequests
+.ide/httpRequests
 
 # Android studio 3.1+ serialized cache file
-Code/.ide/caches/build_file_checksums.ser
+.ide/caches/build_file_checksums.ser
