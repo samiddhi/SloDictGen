@@ -1,9 +1,9 @@
 import os
 import pyperclip
-from entry_parser import Entry, WordForm
+from entry_parser import SloleksEntry, WordForm
 
 
-def format_string(entry: Entry, grammar_name: str):
+def format_string(entry: SloleksEntry, grammar_name: str):
     com_pref = common_prefix([rep.form_representation for gn, rep in entry.forms_dict.items()])
     bolded = bold_except(entry.forms_dict[grammar_name].form_representation, com_pref)
     grayed = gray_unused(entry.forms_dict[grammar_name].frequency, bolded)
@@ -38,12 +38,12 @@ def ipa(form: WordForm) -> str:
     return formatted
 
 
-def noun_table(entry: Entry, pos_to_copy: str) -> str:
+def noun_table(entry: SloleksEntry, pos_to_copy: str) -> str:
     format_string(entry, "nominative_singular")
     table: str = f'''
         <div class="content hidden" id="inflection_{entry.lemma}">
-            <p class="heading"> <b><em>noun</em></b>; <em>{entry.type}</em>, 
-            <em>{entry.gender}</em>
+            <p class="heading"> <b><em>noun</em></b>; <em>{entry.lemma_grammatical_features["type"]}</em>, 
+            <em>{entry.lemma_grammatical_features["gender"]}</em>
             <table class="inflection">
                 <tr>
                     <th></th>
@@ -53,39 +53,39 @@ def noun_table(entry: Entry, pos_to_copy: str) -> str:
                 </tr>
                 <tr>
                     <th>nom.</th>
-                    <td title="nom sg" class="pop-up">{format_string(entry,"nominative_singular")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["nominative_singular"])}</span></td>
-                    <td title="nom dl" class="pop-up">{format_string(entry,"nominative_dual")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["nominative_dual"])}</span></td>
-                    <td title="nom pl" class="pop-up">{format_string(entry,"nominative_plural")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["nominative_plural"])}</span></td>
+                    <td title="nom sg" class="pop-up">{format_string(entry, "nominative_singular")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["nominative_singular"])}</span></td>
+                    <td title="nom dl" class="pop-up">{format_string(entry, "nominative_dual")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["nominative_dual"])}</span></td>
+                    <td title="nom pl" class="pop-up">{format_string(entry, "nominative_plural")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["nominative_plural"])}</span></td>
                 </tr>
                 <tr>
                     <th>gen.</th>
-                    <td title="gen sg" class="pop-up">{format_string(entry,"genitive_singular")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["genitive_singular"])}</span></td>
-                    <td title="gen dl" class="pop-up">{format_string(entry,"genitive_dual")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["genitive_dual"])}</span></td>
-                    <td title="gen pl" class="pop-up">{format_string(entry,"genitive_plural")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["genitive_plural"])}</span></td>
+                    <td title="gen sg" class="pop-up">{format_string(entry, "genitive_singular")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["genitive_singular"])}</span></td>
+                    <td title="gen dl" class="pop-up">{format_string(entry, "genitive_dual")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["genitive_dual"])}</span></td>
+                    <td title="gen pl" class="pop-up">{format_string(entry, "genitive_plural")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["genitive_plural"])}</span></td>
                 </tr>
                 <tr>
                     <th>dat.</th>
-                    <td title="dat sg" class="pop-up">{format_string(entry,"dative_singular")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["dative_singular"])}</span></td>
-                    <td title="dat dl" class="pop-up">{format_string(entry,"dative_dual")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["dative_dual"])}</span></td>
-                    <td title="dat pl" class="pop-up">{format_string(entry,"dative_plural")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["dative_plural"])}</span></td>
+                    <td title="dat sg" class="pop-up">{format_string(entry, "dative_singular")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["dative_singular"])}</span></td>
+                    <td title="dat dl" class="pop-up">{format_string(entry, "dative_dual")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["dative_dual"])}</span></td>
+                    <td title="dat pl" class="pop-up">{format_string(entry, "dative_plural")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["dative_plural"])}</span></td>
                 </tr>
                 <tr>
                     <th>acc.</th>
-                    <td title="acc sg" class="pop-up">{format_string(entry,"accusative_singular")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["accusative_singular"])}</span></td>
-                    <td title="acc dl" class="pop-up">{format_string(entry,"accusative_dual")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["accusative_dual"])}</span></td>
-                    <td title="acc pl" class="pop-up">{format_string(entry,"accusative_plural")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["accusative_plural"])}</span></td>
+                    <td title="acc sg" class="pop-up">{format_string(entry, "accusative_singular")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["accusative_singular"])}</span></td>
+                    <td title="acc dl" class="pop-up">{format_string(entry, "accusative_dual")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["accusative_dual"])}</span></td>
+                    <td title="acc pl" class="pop-up">{format_string(entry, "accusative_plural")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["accusative_plural"])}</span></td>
                 </tr>
                 <tr>
                     <th>loc.</th>
-                    <td title="loc sg" class="pop-up">{format_string(entry,"locative_singular")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["locative_singular"])}</span></td>
-                    <td title="loc dl" class="pop-up">{format_string(entry,"locative_dual")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["locative_dual"])}</span></td>
-                    <td title="loc pl" class="pop-up">{format_string(entry,"locative_plural")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["locative_plural"])}</span></td>
+                    <td title="loc sg" class="pop-up">{format_string(entry, "locative_singular")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["locative_singular"])}</span></td>
+                    <td title="loc dl" class="pop-up">{format_string(entry, "locative_dual")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["locative_dual"])}</span></td>
+                    <td title="loc pl" class="pop-up">{format_string(entry, "locative_plural")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["locative_plural"])}</span></td>
                 </tr>
                 <tr>
                     <th>ins.</th>
-                    <td title="ins sg" class="pop-up">{format_string(entry,"instrumental_singular")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["instrumental_singular"])}</span></td>
-                    <td title="ins dl" class="pop-up">{format_string(entry,"instrumental_dual")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["instrumental_dual"])}</span></td>
-                    <td title="ins pl" class="pop-up">{format_string(entry,"instrumental_plural")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["instrumental_plural"])}</span></td>
+                    <td title="ins sg" class="pop-up">{format_string(entry, "instrumental_singular")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["instrumental_singular"])}</span></td>
+                    <td title="ins dl" class="pop-up">{format_string(entry, "instrumental_dual")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["instrumental_dual"])}</span></td>
+                    <td title="ins pl" class="pop-up">{format_string(entry, "instrumental_plural")}<span class="pop-up-content">Pronunciation:{ipa(entry.forms_dict["instrumental_plural"])}</span></td>
                 </tr>
             </table>
 
@@ -98,7 +98,8 @@ def noun_table(entry: Entry, pos_to_copy: str) -> str:
         pyperclip.copy(table)
     return table
 
-def wrap(entry: Entry, table: str):
+
+def wrap(entry: SloleksEntry, table: str):
     style = f'''
         body {{
             font-family: Verdana, sans-serif;
@@ -236,7 +237,7 @@ def wrap(entry: Entry, table: str):
                     </script>
                 </body>
                 </html>
-            '''
+            '''.strip()
 
 
 def gigafida_footer():
@@ -249,6 +250,3 @@ def gigafida_footer():
         (<em>stalinih</em>) is unsurprisingly absent -- but fear not, as the locative <em>plural</em> (also <em>stalinih</em>) 
         has one occurrence in the corpus.</p>
     '''
-
-
-

@@ -3,13 +3,13 @@ from typing import List, Dict, Union
 import tkinter as tk
 from tkhtmlview import HTMLLabel
 #from entry_classes import Entry, WordForm
-from entry_parser import Entry, WordForm
+from entry_parser import SloleksEntry, WordForm
 
 COPY = "noun"
 
 
-def parse_xml_file(xml_file: str) -> List[Entry]:
-    entries: List[Entry] = []
+def parse_xml_file(xml_file: str) -> List[SloleksEntry]:
+    entries: List[SloleksEntry] = []
     tree = ET.parse(xml_file)
     root = tree.getroot()
 
@@ -67,7 +67,7 @@ def parse_xml_file(xml_file: str) -> List[Entry]:
 
             word_forms_dict[word_form.grammar_name] = word_form
 
-        entry = Entry(
+        entry = SloleksEntry(
                     lemma=lemma,
                     part_of_speech=part_of_speech,
                     lemma_grammatical_features=lemma_grammatical_features,
@@ -78,7 +78,7 @@ def parse_xml_file(xml_file: str) -> List[Entry]:
     return entries
 
 
-def get_one_of_each() -> List[Entry]:
+def get_one_of_each() -> List[SloleksEntry]:
     directory: str = (r"C:\Users\sangha\Documents\Danny's\slodict"
                       r"\Resources\Sloleks.3.0")
     xml_file: str = (r"C:\Users\sangha\Documents\Danny's\slodict"

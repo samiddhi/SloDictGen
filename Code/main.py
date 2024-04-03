@@ -1,7 +1,7 @@
 from typing import List, Dict, Union
 import tkinter as tk
 from tkhtmlview import HTMLLabel
-from entry_parser import Entry, WordForm, XMLParser
+from entry_parser import SloleksEntry, WordForm, XMLParser
 import formatting
 
 COPY = "noun"
@@ -20,18 +20,18 @@ def display_html(content):
 
 
 def main():
-    directory: str = (r"C:\Users\sangha\Documents\Danny's\slodict"
-                      r"\Resources\Sloleks.3.0")
     xml_file: str = (r"C:\Users\sangha\Documents\Danny's\slodict"
                      r"\Resources\Markdown\XML\sloleks_3.0_sample.xml")
     parser: XMLParser = XMLParser(xml_file)
-    entries: List[Entry] = parser.entries
+    entries: List[SloleksEntry] = parser.entries
 
     for entry in entries:
         pos = entry.part_of_speech
         if pos == "noun":
-            table_html = eval(f'formatting.{pos}_table({entry}, "{COPY}")')
-            print(table_html)
+            table_html = eval(f'formatting.{pos}_table({entry}, '
+                              f'"{COPY}")')
+            print(f"Noun Table Coppied:\n\n{table_html[:29]}\n...\n"
+                  f"{table_html[-10:]}")
 
 
 if __name__ == "__main__":

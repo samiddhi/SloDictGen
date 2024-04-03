@@ -48,8 +48,9 @@ major:
         - refactoring formatting was a lot of effort!
 - XML parser became a class, packaged w/ Entry & WordForm in entry_parser.py
 
-(4.2.24): 12:00-
+(4.2.24): 12:00-3:00
 - Created git repo
+	- took way too long but got it done
 
 Tomorrow:
     - Airium for HTML editing: https://pypi.org/project/airium/

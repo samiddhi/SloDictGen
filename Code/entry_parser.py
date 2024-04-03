@@ -1,24 +1,73 @@
 from dataclasses import dataclass
-from typing import List, Dict, Union
-import xml.etree.ElementTree as ET
+from typing import List, Dict
+import xml.etree.ElementTree as Et
 
 
 @dataclass(kw_only=True)
-class Entry:
+class SloleksEntry:
+    """
+    Represents an entry in the Sloleks database.
+
+    Instance Variables:
+        lemma (str)
+
+        part_of_speech (str)
+
+        lemma_grammatical_features (Dict[str, str]):
+            Dictionary that may contain:  ['gender', 'vform', 'form',
+            'animate', 'definiteness', 'number', 'person', 'type', 'degree',
+            'aspect', 'case']
+
+        xml_file (str):
+            XML file path
+
+        forms_dict (Dict[str, WordForm]):
+            Dictionary mapping form grammar names to WordForm objects.
+    """
     lemma: str
     part_of_speech: str
     lemma_grammatical_features: Dict[str, str]
     xml_file: str
-    forms_dict: Dict[str, 'WordForm']   ### ctrl+f "word_forms_dict_info"
-
-    def __post_init__(self):
-        self.gender: str = self.lemma_grammatical_features.get("gender")
-        self.type: str = self.lemma_grammatical_features.get("type")
-        self.aspect: str = self.lemma_grammatical_features.get("aspect")
+    forms_dict: Dict[str, 'WordForm']
 
 
 @dataclass(kw_only=True)
 class WordForm:
+    """
+    Represents a word form with associated grammatical information.
+
+    Instance Variables:
+        lemma (str): Lemma of form's parent entry.
+
+        part_of_speech (str): Part of speech of form/lemma.
+
+        form_representation (str): The word form.
+
+        msd (str): Morphosyntactic descriptor of the form.
+
+        accentuation (str): Accentuation of the form.
+
+        frequency (int): Form's frequency in gigafida.
+
+        grammatical_features (Dict[str, str]): Gram. features of the form.
+
+        pronunciation_data (List[Dict[str, str]]):  Pronunciation data of the
+        form. List of dicts with key as pronunciation notation (IPA,
+        SAMPA), and value as pronunciation string.
+
+        v_form (str): Verb form.
+
+        case (str): Grammatical case.
+
+        person (str): Grammatical person.
+
+        number (str): Singular/Dual/Plural.
+
+        gender (str): Grammatical gender.
+
+        grammar_name (str): Grammar name used for indexing WordForms within
+        Entry.
+    """
     # info from parent entry
     lemma: str
     part_of_speech: str
@@ -44,7 +93,7 @@ class WordForm:
         self.person = self.grammatical_features.get("person", None)
         self.number = self.grammatical_features.get("number", None)
         self.gender = self.grammatical_features.get("gender", None)
-        self.grammar_name = ordered_gn(
+        self.grammar_name = ordered_grammar_name(
             v_form=self.v_form,
             case=self.case,
             person=self.person,
@@ -54,68 +103,97 @@ class WordForm:
 
 
 class XMLParser:
+    """
+    Parses XML files containing entries and forms data into SloleksEntry
+    objects.
+
+    Public Methods:
+        none.
+
+    Instance Variables:
+        xml_file (str): Path to the XML file.
+        entries (List[SloleksEntry]): List of SloleksEntry objects parsed from
+        the XML file.
+    """
+
     def __init__(self, xml_file: str):
+        """
+        Initializes an XMLParser instance.
+
+        :param xml_file: Path to the XML file to parse.
+        """
         self.xml_file = xml_file
-        self.entries = self.parse_xml_file()
+        self.entries = self._parse_xml_file()
 
-    def parse_xml_file(self) -> List[Entry]:
-        tree = ET.parse(self.xml_file)
+    def _parse_xml_file(self) -> List[SloleksEntry]:
+        """
+        Parses xml file for all <entry> ElementTree elements and initiates
+        processing them into SloleksEntry class objects.
+
+        :return: List of SloleksEntry class objects.
+        """
+        tree = Et.parse(self.xml_file)
         root = tree.getroot()
-        entry_list = []
-
-        for entry_element in root.findall('.//entry'):
-            entry = self.parse_entry(entry_element)
-            entry_list.append(entry)
+        entry_list = [self._parse_entry(entry_element) for entry_element
+                      in root.findall('.//entry')]
 
         return entry_list
 
-    def parse_entry(self, entry_element: ET.Element) -> Entry:
-        lemma: str = entry_element.find('.//lemma').text
-        part_of_speech: str = entry_element.find('.//category').text.lower()
-        lemma_grammatical_features: Dict[
-            str, str] = self.parse_grammatical_features(entry_element)
+    def _parse_entry(self, entry_element: Et.Element) -> SloleksEntry:
+        """
+        Parses an <entry> ElementTree element into a SloleksEntry object.
 
+        :param entry_element: <entry> ElementTree element to parse.
+        :return: SloleksEntry object representing the parsed entry.
+        """
+        lemma = entry_element.find('.//lemma').text
+        part_of_speech = entry_element.find('.//category').text.lower()
+        lemma_grammatical_features = self._parse_grammatical_features(
+            entry_element)
 
+        word_forms_dict = {
+            self._parse_form(form_element, lemma, part_of_speech).grammar_name:
+                self._parse_form(form_element, lemma, part_of_speech)
+            for form_element in entry_element.findall('.//wordForm')}
 
-        word_forms_dict = {}  ### ctrl+f "word_forms_dict_info"
-        for word_form_element in entry_element.findall('.//wordForm'):
-            word_form = self.parse_form(word_form_element, lemma,
-                                        part_of_speech)
-            word_forms_dict[word_form.grammar_name] = word_form
-
-
-        entry = Entry(
+        return SloleksEntry(
             lemma=lemma,
             part_of_speech=part_of_speech,
             lemma_grammatical_features=lemma_grammatical_features,
             xml_file=self.xml_file,
-            forms_dict=word_forms_dict  ### ctrl+f "word_forms_dict_info"
+            forms_dict=word_forms_dict
         )
 
-        return entry
+    def _parse_form(
+            self,
+            form_element: Et.Element,
+            lemma: str,
+            part_of_speech: str
+    ) -> WordForm:
+        """
+        Parses a <wordForm> ElementTree element into a WordForm object.
 
-    def parse_form(self, form_element: ET.Element, lemma: str,
-                   part_of_speech: str) -> WordForm:
-        form_representation: str = form_element.find('.//form').text
-
-        msd: str = form_element.find('.//msd').text
+        :param form_element: <wordForm> ElementTree element to parse.
+        :param lemma: Lemma of the wordForm's parent entry.
+        :param part_of_speech: Part of speech of the wordForm/lemma.
+        :return: WordForm object representing the parsed wordForm element.
+        """
+        form_representation = form_element.find('.//form').text
+        msd = form_element.find('.//msd').text
 
         accentuation_element = form_element.find('.//accentuation/form')
-        accentuation: str = accentuation_element.text if (
-                accentuation_element is not None) else None
+        accentuation = accentuation_element.text if (accentuation_element is
+                                                     not None) else None
 
         freq_element = form_element.find(
             './/measureList/measure[@type="frequency"]')
-        frequency: Union[int, None] = int(freq_element.text) if (
-                freq_element is not None) else None
+        frequency = int(
+            freq_element.text) if freq_element is not None else None
 
-        gram_features: Dict[str, str] = self.parse_grammatical_features(
-            form_element)
+        gram_features = self._parse_grammatical_features(form_element)
+        pronunciation_data = self._parse_pronunciation_data(form_element)
 
-        pronunciation_data: list[
-            dict[str, str]] = self.parse_pronunciation_data(form_element)
-
-        word_form = WordForm(
+        return WordForm(
             lemma=lemma,
             part_of_speech=part_of_speech,
             form_representation=form_representation,
@@ -125,33 +203,41 @@ class XMLParser:
             grammatical_features=gram_features,
             pronunciation_data=pronunciation_data
         )
-        return word_form
 
     @staticmethod
-    def parse_grammatical_features(element: ET.Element) -> Dict[
-        str, str]:
+    def _parse_grammatical_features(element: Et.Element) -> Dict[str, str]:
+        """
+        Parses grammatical features from an ElementTree element.
+
+        :param element: ElementTree element containing grammatical features.
+        :return: Dictionary mapping feature names to their corresponding
+            values.
+        """
         return {
             feature.get('name'): feature.text
             for feature in element.findall('.//grammarFeature')
         }
 
     @staticmethod
-    def parse_pronunciation_data(word_form_element: ET.Element) -> list[
+    def _parse_pronunciation_data(word_form_element: Et.Element) -> list[
             Dict[str, str]]:
+        """
+        Parses pronunciation data from an ElementTree Element.
+
+        :param word_form_element: <wordForm> (ElementTree module) element.
+        :return: List of dictionaries with key as script (IPA, SAMPA) and
+            value as pronunciation string.
+        """
         pronunciation_data = []
-        pronunciation_elements = word_form_element.findall('.//pronunciation')
-        for pronunciation_element in pronunciation_elements:
-            form_elements = pronunciation_element.findall('.//form')
-            form_dict = {}
-            for form_element in form_elements:
-                key = form_element.attrib['script']
-                define = form_element.text
-                form_dict[key] = define
-            pronunciation_data.append(form_dict)
+        for pronunciation_element in word_form_element.findall(
+                './/pronunciation'):
+            pronunciation_data.append(
+                {form_element.attrib['script']: form_element.text
+                 for form_element in pronunciation_element.findall('.//form')})
         return pronunciation_data
 
 
-def ordered_gn(
+def ordered_grammar_name(
         *,
         v_form: str = None,
         case: str = None,
@@ -159,35 +245,93 @@ def ordered_gn(
         number: str = None,
         gender: str = None,
 ):
+    """
+    Ensures that grammatical data is ordered correctly before concatenating
+    them into a grammar name. Intended for use for individual word forms.
+    kwargs mandatory.
+
+    :param v_form: Verb form.
+    :param case: Grammatical case.
+    :param person: Grammatical person (1st, 2nd, 3rd).
+    :param number: Singular/Dual/Plural.
+    :param gender: Grammatical gender.
+    :return: String of found items concatenated with an underscore in the
+        correct order.
+    """
     return concatenate_variables(v_form, case, person, number, gender)
 
 
 def concatenate_variables(*items):
+    """
+    Concatenates variables into a string, separated by underscores.
+
+    :param items: Arguments to concatenate.
+    :return: Concatenated string.
+    """
     result = "_".join(str(item) for item in items if item is not None)
     return result
 
+
 # region TESTING
-def test_formclass():
+def test_form_class():
+    """
+    Test WordForm class. Contains sample WordForm initialization data so no
+    parse necessary
+    """
     word_form_instance = WordForm(
         form_representation="cats",
         lemma="cat",
         part_of_speech="noun",
-        msd="akfhaso",
+        msd="idk",
         accentuation="none",
         frequency=100,
         grammatical_features={"case": "nominative", "number": "plural",
                               "gender": "masculine"},
-        pronunciation_data=[{"ipa": "/kæts/", "stress": "none"}]
+        pronunciation_data=[{"DPA": "/katz/", "stress": "none"}]
     )
+    print(word_form_instance)
 
-def test_parser():
-    xml_path = (r"C:\Users\sangha\Documents\Danny's\slodict\Resources"
-                r"\Markdown\XML\sloleks_3.0_sample.xml")
-    parser = XMLParser(xml_path)
+
+def test_parser(path):
+    """
+    Test XMLParser class.
+    """
+    parser = XMLParser(path)
     print('\n'.join(map(str, parser.entries)))
 
 
+def find_element_titles(
+        path,
+        element="grammarFeature",
+        title="name"
+):
+    """
+    SUPER USEFUL. DON'T FORGET THIS EXISTS!!
+
+    Indexes xml for all items of a
+    given title
+    for all elements of specified
+    type. Default parses for all "name" in <grammarFeature>.
+
+    e.g. <grammarFeature name="degree">positive</grammarFeature> -> "positive"
+
+    :param path:
+    :param title: <element TITLE="value">
+    :param element: <ELEMENT title="value">
+    :return: list of all values for <element title="VALUE">
+    """
+    tree = Et.parse(path)
+    root = tree.getroot()
+    names = set()
+    for element in root.findall(f'.//{element}'):
+        name = element.get(title)
+        if name:
+            names.add(name)
+    return list(names)
+
+
 if __name__ == "__main__":
-    #test_formclass()
-    test_parser()
+    xml_path = (r"C:\Users\sangha\Documents\Danny's\slodict\Resources"
+                r"\Markdown\XML\sloleks_3.0_sample.xml")
+
 # endregion
