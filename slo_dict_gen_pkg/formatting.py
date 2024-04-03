@@ -1,6 +1,6 @@
+from slo_dict_gen_pkg import (XMLParser, SloleksEntry, WordForm, Dict, List)
 import os
 import pyperclip
-from entry_parser import SloleksEntry, WordForm
 
 
 def format_string(entry: SloleksEntry, grammar_name: str):

@@ -1,10 +1,8 @@
-from typing import List, Dict, Union
-import tkinter as tk
-from tkhtmlview import HTMLLabel
-from entry_parser import SloleksEntry, WordForm, XMLParser
+from slo_dict_gen_pkg import *
 from random import shuffle
-import os
-import formatting
+from tkhtmlview import HTMLLabel
+import tkinter as tk
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def display_html(content):
@@ -31,6 +29,7 @@ def copy_table(xml_path: str, to_copy: str) -> str:
     """
     parser_obj: XMLParser = XMLParser(xml_path)
 
+
     entry_obj_list: List[SloleksEntry] = parser_obj.entries
     shuffle(entry_obj_list)
 
@@ -49,7 +48,7 @@ def print_sample(text: str, percent: float = 0.5) -> None:
     :param text: (str) Text to sample
     :param percent: (float) Percentage of string to show on either side
     """
-    sample_size = int(round(len(text)*float(percent/100)))
+    sample_size = int(round(len(text) * float(percent / 100)))
     print(f"\nNoun Table Copied:\n\n{text[:sample_size]}\n...\
     n{text[-sample_size:]}")
 

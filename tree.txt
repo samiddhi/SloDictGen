@@ -1,0 +1,153 @@
+Folder PATH listing
+Volume serial number is A051-6B39
+C:.
+¦   .editorconfig
+¦   .gitignore
+¦   changelog.txt
+¦   markdown_workspace.code-workspace
+¦   README
+¦   tree.txt
+¦   
++---.idea
+¦   ¦   .gitignore
+¦   ¦   .name
+¦   ¦   misc.xml
+¦   ¦   modules.xml
+¦   ¦   SloDictGen.iml
+¦   ¦   vcs.xml
+¦   ¦   workspace.xml
+¦   ¦   
+¦   +---inspectionProfiles
+¦           profiles_settings.xml
+¦           
++---data
+¦   ¦   Sloleks.3.0.zip
+¦   ¦   
+¦   +---Markdown
+¦   ¦   +---HTML
+¦   ¦   ¦       noun_ideal.html
+¦   ¦   ¦       playground.html
+¦   ¦   ¦       verb_ideal.html
+¦   ¦   ¦       
+¦   ¦   +---XML
+¦   ¦           sloleks_3.0_sample.xml
+¦   ¦           xml_sandbox.xml
+¦   ¦           
+¦   +---Sloleks.3.0
+¦       ¦   00README.txt
+¦       ¦   sloleks_3.0_001.xml
+¦       ¦   sloleks_3.0_002.xml
+¦       ¦   sloleks_3.0_003.xml
+¦       ¦   sloleks_3.0_004.xml
+¦       ¦   sloleks_3.0_005.xml
+¦       ¦   sloleks_3.0_006.xml
+¦       ¦   sloleks_3.0_007.xml
+¦       ¦   sloleks_3.0_008.xml
+¦       ¦   sloleks_3.0_009.xml
+¦       ¦   sloleks_3.0_010.xml
+¦       ¦   sloleks_3.0_011.xml
+¦       ¦   sloleks_3.0_012.xml
+¦       ¦   sloleks_3.0_013.xml
+¦       ¦   sloleks_3.0_014.xml
+¦       ¦   sloleks_3.0_015.xml
+¦       ¦   sloleks_3.0_016.xml
+¦       ¦   sloleks_3.0_017.xml
+¦       ¦   sloleks_3.0_018.xml
+¦       ¦   sloleks_3.0_019.xml
+¦       ¦   sloleks_3.0_020.xml
+¦       ¦   sloleks_3.0_021.xml
+¦       ¦   sloleks_3.0_022.xml
+¦       ¦   sloleks_3.0_023.xml
+¦       ¦   sloleks_3.0_024.xml
+¦       ¦   sloleks_3.0_025.xml
+¦       ¦   sloleks_3.0_026.xml
+¦       ¦   sloleks_3.0_027.xml
+¦       ¦   sloleks_3.0_028.xml
+¦       ¦   sloleks_3.0_029.xml
+¦       ¦   sloleks_3.0_030.xml
+¦       ¦   sloleks_3.0_031.xml
+¦       ¦   sloleks_3.0_032.xml
+¦       ¦   sloleks_3.0_033.xml
+¦       ¦   sloleks_3.0_034.xml
+¦       ¦   sloleks_3.0_035.xml
+¦       ¦   sloleks_3.0_036.xml
+¦       ¦   sloleks_3.0_037.xml
+¦       ¦   sloleks_3.0_038.xml
+¦       ¦   sloleks_3.0_039.xml
+¦       ¦   sloleks_3.0_040.xml
+¦       ¦   sloleks_3.0_041.xml
+¦       ¦   sloleks_3.0_042.xml
+¦       ¦   sloleks_3.0_043.xml
+¦       ¦   sloleks_3.0_044.xml
+¦       ¦   sloleks_3.0_045.xml
+¦       ¦   sloleks_3.0_046.xml
+¦       ¦   sloleks_3.0_047.xml
+¦       ¦   sloleks_3.0_048.xml
+¦       ¦   sloleks_3.0_049.xml
+¦       ¦   sloleks_3.0_050.xml
+¦       ¦   sloleks_3.0_051.xml
+¦       ¦   sloleks_3.0_052.xml
+¦       ¦   sloleks_3.0_053.xml
+¦       ¦   sloleks_3.0_054.xml
+¦       ¦   sloleks_3.0_055.xml
+¦       ¦   sloleks_3.0_056.xml
+¦       ¦   sloleks_3.0_057.xml
+¦       ¦   sloleks_3.0_058.xml
+¦       ¦   sloleks_3.0_059.xml
+¦       ¦   sloleks_3.0_060.xml
+¦       ¦   sloleks_3.0_061.xml
+¦       ¦   sloleks_3.0_062.xml
+¦       ¦   sloleks_3.0_063.xml
+¦       ¦   sloleks_3.0_064.xml
+¦       ¦   sloleks_3.0_065.xml
+¦       ¦   sloleks_3.0_066.xml
+¦       ¦   sloleks_3.0_067.xml
+¦       ¦   sloleks_3.0_068.xml
+¦       ¦   sloleks_3.0_069.xml
+¦       ¦   sloleks_3.0_070.xml
+¦       ¦   sloleks_3.0_071.xml
+¦       ¦   sloleks_3.0_072.xml
+¦       ¦   sloleks_3.0_073.xml
+¦       ¦   sloleks_3.0_074.xml
+¦       ¦   sloleks_3.0_075.xml
+¦       ¦   sloleks_3.0_076.xml
+¦       ¦   sloleks_3.0_077.xml
+¦       ¦   sloleks_3.0_078.xml
+¦       ¦   sloleks_3.0_079.xml
+¦       ¦   sloleks_3.0_080.xml
+¦       ¦   sloleks_3.0_081.xml
+¦       ¦   sloleks_3.0_082.xml
+¦       ¦   sloleks_3.0_083.xml
+¦       ¦   sloleks_3.0_084.xml
+¦       ¦   sloleks_3.0_085.xml
+¦       ¦   sloleks_3.0_086.xml
+¦       ¦   sloleks_3.0_087.xml
+¦       ¦   sloleks_3.0_088.xml
+¦       ¦   sloleks_3.0_089.xml
+¦       ¦   sloleks_3.0_090.xml
+¦       ¦   sloleks_3.0_091.xml
+¦       ¦   sloleks_3.0_092.xml
+¦       ¦   sloleks_3.0_093.xml
+¦       ¦   sloleks_3.0_094.xml
+¦       ¦   sloleks_3.0_095.xml
+¦       ¦   sloleks_3.0_096.xml
+¦       ¦   sloleks_3.0_097.xml
+¦       ¦   sloleks_3.0_098.xml
+¦       ¦   sloleks_3.0_099.xml
+¦       ¦   sloleks_3.0_100.xml
+¦       ¦   sloleks_3.0_101.xml
+¦       ¦   sloleks_3.0_102.xml
+¦       ¦   
+¦       +---xml_schemas
+¦               inventory.xsd
+¦               morphological_lexicon.xsd
+¦               
++---slo_dict_gen_pkg
+¦       entry_parser.py
+¦       formatting.py
+¦       OLD_classes.py
+¦       __init__.py
+¦       
++---tests
+        dev_main.py
+        
