@@ -52,8 +52,15 @@ major:
 - Created git repo
 	- took way too long but got it done
 
+(4.3.24)
+- Refactoring 
+- shared imports
+- added high quality docstrings to test and classes files
+	- oh yeah, changed filenames
+
+
 Tomorrow:
     - Airium for HTML editing: https://pypi.org/project/airium/
+    - Make verbs great again
     - minor fixes
-    - html/css variables to new module
     - goldendict + dpd
