@@ -1,31 +1,14 @@
 from slo_dict_gen_pkg import XMLParser, SloleksEntry, WordForm, Dict, List
+from slo_dict_gen_pkg.grammar_utilities import ordered_grammar_name
 
 from airium import Airium
+from itertools import product
 import os
 import sys
 import pyperclip
 
 # Add the parent directory
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-
-class GrammarTableGen:
-    """
-    Generates a grammar table from a SloleksEntry object
-
-    Instance variables:
-        table (str)
-    """
-
-    def __init__(self, entry: SloleksEntry, pos_to_copy: str = None):
-        """
-        Manages the creation of a table from SloleksEntry object
-
-        :param entry: (SloleksEntry)
-        :param pos_to_copy: (str) Indicates which (default None) part of
-            speech to copy to clipboard
-        """
-        raise NotImplementedError
 
 
 def format_string(entry: SloleksEntry, grammar_name: str):
@@ -65,7 +48,7 @@ def ipa(form: WordForm) -> str:
     return formatted
 
 
-def _noun_table(entry: SloleksEntry, pos_to_copy: str) -> str:
+def noun_table(entry: SloleksEntry, pos_to_copy: str) -> str:
     format_string(entry, "nominative_singular")
     table: str = f'''
         <div class="content hidden" id="inflection_{entry.lemma}">
@@ -125,25 +108,6 @@ def _noun_table(entry: SloleksEntry, pos_to_copy: str) -> str:
         pyperclip.copy(table)
     return table
 
-
-def noun_table(entry: SloleksEntry, pos_to_copy: str) -> str:
-    a: Airium = Airium()
-
-    a('<!DOCTYPE html>')
-    with a.html(lang="en"):
-        with a.head():
-            a.meta(charset="utf-8")
-            a.meta(name="viewport", content="width=device-width, initial-scale=1.0")
-            a.meta(charset="utf-8")
-            a.link(href=css_path("modern_minimalist"), rel='stylesheet')
-            a.title(_t=entry.lemma)
-    return table
-
-
-def css_path(aesthetic: str = "modern_minimalist"):
-    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'CSS', f'{aesthetic}.css'))
-    print(path)
-    return path
 
 def wrap(entry: SloleksEntry, table: str):
     style = f'''
@@ -296,3 +260,89 @@ def gigafida_footer():
         (<em>stalinih</em>) is unsurprisingly absent -- but fear not, as the locative <em>plural</em> (also <em>stalinih</em>) 
         has one occurrence in the corpus.</p>
     '''
+
+
+
+### IMPLEMENTING
+
+class GrammarTableGen:
+    """
+    Generates a grammar table from a SloleksEntry object
+
+    Instance variables:
+        table (str)
+    """
+
+    def __init__(self, entry: SloleksEntry, pos_to_copy: str = None):
+        """
+        Manages the creation of a table from SloleksEntry object
+
+        :param entry: (SloleksEntry)
+        :param pos_to_copy: (str) Indicates which (default None) part of
+            speech to copy to clipboard
+        """
+        raise NotImplementedError
+
+def airhead(entry: SloleksEntry, pos_to_copy: str) -> str:
+    a: Airium = Airium()
+
+    a('<!DOCTYPE html>')
+    with a.html(lang="en"):
+        with a.head():
+            a.meta(charset="utf-8")
+            a.meta(name="viewport", content="width=device-width, initial-scale=1.0")
+            a.meta(charset="utf-8")
+            a.link(href=css_path("modern_minimalist"), rel='stylesheet')
+            a.title(_t=entry.lemma)
+        with a.body():
+            raise NotImplementedError
+    return table
+
+def airnoun(entry: SloleksEntry):
+    a: Airium = Airium()
+    with a.div(klass="content hidden", id=f"inflection_{entry.lemma}"):
+        with a.p(klass="heading"):
+            with a.b():
+                a.em(_t=entry.part_of_speech)
+            a(';')
+            a.em(_t=entry.lemma_grammatical_features["type"])
+            a(',')
+            a.em(_t=entry.lemma_grammatical_features['gender'])
+
+
+def airtable(a: Airium, entry: SloleksEntry, top_labels: List[str], left_labels: List[str]) -> Airium:
+    """
+    Takes a number of parameters and generates an unstyled html table
+
+    :param a: (Airium)
+    :param entry: (SloleksEntry)
+    :param top_labels: (List[str])
+    :param left_labels: (List[str])
+    :return a: (Airium)
+    """
+    with a.table(klass='inflection'):
+        with a.tr():
+            a.th()
+            for item in top_labels:
+                a.th(_t=item)
+    for row in left_labels:
+        with a.tr():
+            a.th(_t=eval(f"entry.{row}")[:3]) ###
+            for col in top_labels:
+                grammar_name = ordered_grammar_name(
+                    v_form=entry.lemma_grammatical_features["vform"],
+                    case="x"
+                )
+                with a.td(klass='pop-up'):
+                    a("x")
+
+    raise NotImplementedError
+
+
+
+
+
+def css_path(aesthetic: str = "modern_minimalist"):
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'CSS', f'{aesthetic}.css'))
+    print(path)
+    return path
