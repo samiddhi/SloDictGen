@@ -1,6 +1,9 @@
-from typing import Dict, List
+from typing import Dict, List, Set
 from dataclasses import dataclass
 import xml.etree.ElementTree as Et
+import pyperclip
+import timeit
+import os
 
 from slo_dict_gen_pkg.grammar_utilities import ordered_grammar_name
 
@@ -222,7 +225,7 @@ class XMLParser:
 
     @staticmethod
     def _parse_pronunciation_data(word_form_element: Et.Element) -> list[
-            Dict[str, str]]:
+        Dict[str, str]]:
         """
         Parses pronunciation data from an ElementTree Element.
 
@@ -267,38 +270,124 @@ def test_parser(path):
     print('\n'.join(map(str, parser.entries)))
 
 
-def find_element_titles(
-        path,
-        element="grammarFeature",
-        title="name"
-):
+# region Rewriting
+def find_type_attributes(
+        path: str,
+        element_type: str = "grammarFeature",
+        attribute_name: str = "name"
+) -> List[str]:
     """
     SUPER USEFUL. DON'T FORGET THIS EXISTS!!
 
-    Indexes xml for all items of a
-    given title
-    for all elements of specified
-    type. Default parses for all "name" in <grammarFeature>.
+    Indexes xml for all items of a given attribute for all elements of
+    specified type. Default parses for all "name" in <grammarFeature>.
 
-    e.g. <grammarFeature name="degree">positive</grammarFeature> -> "positive"
+    e.g. <grammarFeature name="degree"> -> "degree"
 
     :param path:
-    :param title: <element TITLE="value">
-    :param element: <ELEMENT title="value">
-    :return: list of all values for <element title="VALUE">
+    :param element_type: <TYPE attribute="value">
+    :param attribute_name: <type ATTRIBUTE="value">
+    :return: list of all attribute values <type attribute="VALUE">
     """
     tree = Et.parse(path)
     root = tree.getroot()
     names = set()
-    for element in root.findall(f'.//{element}'):
-        name = element.get(title)
+    for element in root.findall(f'.//{element_type}'):
+        name = element.get(attribute_name)
         if name:
             names.add(name)
     return list(names)
 
 
+def find_element_contents(
+        path: str,
+        element_type: str = "grammarFeature",
+        attribute_name: str = "name",
+        attribute_value: str = "degree"
+) -> Set[str]:
+    """
+    SUPER USEFUL. DON'T FORGET THIS EXISTS!!
+
+    Finds all contents within elements of a specified type,
+    attribute, and attribute value in a given XML file
+
+    :param path: The file path to the XML file.
+    :param element_type: <TYPE attribute="value">
+    :param attribute_name: <type ATTRIBUTE="value">
+    :param attribute_value: <type attribute="VALUE">
+    :return: <type attribute="value">CONTENT</type>
+    """
+    tree = Et.parse(path)
+    root = tree.getroot()
+    element_contents = set()
+    for element in root.findall(
+            f'.//{element_type}[@{attribute_name}="{attribute_value}"]'):
+        element_contents.add(element.text)
+    return element_contents
+
+def generate_all_grammar_features(path: str) -> Dict[
+        str, Set]:
+    """
+    Used to create the dictionary in grammar_utilities.return_gram_feat_type().
+    Parses all xml files at path and returns a complete dict of grammar feature
+    attributes and their corresponding element contents.
+
+    e.g. dict['gender'] -> {'neuter', 'feminine', 'masculine'}
+
+    :param path:
+    :return:
+    """
+    if os.path.isfile(path):  # If path leads to a file
+        files = [path]
+    elif os.path.isdir(path):  # If path leads to a directory
+        files = [os.path.join(path, f) for f in os.listdir(path) if
+                 f.endswith('.xml')]
+    else:
+        raise ValueError("Invalid path provided.")
+
+    dict_return = {}
+    x = 0
+    for file_path in files:
+        attributes = find_type_attributes(
+            path=file_path,
+            element_type="grammarFeature",
+            attribute_name="name"
+        )
+
+        for attribute in attributes:
+            if attribute not in dict_return:
+                dict_return[attribute] = set()
+            dict_return[attribute].update(
+                find_element_contents(
+                    path=file_path,
+                    element_type="grammarFeature",
+                    attribute_name="name",
+                    attribute_value=attribute
+                )
+            )
+        print(f'{x} files done.')
+        x += 1
+
+    return dict_return
+# endregion
+
+
 if __name__ == "__main__":
-    xml_path = (r"C:\Users\sangha\Documents\Danny's\slodict\Resources"
-                r"\Markdown\XML\sloleks_3.0_sample.xml")
+    sample_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
+                   r"\Markdown\XML\sloleks_3.0_sample.xml")
+    parent_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
+                   r"\Sloleks.3.0")
+    example_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
+                    r"\Sloleks.3.0\sloleks_3.0_028.xml")
+
+    d: Dict = generate_all_grammar_features(parent_path)
+
+    # Specify text file path
+    txt_file_path = 'output.txt'
+
+    # Open text file in write mode and write the dictionary d
+    with open(txt_file_path, 'w') as txtfile:
+        for key, values in d.items():
+            txtfile.write(f"'{key}' : {{{', '.join(values)}}}\n")
 
 # endregion

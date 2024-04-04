@@ -11,14 +11,20 @@ def return_gram_feat_type(sample: str) -> str:
     :return: string of feature type
     """
     gram_feat_dict = {
-        "v_form": [],
-        "case": [],
-        "person": [],
-        "number": [],
-        "gender": [],
-        "x": [],
-        "c": [],
-        "z": []
+        'degree': {'positive'},
+        'form': {'roman'},
+        'gender': {'neuter', 'masculine', 'feminine'},
+        'person': {'first', 'second', 'third'},
+        'case': {'dative', 'nominative', 'genitive', 'locative',
+                 'instrumental', 'accusative'},
+        'aspect': {'progressive'},
+        'definiteness': {'no', 'yes'},
+        'number': {'dual', 'singular', 'plural'},
+        'type': {'possessive', 'cardinal', 'common', 'main', 'proper',
+                 'ordinal', 'general'},
+        'vform': {'participle', 'infinitive', 'supine', 'imperative',
+                  'present'},
+        'animate': {'no', 'yes'}
     }
     raise NotImplementedError
 
