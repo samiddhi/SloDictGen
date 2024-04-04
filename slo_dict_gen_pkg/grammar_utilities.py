@@ -11,20 +11,27 @@ def return_gram_feat_type(sample: str) -> str:
     :return: string of feature type
     """
     gram_feat_dict = {
-        'degree': {'positive'},
-        'form': {'roman'},
-        'gender': {'neuter', 'masculine', 'feminine'},
-        'person': {'first', 'second', 'third'},
-        'case': {'dative', 'nominative', 'genitive', 'locative',
-                 'instrumental', 'accusative'},
-        'aspect': {'progressive'},
-        'definiteness': {'no', 'yes'},
-        'number': {'dual', 'singular', 'plural'},
-        'type': {'possessive', 'cardinal', 'common', 'main', 'proper',
-                 'ordinal', 'general'},
-        'vform': {'participle', 'infinitive', 'supine', 'imperative',
-                  'present'},
-        'animate': {'no', 'yes'}
+        'aspect': {perfective, biaspectual, progressive},
+        'number': {dual, singular, plural},
+        'negative': {yes, no},
+        'case': {nominative, dative, instrumental, genitive, locative,
+                 accusative},
+        'animate': {yes, no},
+        'definiteness': {yes, no},
+        'type': {participle, special, personal, relative, general,
+                 auxiliary, cardinal, proper, ordinal, reflexive,
+                 pronominal, possessive, coordinating, negative,
+                 interrogative, subordinating, main, demonstrative,
+                 indefinite, common},
+        'person': {first, third, second},
+        'degree': {superlative, positive, comparative},
+        'vform': {participle, future, imperative, supine, conditional,
+                  present, infinitive},
+        'gender': {masculine, feminine, neuter},
+        'form': {letter, roman, digit},
+        'clitic': {yes, bound},
+        'owner_number': {dual, singular, plural},
+        'owner_gender': {masculine, neuter, feminine}
     }
     raise NotImplementedError
 

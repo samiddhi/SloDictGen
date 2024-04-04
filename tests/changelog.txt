@@ -61,6 +61,7 @@ major:
 
 Tomorrow:
     - Airium for HTML editing: https://pypi.org/project/airium/
+        - FINISH table function
     - Make verbs great again
     - minor fixes
     - goldendict + dpd

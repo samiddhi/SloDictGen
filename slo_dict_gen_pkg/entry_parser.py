@@ -383,7 +383,7 @@ if __name__ == "__main__":
     d: Dict = generate_all_grammar_features(parent_path)
 
     # Specify text file path
-    txt_file_path = 'output.txt'
+    txt_file_path = '../data/Notes/grammarFeature_name_values.txt'
 
     # Open text file in write mode and write the dictionary d
     with open(txt_file_path, 'w') as txtfile:
