@@ -1,11 +1,12 @@
-from slo_dict_gen_pkg import XMLParser, SloleksEntry, WordForm, Dict, List
+from common.imports import *
+from slo_dict_gen_pkg.entry_parser import SloleksEntry, WordForm, XMLParser
 from slo_dict_gen_pkg.grammar_utilities import ordered_grammar_name
 
 from airium import Airium
-from itertools import product
+# from itertools import product
+import pyperclip
 import os
 import sys
-import pyperclip
 
 # Add the parent directory
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
