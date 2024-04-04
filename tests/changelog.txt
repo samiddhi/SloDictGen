@@ -58,10 +58,15 @@ major:
 - added high quality docstrings to test and classes files
 	- oh yeah, changed filenames
 
+(4.4.24)
+- Airium for tables, head, css finished
+    - bigger than it sounds. extremely reusable table generation function which
+      may or may not have required parsing all the xml files to get some
+      important data
+
 
 Tomorrow:
-    - Airium for HTML editing: https://pypi.org/project/airium/
-        - FINISH table function
+    - reformat formatting.py (class?)
     - Make verbs great again
     - minor fixes
     - goldendict + dpd

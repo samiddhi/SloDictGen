@@ -1,6 +1,6 @@
 from common.imports import *
-from slo_dict_gen_pkg.entry_parser import SloleksEntry, WordForm, XMLParser
-from slo_dict_gen_pkg.grammar_utilities import ordered_grammar_name
+from slo_dict_gen_pkg.entry_parser import SloleksEntry, WordForm, XMLParser, sample_entry_obj
+from slo_dict_gen_pkg.grammar_utilities import ordered_grammar_name, return_gram_feat_type, number, case, gender, vform, person
 
 from airium import Airium
 # from itertools import product
@@ -263,7 +263,6 @@ def gigafida_footer():
     '''
 
 
-
 ### IMPLEMENTING
 
 class GrammarTableGen:
@@ -284,66 +283,132 @@ class GrammarTableGen:
         """
         raise NotImplementedError
 
-def airhead(entry: SloleksEntry, pos_to_copy: str) -> str:
+
+def airhead_embody(*html: Union[Airium, str], entry: SloleksEntry) -> Airium:
     a: Airium = Airium()
 
     a('<!DOCTYPE html>')
-    with a.html(lang="en"):
+    with (a.html(lang="en")):
         with a.head():
             a.meta(charset="utf-8")
             a.meta(name="viewport", content="width=device-width, initial-scale=1.0")
             a.meta(charset="utf-8")
-            a.link(href=css_path("modern_minimalist"), rel='stylesheet')
             a.title(_t=entry.lemma)
+            with a.style():
+                a(css("modern"))
         with a.body():
-            raise NotImplementedError
-    return table
+            for item in html:
+                a(str(item))
+            with a.script():
+                a(js())
+    return a
 
-def airnoun(entry: SloleksEntry):
+
+def airbut(*html: Union[Airium, str], entry: SloleksEntry, id: str = "inflection") -> Airium:
     a: Airium = Airium()
-    with a.div(klass="content hidden", id=f"inflection_{entry.lemma}"):
-        with a.p(klass="heading"):
-            with a.b():
-                a.em(_t=entry.part_of_speech)
-            a(';')
-            a.em(_t=entry.lemma_grammatical_features["type"])
-            a(',')
-            a.em(_t=entry.lemma_grammatical_features['gender'])
+
+    with a.div(klass='container'):
+        a.button(klass='button', onclick=f"toggleTable('inflection_{entry.lemma}')", _t='Inflections')
+        with a.div(klass='content hidden', id=f'{id}_{entry.lemma}'):
+            for input in html:
+                a(str(input))
+    return a
 
 
-def airtable(a: Airium, entry: SloleksEntry, top_labels: List[str], left_labels: List[str]) -> Airium:
+def airheading(*html: Union[Airium, str], entry: SloleksEntry, id: str = "inflection") -> Airium:
+    a = Airium()
+    with a.p(klass='heading'):
+        with a.b():
+            a.em(_t=entry.part_of_speech)
+        a(';')
+        a.em(_t=entry.lemma_grammatical_features['type'])
+        lg.warning("Assumes entry has 'type' feature.")
+        a(',')
+        a.em(_t=entry.lemma_grammatical_features['gender'])
+        lg.warning("Assumes entry has 'gender' feature. Cancelled")
+        for input in html:
+            a(str(input))
+
+    return a
+
+
+def airtable(entry: SloleksEntry, top_labels: List[str], left_labels: List[str]) -> Airium:
     """
     Takes a number of parameters and generates an unstyled html table
 
-    :param a: (Airium)
     :param entry: (SloleksEntry)
-    :param top_labels: (List[str])
-    :param left_labels: (List[str])
+    :param top_labels: (List[str]) Labels at the top of the table
+    :param left_labels: (List[str]) Labels on the left side of the table
     :return a: (Airium)
     """
-    with a.table(klass='inflection'):
-        with a.tr():
-            a.th()
+    table = Airium()
+
+    with table.table(klass='inflection'):
+        with table.tr():
+            table.th()
             for item in top_labels:
-                a.th(_t=item)
-    for row in left_labels:
-        with a.tr():
-            a.th(_t=eval(f"entry.{row}")[:3]) ###
-            for col in top_labels:
-                grammar_name = ordered_grammar_name(
-                    v_form=entry.lemma_grammatical_features["vform"],
-                    case="x"
-                )
-                with a.td(klass='pop-up'):
-                    a("x")
+                table.th(_t=item)
+        for row in ic(left_labels):
+            with table.tr():
+                table.th(_t=f'{row[:3]}.')  ####
+                for col in top_labels:
+                    ic.disable()
+                    row_feature = ic(return_gram_feat_type(row))
+                    col_feature = ic(return_gram_feat_type(col))
+                    grammar_name = ic(ordered_grammar_name(
+                        v_form=row if row_feature == "vform" else (col if col_feature == "vform" else None),
+                        case=row if row_feature == "case" else (col if col_feature == "case" else None),
+                        person=row if row_feature == "person" else (col if col_feature == "person" else None),
+                        number=row if row_feature == "number" else (col if col_feature == "number" else None),
+                        gender=row if row_feature == "gender" else (col if col_feature == "gender" else None)
+                    ))
+                    ic.enable()
+                    form: WordForm = entry.forms_dict[grammar_name]
 
-    raise NotImplementedError
+                    with table.td(klass='pop-up', title=grammar_name):  # @
+                        table(format_string(entry, grammar_name))
+                        with table.span(klass='pop-up-content'):
+                            table("Pronunciation:")
+                            table.br()
+                            table(ipa(entry.forms_dict[grammar_name]))
+
+    return table
 
 
+def css(aesthetic: str = "modern") -> str:
+    """
+    Takes css aesthetic and returns relevant style element contents
 
-
-
-def css_path(aesthetic: str = "modern_minimalist"):
+    :param aesthetic:
+    :return: CSS text
+    """
     path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'CSS', f'{aesthetic}.css'))
-    print(path)
-    return path
+    with open(path, "r") as file:
+        return file.read()
+
+
+def js(filename: str = "scripts") -> str:
+    """
+    Fetches JS script file contents
+
+    :return: JS text
+    """
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'JS', f'{filename}.js'))
+    with open(path, "r") as file:
+        return file.read()
+
+
+if __name__ == "__main__":
+    entry = sample_entry_obj("noun")
+    table_unprocessed = airtable(entry, number, case)
+    pyperclip.copy(str(
+        airhead_embody(
+            airbut(
+                airheading(
+                    table_unprocessed,
+                    entry=entry),
+                entry=entry,
+                id="inflection"),
+            entry=entry
+        )
+    ))

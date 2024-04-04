@@ -1,9 +1,10 @@
-from typing import Dict, List, Set
+from common.imports import *
 from dataclasses import dataclass
 import xml.etree.ElementTree as Et
 import pyperclip
 import timeit
 import os
+import random
 
 from slo_dict_gen_pkg.grammar_utilities import ordered_grammar_name
 
@@ -325,8 +326,9 @@ def find_element_contents(
         element_contents.add(element.text)
     return element_contents
 
+
 def generate_all_grammar_features(path: str) -> Dict[
-        str, Set]:
+    str, Set]:
     """
     Used to create the dictionary in grammar_utilities.return_gram_feat_type().
     Parses all xml files at path and returns a complete dict of grammar feature
@@ -369,7 +371,19 @@ def generate_all_grammar_features(path: str) -> Dict[
         x += 1
 
     return dict_return
+
 # endregion
+
+
+def sample_entry_obj(p_o_s: str = "noun") -> SloleksEntry:
+    file = (r"C:\Users\sangha\Documents\Danny's\SloDictGen"
+            r"\data"
+            r"\Markdown\XML\sloleks_3.0_sample.xml")
+    parser: XMLParser = XMLParser(file)
+    for entry in parser.entries:
+        if entry.part_of_speech == p_o_s:
+            return entry
+    raise ic(Exception(f"No '{p_o_s}' found in entries from {file}"))
 
 
 if __name__ == "__main__":

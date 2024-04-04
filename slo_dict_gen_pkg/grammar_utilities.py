@@ -1,5 +1,29 @@
 from common.imports import *
 
+aspect = ['perfective', 'progressive', 'biaspectual']
+number = ['singular', 'dual', 'plural']
+negative = ['yes', 'no']
+case = ['nominative', 'genitive', 'dative', 'accusative', 'locative',
+        'instrumental']
+animate = ['yes', 'no']
+definiteness = ['yes', 'no']
+word_type = ['special', 'personal', 'relative', 'general',
+             'auxiliary', 'cardinal', 'proper', 'ordinal', 'reflexive',
+             'pronominal', 'possessive', 'coordinating', 'negative',
+             'interrogative', 'subordinating', 'main', 'demonstrative',
+             'indefinite', 'common']  # 'participle' removed!
+person = ['first', 'second', 'third']
+degree = ['superlative', 'positive', 'comparative']
+vform = ['present', 'imperative', 'participle', 'future', 'infinitive',
+         'supine', 'conditional', ]
+gender = ['masculine', 'feminine', 'neuter']
+form = ['letter', 'roman', 'digit']
+clitic = ['yes', 'bound']
+
+
+#   'owner_number':  ['dual', 'singular', 'plural']
+#   'owner_gender':  ['masculine', 'neuter', 'feminine']
+
 
 def ordered_grammar_name(
         *,
@@ -49,42 +73,39 @@ def return_gram_feat_type(sample: str) -> str:
     :return: string of feature type
     """
     gram_feat_dict = {
-        'aspect': {'perfective', 'biaspectual', 'progressive'},
-        'number': {'dual', 'singular', 'plural'},
-        'negative': {'yes', 'no'},
-        'case': {'nominative', 'dative', 'instrumental', 'genitive',
-                 'locative', 'accusative'},
-        'animate': {'yes', 'no'},
-        'definiteness': {'yes', 'no'},
-        'type': {'special', 'personal', 'relative', 'general',
-                 'auxiliary', 'cardinal', 'proper', 'ordinal', 'reflexive',
-                 'pronominal', 'possessive', 'coordinating', 'negative',
-                 'interrogative', 'subordinating', 'main', 'demonstrative',
-                 'indefinite', 'common'},  # 'participle' removed!
-        'person': {'first', 'third', 'second'},
-        'degree': {'superlative', 'positive', 'comparative'},
-        'vform': {'participle', 'future', 'imperative', 'supine',
-                  'conditional', 'present', 'infinitive'},
-        'gender': {'masculine', 'feminine', 'neuter'},
-        'form': {'letter', 'roman', 'digit'},
-        'clitic': {'yes', 'bound'}
+        'aspect': aspect,
+        'number': number,
+        'negative': negative,
+        'case': case,
+        'animate': animate,
+        'definiteness': definiteness,
+        'type': word_type,  # 'participle' removed!
+        'person': person,
+        'degree': degree,
+        'vform': vform,
+        'gender': gender,
+        'form': form,
+        'clitic': clitic
     }
-    #   'owner_number': {'dual', 'singular', 'plural'},
-    #   'owner_gender': {'masculine', 'neuter', 'feminine'}
 
     for key, values in gram_feat_dict.items():
-        if sample in {"yes", "no"}:
-            lg.warning("'yes'/'no' appear in two grammar features")
+        if sample == "no":
+            lg.warning("'no' appears in two grammar features")
             return_value = "animate/negative"
+            return ic([sample, return_value])[1]
+        if sample == "yes":
+            lg.warning("'yes' appears in three grammar features")
+            return_value = "animate/clitic/negative"
             return ic([sample, return_value])[1]
         if sample in values:
             if sample in {"participle"}:
                 lg.warning('"participle" removed from "type" feature '
-                        'for functionality')
+                           'for functionality')
             return key
 
     raise Exception(f"ERROR, {sample} not a known grammar feature.")
 
 
 if __name__ == "__main__":
+    aspect
     return_gram_feat_type('yes')

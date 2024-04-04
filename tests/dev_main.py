@@ -58,7 +58,6 @@ def main():
     data_directory = os.path.join(parent_directory, 'data')
     filename = 'sloleks_3.0_sample.xml'
     filepath = os.path.join(data_directory, 'Markdown', 'XML', filename)
-    lg.info("hill")
     print_sample(copy_table(xml_path=filepath, to_copy="noun"))
 
 
