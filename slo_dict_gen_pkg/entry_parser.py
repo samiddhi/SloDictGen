@@ -1,7 +1,6 @@
 from typing import Dict, List, Union
 from dataclasses import dataclass
 import xml.etree.ElementTree as Et
-from slo_dict_gen_pkg import common_modules
 
 
 @dataclass(kw_only=True)

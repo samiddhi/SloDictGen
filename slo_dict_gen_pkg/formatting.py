@@ -1,11 +1,38 @@
-from slo_dict_gen_pkg import (XMLParser, SloleksEntry, WordForm, Dict, List)
+from slo_dict_gen_pkg import XMLParser, SloleksEntry, WordForm, Dict, List
+
+from airium import Airium
 import os
+import sys
 import pyperclip
+
+# Add the parent directory
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+
+class GrammarTableGen:
+    """
+    Generates a grammar table from a SloleksEntry object
+
+    Instance variables:
+        table (str)
+    """
+
+    def __init__(self, entry: SloleksEntry, pos_to_copy: str = None):
+        """
+        Manages the creation of a table from SloleksEntry object
+
+        :param entry: (SloleksEntry)
+        :param pos_to_copy: (str) Indicates which (default None) part of
+            speech to copy to clipboard
+        """
+        raise NotImplementedError
 
 
 def format_string(entry: SloleksEntry, grammar_name: str):
-    com_pref = common_prefix([rep.form_representation for gn, rep in entry.forms_dict.items()])
-    bolded = bold_except(entry.forms_dict[grammar_name].form_representation, com_pref)
+    com_pref = common_prefix(
+        [rep.form_representation for gn, rep in entry.forms_dict.items()])
+    bolded = bold_except(entry.forms_dict[grammar_name].form_representation,
+                         com_pref)
     grayed = gray_unused(entry.forms_dict[grammar_name].frequency, bolded)
     return grayed
 
@@ -38,7 +65,7 @@ def ipa(form: WordForm) -> str:
     return formatted
 
 
-def noun_table(entry: SloleksEntry, pos_to_copy: str) -> str:
+def _noun_table(entry: SloleksEntry, pos_to_copy: str) -> str:
     format_string(entry, "nominative_singular")
     table: str = f'''
         <div class="content hidden" id="inflection_{entry.lemma}">
@@ -98,6 +125,25 @@ def noun_table(entry: SloleksEntry, pos_to_copy: str) -> str:
         pyperclip.copy(table)
     return table
 
+
+def noun_table(entry: SloleksEntry, pos_to_copy: str) -> str:
+    a: Airium = Airium()
+
+    a('<!DOCTYPE html>')
+    with a.html(lang="en"):
+        with a.head():
+            a.meta(charset="utf-8")
+            a.meta(name="viewport", content="width=device-width, initial-scale=1.0")
+            a.meta(charset="utf-8")
+            a.link(href=css_path("modern_minimalist"), rel='stylesheet')
+            a.title(_t=entry.lemma)
+    return table
+
+
+def css_path(aesthetic: str = "modern_minimalist"):
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'CSS', f'{aesthetic}.css'))
+    print(path)
+    return path
 
 def wrap(entry: SloleksEntry, table: str):
     style = f'''
