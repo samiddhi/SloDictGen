@@ -1,24 +1,35 @@
 from common.imports import *
 
-aspect = ['perfective', 'progressive', 'biaspectual']
-number = ['singular', 'dual', 'plural']
-negative = ['yes', 'no']
-case = ['nominative', 'genitive', 'dative', 'accusative', 'locative',
-        'instrumental']
-animate = ['yes', 'no']
-definiteness = ['yes', 'no']
-word_type = ['special', 'personal', 'relative', 'general',
+aspect = ('perfective', 'progressive', 'biaspectual')
+number = ('singular', 'dual', 'plural')
+negative = ('yes', 'no')
+case = ('nominative', 'genitive', 'dative', 'accusative', 'locative',
+        'instrumental')
+animate = ('yes', 'no')
+definiteness = ('yes', 'no')
+word_type = ('special', 'personal', 'relative', 'general',
              'auxiliary', 'cardinal', 'proper', 'ordinal', 'reflexive',
              'pronominal', 'possessive', 'coordinating', 'negative',
              'interrogative', 'subordinating', 'main', 'demonstrative',
-             'indefinite', 'common']  # 'participle' removed!
-person = ['first', 'second', 'third']
-degree = ['superlative', 'positive', 'comparative']
-vform = ['present', 'imperative', 'participle', 'future', 'infinitive',
-         'supine', 'conditional', ]
-gender = ['masculine', 'feminine', 'neuter']
-form = ['letter', 'roman', 'digit']
-clitic = ['yes', 'bound']
+             'indefinite', 'common')  # 'participle' removed!
+person = ('first', 'second', 'third')
+degree = ('superlative', 'positive', 'comparative')
+vform = ('present', 'imperative', 'participle', 'infinitive',
+         'supine')
+gender = ('masculine', 'feminine', 'neuter')
+form = ('letter', 'roman', 'digit')
+clitic = ('yes', 'bound')
+
+noun_tables = {
+    "declension": (number, case)
+}
+
+verb_tables = {
+    'present': (number, person),
+    'imperative': (number, ('first', 'second')),
+    'participle': (number, gender),
+    'infinitive': (("form",), ('infinitive', 'supine'))
+}
 
 
 #   'owner_number':  ['dual', 'singular', 'plural']
@@ -60,7 +71,7 @@ def concatenate_variables(*items):
     return result
 
 
-def return_gram_feat_type(sample: str) -> str:
+def return_gram_feat_type(sample: str) -> Union[str,None]:
     """
     Takes a string and returns its grammar feature name.
 
@@ -102,8 +113,9 @@ def return_gram_feat_type(sample: str) -> str:
                 lg.warning('"participle" removed from "type" feature '
                            'for functionality')
             return key
-
-    raise Exception(f"ERROR, {sample} not a known grammar feature.")
+    if sample not in {"form"}:
+        lg.warning(f'"{sample}" not a known grammar feature.')
+    return None
 
 
 if __name__ == "__main__":

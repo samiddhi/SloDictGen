@@ -285,10 +285,10 @@ def find_type_attributes(
 
     e.g. <grammarFeature name="degree"> -> "degree"
 
-    :param path:
-    :param element_type: <TYPE attribute="value">
-    :param attribute_name: <type ATTRIBUTE="value">
-    :return: list of all attribute values <type attribute="VALUE">
+    :param path: (str)
+    :param element_type: (str) <TYPE attribute="value">
+    :param attribute_name: (str) <type ATTRIBUTE="value">
+    :return: (List[str]) attribute values <type attribute="VALUE">
     """
     tree = Et.parse(path)
     root = tree.getroot()
@@ -312,11 +312,11 @@ def find_element_contents(
     Finds all contents within elements of a specified type,
     attribute, and attribute value in a given XML file
 
-    :param path: The file path to the XML file.
-    :param element_type: <TYPE attribute="value">
-    :param attribute_name: <type ATTRIBUTE="value">
-    :param attribute_value: <type attribute="VALUE">
-    :return: <type attribute="value">CONTENT</type>
+    :param path: (str) The file path to the XML file.
+    :param element_type: (str) <TYPE attribute="value">
+    :param attribute_name: (str) <type ATTRIBUTE="value">
+    :param attribute_value: (str) <type attribute="VALUE">
+    :return: Set[str] <type attribute="value">CONTENT</type>
     """
     tree = Et.parse(path)
     root = tree.getroot()
@@ -327,8 +327,7 @@ def find_element_contents(
     return element_contents
 
 
-def generate_all_grammar_features(path: str) -> Dict[
-    str, Set]:
+def generate_all_grammar_features(path: str) -> Dict[str, Set]:
     """
     Used to create the dictionary in grammar_utilities.return_gram_feat_type().
     Parses all xml files at path and returns a complete dict of grammar feature
@@ -336,8 +335,8 @@ def generate_all_grammar_features(path: str) -> Dict[
 
     e.g. dict['gender'] -> {'neuter', 'feminine', 'masculine'}
 
-    :param path:
-    :return:
+    :param path: (str)
+    :return: Dict[str, Set]
     """
     if os.path.isfile(path):  # If path leads to a file
         files = [path]
@@ -372,6 +371,7 @@ def generate_all_grammar_features(path: str) -> Dict[
 
     return dict_return
 
+
 # endregion
 
 
@@ -386,6 +386,53 @@ def sample_entry_obj(p_o_s: str = "noun") -> SloleksEntry:
     raise ic(Exception(f"No '{p_o_s}' found in entries from {file}"))
 
 
+def find_file_with_grammar_feature_content(
+        path: str,
+        element_type: str,
+        attribute_name: str,
+        attribute_value: str,
+        element_content: str,
+        all: bool = False
+):
+    """
+    Finds all files containing instance of provided element content
+
+    :param path: The file path to the XML file.
+    :param element_type: (str) <TYPE attribute="value">
+    :param attribute_name: (str) <type ATTRIBUTE="value">
+    :param attribute_value: (str) <type attribute="VALUE">
+    :param element_content: (str) <type attribute="value">CONTENT</type>
+    :return: (List[str]) list of files containing
+    """
+
+    '''
+    Args:
+        path=,
+        element_type="",
+        attribute_name="name",
+        attribute_value="",
+        element_content=""
+        '''
+    filepaths = []
+    for filename in os.listdir(path):
+        if filename.endswith('.xml'):
+            filepath = os.path.join(path, filename)
+            tree = Et.parse(filepath)
+            root = tree.getroot()
+            for element in root.iter():
+                if (element.tag == element_type and element.attrib.get(
+                        attribute_name) == attribute_value and element.text
+                        == element_content):
+                    if all:
+                        filepaths.append(filename)
+                        break
+                    else:
+                        return ic(filename)
+
+    return ic(filepaths)
+
+
+
 if __name__ == "__main__":
     sample_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
                    r"\Markdown\XML\sloleks_3.0_sample.xml")
@@ -394,14 +441,21 @@ if __name__ == "__main__":
     example_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
                     r"\Sloleks.3.0\sloleks_3.0_028.xml")
 
-    d: Dict = generate_all_grammar_features(parent_path)
+    path = parent_path
+    element_type = "grammarFeature"
+    attribute_name = "name"
+    attribute_value = "vform"
+    element_content = "conditional"
+    all = True
 
-    # Specify text file path
-    txt_file_path = '../data/Notes/grammarFeature_name_values.txt'
 
-    # Open text file in write mode and write the dictionary d
-    with open(txt_file_path, 'w') as txtfile:
-        for key, values in d.items():
-            txtfile.write(f"'{key}' : {{{', '.join(values)}}}\n")
+    find_file_with_grammar_feature_content(
+        path=parent_path,
+        element_type="grammarFeature",
+        attribute_name="name",
+        attribute_value="vform",
+        element_content="conditional",
+        all=True
+    )
 
 # endregion
