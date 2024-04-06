@@ -1,33 +1,31 @@
 from common.imports import *
 
-aspect = ('perfective', 'progressive', 'biaspectual')
-number = ('singular', 'dual', 'plural')
-negative = ('yes', 'no')
-case = ('nominative', 'genitive', 'dative', 'accusative', 'locative',
-        'instrumental')
-animate = ('yes', 'no')
-definiteness = ('yes', 'no')
-word_type = ('special', 'personal', 'relative', 'general',
-             'auxiliary', 'cardinal', 'proper', 'ordinal', 'reflexive',
-             'pronominal', 'possessive', 'coordinating', 'negative',
-             'interrogative', 'subordinating', 'main', 'demonstrative',
-             'indefinite', 'common')  # 'participle' removed!
-person = ('first', 'second', 'third')
-degree = ('superlative', 'positive', 'comparative')
-vform = ('present', 'imperative', 'participle', 'infinitive',
-         'supine')
-gender = ('masculine', 'feminine', 'neuter')
-form = ('letter', 'roman', 'digit')
-clitic = ('yes', 'bound')
+# Grammar Feature categories
+gfcat: Dict[str, Tuple] = {
+    'aspect': ('perfective', 'progressive', 'biaspectual'),
+    'number': ('singular', 'dual', 'plural'),
+    'negative': ('yes', 'no'),
+    'case': ('nominative', 'genitive', 'dative', 'accusative', 'locative', 'instrumental'),
+    'animate': ('yes', 'no'),
+    'definiteness': ('yes', 'no'),
+    'word_type': ('special', 'personal', 'relative', 'general', 'auxiliary', 'cardinal', 'proper', 'ordinal', 'reflexive', 'pronominal', 'possessive', 'coordinating', 'negative', 'interrogative', 'subordinating', 'main', 'demonstrative', 'indefinite', 'common'),
+    'person': ('first', 'second', 'third'),
+    'degree': ('superlative', 'positive', 'comparative'),
+    'vform': ('present', 'imperative', 'participle', 'infinitive', 'supine'),
+    'gender': ('masculine', 'feminine', 'neuter'),
+    'form': ('letter', 'roman', 'digit'),
+    'clitic': ('yes', 'bound')
+}
+
 
 noun_tables = {
-    "declension": (number, case)
+    "declension": (gfcat['number'], gfcat['case'])
 }
 
 verb_tables = {
-    'present': (number, person),
-    'imperative': (number, ('first', 'second')),
-    'participle': (number, gender),
+    'present': (gfcat['number'], gfcat['person']),
+    'imperative': (gfcat['number'], ('first', 'second')),
+    'participle': (gfcat['number'], gfcat['gender']),
     'infinitive': (("form",), ('infinitive', 'supine'))
 }
 
@@ -84,19 +82,19 @@ def return_gram_feat_type(sample: str) -> Union[str,None]:
     :return: string of feature type
     """
     gram_feat_dict = {
-        'aspect': aspect,
-        'number': number,
-        'negative': negative,
-        'case': case,
-        'animate': animate,
-        'definiteness': definiteness,
-        'type': word_type,  # 'participle' removed!
-        'person': person,
-        'degree': degree,
-        'vform': vform,
-        'gender': gender,
-        'form': form,
-        'clitic': clitic
+        'aspect': gfcat['aspect'],
+        'number': gfcat['number'],
+        'negative': gfcat['negative'],
+        'case': gfcat['case'],
+        'animate': gfcat['animate'],
+        'definiteness': gfcat['definiteness'],
+        'type': gfcat['word_type'],  # 'participle' removed!
+        'person': gfcat['person'],
+        'degree': gfcat['degree'],
+        'vform': gfcat['vform'],
+        'gender': gfcat['gender'],
+        'form': gfcat['form'],
+        'clitic': gfcat['clitic']
     }
 
     for key, values in gram_feat_dict.items():
@@ -119,5 +117,4 @@ def return_gram_feat_type(sample: str) -> Union[str,None]:
 
 
 if __name__ == "__main__":
-    aspect
     return_gram_feat_type('yes')

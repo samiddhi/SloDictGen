@@ -64,9 +64,16 @@ major:
       may or may not have required parsing all the xml files to get some
       important data
 
+4/5/24
+- reformat formatting.py (class?)
+- made verbs great again
+- began class implementation for dictionary entries
+- identified a few manual entries for final product which simplified grammar
+  features lists (oh yeah, which are tuples now)
+
 
 Tomorrow:
-    - reformat formatting.py (class?)
-    - Make verbs great again
+    - parse for all irreg conj counts
+    - new parts of speech
     - minor fixes
     - goldendict + dpd

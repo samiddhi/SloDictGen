@@ -1,12 +1,13 @@
 from common.imports import *
 from slo_dict_gen_pkg.entry_parser import SloleksEntry, WordForm, XMLParser, sample_entry_obj
-from slo_dict_gen_pkg.grammar_utilities import ordered_grammar_name, return_gram_feat_type, number, case, gender, vform, person, noun_tables, verb_tables
+from slo_dict_gen_pkg.grammar_utils import ordered_grammar_name, return_gram_feat_type, gfcat, noun_tables, verb_tables
 
 from airium import Airium
 # from itertools import product
 import pyperclip
 import os
 import sys
+
 
 # Add the parent directory
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -118,14 +119,14 @@ class InflectionSection:
 
     def table_maker(
             self,
-            table_type: tuple[str, tuple[tuple, tuple]],
+            table_type: Tuple[str, Tuple[Tuple, Tuple]],
             test: bool = False,
             **gram_feat
     ) -> str:
         """
         Generates table
 
-        :param table_type: (tuple[str, tuple[tuple, tuple]]) one key+val pair from grammar_utilities.py dict
+        :param table_type: (Tuple[str, Tuple[Tuple, Tuple]]) one key+val pair from grammar_utils.py dict
         :param gram_feat: (kwargs) additional grammarFeature contents needed for grammar_name generation
         ":param test: (bool) True returns fully formatted html
         :return: (Airium) final product as Airium object
@@ -189,12 +190,12 @@ def air_section_info(*html: Union[Airium, str], entry: SloleksEntry) -> str:
     return str(a) + footer()
 
 
-def air_table(entry: SloleksEntry, table_type: tuple[str, tuple[tuple, tuple]], gram_feat: Dict[str, str]) -> str:
+def air_table(entry: SloleksEntry, table_type: Tuple[str, Tuple[Tuple, Tuple]], gram_feat: Dict[str, str]) -> str:
     """
     Takes a number of parameters and generates an unstyled html table
 
     :param entry: (SloleksEntry)
-    :param table_type: (tuple[tuple, tuple]): item from dict defined in grammar_utilities.py
+    :param table_type: (Tuple[Tuple, Tuple]): item from dict defined in grammar_utils.py
     :param gram_feat: (Dict[str,str]) additional grammarFeature contents needed for grammar_name generation
     :return a: (Airium)
     """
@@ -216,7 +217,7 @@ def air_table(entry: SloleksEntry, table_type: tuple[str, tuple[tuple, tuple]], 
                         row_feature = ic(return_gram_feat_type(row))
                         col_feature = ic(return_gram_feat_type(col))
                         grammar_name = ic(ordered_grammar_name(
-                            v_form=table_type[0] if table_type[0] in vform else None,
+                            v_form=table_type[0] if table_type[0] in gfcat['vform'] else None,
                             case=row if row_feature == "case" else (col if col_feature == "case" else None),
                             person=row if row_feature == "person" else (col if col_feature == "person" else None),
                             number=row if row_feature == "number" else (col if col_feature == "number" else None),

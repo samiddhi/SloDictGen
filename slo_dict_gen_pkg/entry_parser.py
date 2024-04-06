@@ -6,7 +6,7 @@ import timeit
 import os
 import random
 
-from slo_dict_gen_pkg.grammar_utilities import ordered_grammar_name
+from slo_dict_gen_pkg.grammar_utils import ordered_grammar_name
 
 
 @dataclass(kw_only=True)

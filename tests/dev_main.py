@@ -17,29 +17,6 @@ def display_html(content):
     root.mainloop()
 
 
-def copy_table(xml_path: str, to_copy: str) -> str:
-    """
-    takes xml path + part of speech and returns a random entry with that
-    part of speech as a formatted table
-
-    :param xml_path: (str) XML file path
-    :param to_copy: (str) part of speech to be copied, lowercase
-    :return table_html (str): html format of a given
-    """
-    parser_obj: XMLParser = XMLParser(xml_path)
-
-
-    entry_obj_list: List[SloleksEntry] = parser_obj.entries
-    shuffle(entry_obj_list)
-
-    table_html: str = ""
-    for entry in entry_obj_list:
-        table_html = eval(f'formatting.{to_copy}_table({entry}, '
-                          f'"{to_copy}")') if (entry.part_of_speech ==
-                                               to_copy) else table_html
-    return table_html
-
-
 def print_sample(text: str, percent: float = 0.5) -> None:
     """
     Prints a sample of a string based on a given percentage.
@@ -58,7 +35,7 @@ def main():
     data_directory = os.path.join(parent_directory, 'data')
     filename = 'sloleks_3.0_sample.xml'
     filepath = os.path.join(data_directory, 'Markdown', 'XML', filename)
-    print_sample(copy_table(xml_path=filepath, to_copy="noun"))
+    print_sample(return_table(xml_path=filepath, to_copy="noun"))
 
 
 if __name__ == "__main__":
