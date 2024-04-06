@@ -78,7 +78,7 @@ class Definition:
 
         button_stuff = ''
         for section in self.button_sections:
-            button_stuff += air_button(section, entry=self.entry)
+            button_stuff += air_button(str(section), entry=self.entry)
 
         self.formatted = airhead_embody(button_stuff, entry=self.entry)
 
@@ -98,12 +98,29 @@ class InflectionSection:
         self.entry: SloleksEntry = entry
         pos = self.entry.part_of_speech
         self.test: bool = test
-        self.tables = []
+        self.tables: List[str] = []
 
+        '''
         self.made_table: str = ''
         for table_type_value in table_types[pos]:
-            t_type = (table_type_value, table_types[pos][table_type_value])
-            self.tables.append(self.table_maker(table_type=t_type, vform=table_type_value if pos == "verb" else None))
+            
+            t_type: tuple[str, tuple[tuple, tuple]] = (table_type_value, table_types[pos][table_type_value])
+            table: str = self.table_maker(
+                table_type=t_type,
+                vform=table_type_value if pos == "verb" else None
+            )
+            
+            self.tables.append(table)
+        '''
+        ####
+        t_types: Tuple[str] = ic(tuple(table_types[pos].items()))
+        for t_type in t_types:
+            table = self.table_maker(
+                table_type=t_type,
+                vform=t_type if pos == "verb" else None
+            )
+            self.tables.append(table)
+        ####
 
         '''
         if pos == 'noun':
@@ -140,7 +157,7 @@ class InflectionSection:
         """
         raw_table = str(air_table(entry, table_type=table_type, gram_feat=gram_feat))
 
-        return_val = raw_table if not test else self._table_test(entry=self.entry, *raw_table)
+        return_val = raw_table if not test else self._table_test(*raw_table)
 
         return str(return_val)
 
@@ -150,6 +167,7 @@ class InflectionSection:
         tables_section = air_section_info('\n'.join(to_section), entry=self.entry)
         tables_section_button = air_button(tables_section, entry=self.entry, id=id_val)
         test_page = airhead_embody(tables_section_button, entry=self.entry)
+        return test_page
 
 
 def airhead_embody(*html: Union[Airium, str], entry: SloleksEntry) -> str:
@@ -231,13 +249,16 @@ def air_table(entry: SloleksEntry, table_type: Tuple[str, Tuple[Tuple, Tuple]], 
                             gender=row if row_feature == "gender" else (col if col_feature == "gender" else None)
                         ))
                         form: WordForm = entry.forms_dict.get(grammar_name, None)
-                        if form is not None:
-                            with table.td(klass='pop-up', title=grammar_name):  # @
+                        with table.td(klass='pop-up', title=grammar_name):  # @
+                            if form is not None:
                                 table(format_string(entry, grammar_name))
                                 with table.span(klass='pop-up-content'):
                                     table("Pronunciation:")
                                     table.br()
                                     table(ipa(entry.forms_dict[grammar_name]))
+                            else:
+                                table('')
+
     ic.enable()
     return str(table)
 
