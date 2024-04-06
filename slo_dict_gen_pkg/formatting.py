@@ -1,5 +1,6 @@
 from common.imports import *
-from slo_dict_gen_pkg.entry_parser import SloleksEntry, WordForm, XMLParser, sample_entry_obj
+from slo_dict_gen_pkg.entry_parser import SloleksEntry, WordForm, XMLParser
+from tests.parsing_utils import sample_entry_obj
 from slo_dict_gen_pkg.grammar_utils import ordered_grammar_name, return_gram_feat_type, gfcat, table_types
 
 from airium import Airium
