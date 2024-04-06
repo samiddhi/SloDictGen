@@ -20,3 +20,77 @@ sloleks files with vform "future": 1, 6
 
 sloleks files with vform "conditional": 1
     words: iti
+
+-------------------------------------------------------------------------------
+
+Word Form Count:                               * category is names only
+    verb:
+        25 form(s)   : 17269 entries   -e.g.- ahniti          -> 001.xml
+        62 form(s)   : 1 entries       -e.g.- biti            -> 001.xml
+        24 form(s)   : 3 entries       -e.g.- dovoliti        -> 003.xml
+        20 form(s)   : 37 entries      -e.g.- daniti          -> 003.xml
+        2 form(s)    : 2 entries       -e.g.- grizti          -> 005.xml
+        33 form(s)   : 1 entries       -e.g.- hoteti          -> 006.xml
+        34 form(s)   : 1 entries       -e.g.- imeti           -> 006.xml
+        35 form(s)   : 1 entries       -e.g.- iti             -> 006.xml
+        19 form(s)   : 4 entries       -e.g.- morati          -> 010.xml
+
+    particle:
+        1 form(s)    : 68 entries      -e.g.- anka            -> 001.xml
+
+    interjection:
+        1 form(s)    : 85 entries      -e.g.- adijo           -> 001.xml
+
+    adjective:
+        57 form(s)   : 21361 entries   -e.g.- aboniran        -> 001.xml
+        55 form(s)   : 22149 entries   -e.g.- abesinski       -> 001.xml
+        167 form(s)  : 813 entries     -e.g.- aboten          -> 001.xml
+        6 form(s)    : 145 entries     -e.g.- Arji*           -> 001.xml
+        18 form(s)   : 3 entries       -e.g.- Babni*          -> 001.xml
+        12 form(s)   : 6 entries       -e.g.- Bojanji*        -> 001.xml
+
+    adverb:
+        1 form(s)    : 13273 entries   -e.g.- apnene          -> 001.xml
+        3 form(s)    : 764 entries     -e.g.- abotno          -> 001.xml
+
+    noun:
+        18 form(s)   : 281017 entries  -e.g.- Abdul*          -> 001.xml
+        6 form(s)    : 5119 entries    -e.g.- Adis*           -> 001.xml
+        19 form(s)   : 525 entries     -e.g.- Ambrož*         -> 001.xml
+        1 form(s)    : 55 entries      -e.g.- ad              -> 001.xml
+        3 form(s)    : 1 entries       -e.g.- britva          -> 002.xml
+        2 form(s)    : 3 entries       -e.g.- dopoldne        -> 004.xml
+        5 form(s)    : 1 entries       -e.g.- Golte*          -> 005.xml
+        7 form(s)    : 2 entries       -e.g.- golf            -> 005.xml
+        15 form(s)   : 1 entries       -e.g.- kres            -> 009.xml
+        4 form(s)    : 1 entries       -e.g.- postrv          -> 018.xml
+
+    conjunction:
+        1 form(s)    : 54 entries      -e.g.- ako             -> 001.xml
+
+    preposition:
+        1 form(s)    : 96 entries      -e.g.- blizu           -> 001.xml
+
+    pronoun:
+        54 form(s)   : 100 entries     -e.g.- bogsigavedikakšen -> 002.xml
+        6 form(s)    : 30 entries      -e.g.- bogvedikaj      -> 002.xml
+        1 form(s)    : 20 entries      -e.g.- enaki           -> 004.xml
+        23 form(s)   : 1 entries       -e.g.- jaz             -> 007.xml
+        11 form(s)   : 11 entries      -e.g.- medme           -> 011.xml
+        18 form(s)   : 2 entries       -e.g.- nekateri        -> 013.xml
+        108 form(s)  : 1 entries       -e.g.- njegov          -> 013.xml
+        81 form(s)   : 1 entries       -e.g.- on              -> 014.xml
+        7 form(s)    : 1 entries       -e.g.- se              -> 022.xml
+        2 form(s)    : 1 entries       -e.g.- tadva           -> 023.xml
+        25 form(s)   : 1 entries       -e.g.- ti              -> 023.xml
+
+    numeral:
+        54 form(s)   : 271 entries     -e.g.- deseter         -> 003.xml
+        57 form(s)   : 16 entries      -e.g.- deseteren       -> 003.xml
+        6 form(s)    : 107 entries     -e.g.- deset           -> 003.xml
+        18 form(s)   : 4 entries       -e.g.- dva             -> 003.xml
+        1 form(s)    : 1841 entries    -e.g.- eden            -> 004.xml
+        36 form(s)   : 1 entries       -e.g.- en              -> 004.xml
+
+    abbreviation:
+        1 form(s)    : 70 entries      -e.g.- agr.            -> 027.xml
