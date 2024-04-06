@@ -1,14 +1,19 @@
 from common.imports import *
 
 # Grammar Feature categories
-gfcat: Dict[str, Tuple] = {
+gfcat: Dict[str, Tuple[str]] = {
     'aspect': ('perfective', 'progressive', 'biaspectual'),
     'number': ('singular', 'dual', 'plural'),
     'negative': ('yes', 'no'),
-    'case': ('nominative', 'genitive', 'dative', 'accusative', 'locative', 'instrumental'),
+    'case': ('nominative', 'genitive', 'dative', 'accusative', 'locative',
+             'instrumental'),
     'animate': ('yes', 'no'),
     'definiteness': ('yes', 'no'),
-    'word_type': ('special', 'personal', 'relative', 'general', 'auxiliary', 'cardinal', 'proper', 'ordinal', 'reflexive', 'pronominal', 'possessive', 'coordinating', 'negative', 'interrogative', 'subordinating', 'main', 'demonstrative', 'indefinite', 'common'),
+    'word_type': (
+        'special', 'personal', 'relative', 'general', 'auxiliary', 'cardinal',
+        'proper', 'ordinal', 'reflexive', 'pronominal', 'possessive',
+        'coordinating', 'negative', 'interrogative', 'subordinating', 'main',
+        'demonstrative', 'indefinite', 'common'),
     'person': ('first', 'second', 'third'),
     'degree': ('superlative', 'positive', 'comparative'),
     'vform': ('present', 'imperative', 'participle', 'infinitive', 'supine'),
@@ -17,19 +22,21 @@ gfcat: Dict[str, Tuple] = {
     'clitic': ('yes', 'bound')
 }
 
-table_types: Dict[str, Dict[str, Tuple[Tuple, Tuple]]] = {
+table_types: Dict[str, Dict[str, Tuple[Tuple[str]]]] = {
     "noun": {
         "declension": (gfcat['number'], gfcat['case'])
     },
 
     'verb': {
-        'present': (gfcat['number'], gfcat['person']),
-        'imperative': (gfcat['number'], ('first', 'second')),
-        'participle': (gfcat['number'], gfcat['gender']),
-        'infinitive': (("form",), ('infinitive', 'supine'))
+        'present': (gfcat['number'], gfcat['person'],),
+        'imperative': (gfcat['number'], ('first', 'second'),),
+        'participle': (gfcat['number'], gfcat['gender'],),
+        'infinitive': (("form",), ('infinitive', 'supine'),)
     },
-
 }
+
+
+
 
 #   'owner_number':  ['dual', 'singular', 'plural']
 #   'owner_gender':  ['masculine', 'neuter', 'feminine']
@@ -70,7 +77,7 @@ def concatenate_variables(*items):
     return result
 
 
-def return_gram_feat_type(sample: str) -> Union[str,None]:
+def return_gram_feat_type(sample: str) -> Union[str, None]:
     """
     Takes a string and returns its grammar feature name.
 
