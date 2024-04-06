@@ -17,18 +17,19 @@ gfcat: Dict[str, Tuple] = {
     'clitic': ('yes', 'bound')
 }
 
+table_types: Dict[str, Dict[str, Tuple[Tuple, Tuple]]] = {
+    "noun": {
+        "declension": (gfcat['number'], gfcat['case'])
+    },
 
-noun_tables = {
-    "declension": (gfcat['number'], gfcat['case'])
+    'verb': {
+        'present': (gfcat['number'], gfcat['person']),
+        'imperative': (gfcat['number'], ('first', 'second')),
+        'participle': (gfcat['number'], gfcat['gender']),
+        'infinitive': (("form",), ('infinitive', 'supine'))
+    },
+
 }
-
-verb_tables = {
-    'present': (gfcat['number'], gfcat['person']),
-    'imperative': (gfcat['number'], ('first', 'second')),
-    'participle': (gfcat['number'], gfcat['gender']),
-    'infinitive': (("form",), ('infinitive', 'supine'))
-}
-
 
 #   'owner_number':  ['dual', 'singular', 'plural']
 #   'owner_gender':  ['masculine', 'neuter', 'feminine']

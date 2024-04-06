@@ -1,13 +1,12 @@
 from common.imports import *
 from slo_dict_gen_pkg.entry_parser import SloleksEntry, WordForm, XMLParser, sample_entry_obj
-from slo_dict_gen_pkg.grammar_utils import ordered_grammar_name, return_gram_feat_type, gfcat, noun_tables, verb_tables
+from slo_dict_gen_pkg.grammar_utils import ordered_grammar_name, return_gram_feat_type, gfcat, table_types
 
 from airium import Airium
 # from itertools import product
 import pyperclip
 import os
 import sys
-
 
 # Add the parent directory
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -100,15 +99,22 @@ class InflectionSection:
         self.test: bool = test
         self.tables = []
 
+        self.made_table: str = ''
+        for table_type_value in table_types[pos]:
+            t_type = (table_type_value, table_types[pos][table_type_value])
+            self.tables.append(self.table_maker(table_type=t_type, vform=table_type_value if pos == "verb" else None))
+
+        '''
         if pos == 'noun':
-            t_type = ("declension", noun_tables["declension"])
+            t_type = ("declension", table_types["noun"]["declension"])
             self.tables.append(self.table_maker(table_type=t_type))
 
         if pos == 'verb':
             self.made_table: str = ''
-            for verb_form in verb_tables:
-                t_type = (verb_form, verb_tables[verb_form])
+            for verb_form in table_types['verb']:
+                t_type = (verb_form, table_types['verb'][verb_form])
                 self.tables.append(self.table_maker(table_type=t_type, vform=verb_form))
+        '''
 
         self.section = air_section_info('\n'.join(self.tables), entry=self.entry)
 
@@ -271,6 +277,6 @@ def footer():
 
 
 if __name__ == "__main__":
-    entry = sample_entry_obj("noun")
+    entry = sample_entry_obj("verb")
     infsec = Definition(entry, test=True)
     pyperclip.copy(str(infsec))
