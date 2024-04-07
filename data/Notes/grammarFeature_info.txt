@@ -39,7 +39,7 @@ vform_case_person_number_gender
 -------------------------------------------------------------------------------
 
 
-Part of Speech Isotopes:                               * category is names only
+Part of Speech Isotopes:                       * names only             Handled
     verb:
         25 form(s)   : 17269 entries   -e.g.- ahniti          -> 001.xml
         62 form(s)   : 1 entries       -e.g.- biti            -> 001.xml
@@ -49,7 +49,7 @@ Part of Speech Isotopes:                               * category is names only
         33 form(s)   : 1 entries       -e.g.- hoteti          -> 006.xml
         34 form(s)   : 1 entries       -e.g.- imeti           -> 006.xml
         35 form(s)   : 1 entries       -e.g.- iti             -> 006.xml
-        19 form(s)   : 4 entries       -e.g.- morati          -> 010.xml
+        19 form(s)   : 4 entries       -e.g.- morati          -> 010.xml   +
 
     particle:
         1 form(s)    : 68 entries      -e.g.- anka            -> 001.xml
