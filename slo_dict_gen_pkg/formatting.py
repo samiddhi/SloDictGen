@@ -95,46 +95,23 @@ class InflectionSection:
         :param test: (bool) determines whether output is plain table or fully implemented
             code with a head, body, styling, etc. for test purposes
         """
+        self.wordforms_displayed: int = 0
         self.entry: SloleksEntry = entry
         pos = self.entry.part_of_speech
         self.test: bool = test
         self.tables: List[str] = []
 
-        '''
-        self.made_table: str = ''
-        for table_type_value in table_types[pos]:
-            
-            t_type: tuple[str, tuple[tuple, tuple]] = (table_type_value, table_types[pos][table_type_value])
-            table: str = self.table_maker(
-                table_type=t_type,
-                vform=table_type_value if pos == "verb" else None
-            )
-            
-            self.tables.append(table)
-        '''
-        ####
         t_types: Tuple[str] = ic(tuple(table_types[pos].items()))
         for t_type in t_types:
             table = self.table_maker(
                 table_type=t_type,
                 vform=t_type if pos == "verb" else None
             )
-            self.tables.append(table)
-        ####
-
-        '''
-        if pos == 'noun':
-            t_type = ("declension", table_types["noun"]["declension"])
-            self.tables.append(self.table_maker(table_type=t_type))
-
-        if pos == 'verb':
-            self.made_table: str = ''
-            for verb_form in table_types['verb']:
-                t_type = (verb_form, table_types['verb'][verb_form])
-                self.tables.append(self.table_maker(table_type=t_type, vform=verb_form))
-        '''
+            if table is not None:
+                self.tables.append(table)
 
         self.section = air_section_info('\n'.join(self.tables), entry=self.entry)
+        print(f"{self.wordforms_displayed}/{len(self.entry.forms_dict)} forms displayed")
 
     def __str__(self):
         if self.test:
@@ -155,11 +132,14 @@ class InflectionSection:
         ":param test: (bool) True returns fully formatted html
         :return: (Airium) final product as Airium object
         """
-        raw_table = str(air_table(entry, table_type=table_type, gram_feat=gram_feat))
+        raw_table, added_total = air_table(entry, table_type=table_type, gram_feat=gram_feat)
+        raw_table = str(raw_table)
+        self.wordforms_displayed += added_total
 
-        return_val = raw_table if not test else self._table_test(*raw_table)
-
-        return str(return_val)
+        if added_total>0:
+            return_val = raw_table if not test else self._table_test(*raw_table)
+            return str(return_val)
+        return None
 
     def _table_test(
             id_val: str = "inflection",
@@ -195,7 +175,8 @@ def air_button(*html: Union[Airium, str], entry: SloleksEntry, id: str = "inflec
 
     with a.div(klass='container'):
         a.button(klass='button', onclick=f"toggleTable('inflection_{entry.lemma}')", _t=f'{id}s')
-        with a.div(klass='content hidden', id=f'{id}_{entry.lemma}'):
+        with a.div(klass='content', id=f'{id}_{entry.lemma}'):
+            lg.warning("after debugging, must reset klass to 'content hidden'")
             for input in html:
                 a(str(input))
     return str(a)
@@ -204,18 +185,18 @@ def air_button(*html: Union[Airium, str], entry: SloleksEntry, id: str = "inflec
 def air_section_info(*html: Union[Airium, str], entry: SloleksEntry) -> str:
     a = Airium(base_indent="")
     with a.p(klass='heading'):
-        a(f'<b>{entry.part_of_speech}</b>; '
-          f'<em>{entry.lemma_grammatical_features['type']}</em>, '
-          f'<em>{entry.lemma_grammatical_features['gender']}</em>')
-        lg.warning("Assumes entry has 'type' feature.")
-        lg.warning("Assumes entry has 'gender' feature. Cancelled")
+        a(f'<b>{entry.part_of_speech}-{len(entry.forms_dict)}</b>; ')
+        feature_string = ''
+        for feature_type, feature in entry.lemma_grammatical_features.items():
+            a(f'<em>{feature_type}: {feature}</em>,')
+        a(feature_string[:-1])
         for input in html:
             a(str(input))
 
     return str(a) + footer()
 
 
-def air_table(entry: SloleksEntry, table_type: Tuple[str, Tuple[Tuple, Tuple]], gram_feat: Dict[str, str]) -> str:
+def air_table(entry: SloleksEntry, table_type: Tuple[str, Tuple[Tuple, Tuple]], gram_feat: Dict[str, str]) -> Tuple[str, int]:
     """
     Takes a number of parameters and generates an unstyled html table
 
@@ -224,8 +205,8 @@ def air_table(entry: SloleksEntry, table_type: Tuple[str, Tuple[Tuple, Tuple]], 
     :param gram_feat: (Dict[str,str]) additional grammarFeature contents needed for grammar_name generation
     :return a: (Airium)
     """
+    added = 0
     table = Airium()
-    ic.disable()
     with table.p(klass="lineabove"):
         with table.b():
             table(table_type[0].title())
@@ -234,33 +215,34 @@ def air_table(entry: SloleksEntry, table_type: Tuple[str, Tuple[Tuple, Tuple]], 
                 table.th()
                 for item in table_type[1][0]:
                     table.th(_t=item)
-            for row in ic(table_type[1][1]):
+            for row in table_type[1][1]:
                 with table.tr():
 
                     table.th(_t=row)  ####
-                    for col in ic(table_type[1][0]):
-                        row_feature = ic(return_gram_feat_type(row))
-                        col_feature = ic(return_gram_feat_type(col))
-                        grammar_name = ic(ordered_grammar_name(
-                            v_form=table_type[0] if table_type[0] in gfcat['vform'] else None,
+                    for col in table_type[1][0]:
+                        row_feature = return_gram_feat_type(row)
+
+                        col_feature = return_gram_feat_type(col)
+
+                        grammar_name = ordered_grammar_name(
+                            v_form=table_type[0] if table_type[0] in gfcat['vform'] else (row if row in {"infinitive","supine"} else None),
                             case=row if row_feature == "case" else (col if col_feature == "case" else None),
                             person=row if row_feature == "person" else (col if col_feature == "person" else None),
                             number=row if row_feature == "number" else (col if col_feature == "number" else None),
                             gender=row if row_feature == "gender" else (col if col_feature == "gender" else None)
-                        ))
+                        )
                         form: WordForm = entry.forms_dict.get(grammar_name, None)
                         with table.td(klass='pop-up', title=grammar_name):  # @
                             if form is not None:
                                 table(format_string(entry, grammar_name))
+                                added += 1
                                 with table.span(klass='pop-up-content'):
                                     table("Pronunciation:")
                                     table.br()
                                     table(ipa(entry.forms_dict[grammar_name]))
                             else:
                                 table('')
-
-    ic.enable()
-    return str(table)
+    return str(table), added
 
 
 def css(aesthetic: str = "modern") -> str:
@@ -299,6 +281,10 @@ def footer():
 
 
 if __name__ == "__main__":
+    verified = ("morati",)
+
     entry = sample_entry_obj("verb")
+    while entry.lemma is not "hoteti":
+        entry = sample_entry_obj("verb")
     infsec = Definition(entry, test=True)
     pyperclip.copy(str(infsec))

@@ -9,6 +9,8 @@ from tqdm import tqdm
 
 from slo_dict_gen_pkg import SloleksEntry, XMLParser
 
+import random
+
 
 def find_type_attributes(
         path: str,
@@ -113,8 +115,9 @@ def generate_all_grammar_features(path: str) -> Dict[str, Set]:
 def sample_entry_obj(p_o_s: str = "noun") -> SloleksEntry:
     file = (r"C:\Users\sangha\Documents\Danny's\SloDictGen"
             r"\data"
-            r"\Markdown\XML\sloleks_3.0_sample.xml")
+            r"\Markdown\XML\all_isotopes.xml")
     parser: XMLParser = XMLParser(file)
+    random.shuffle(parser.entries)
     for entry in parser.entries:
         if entry.part_of_speech == p_o_s:
             return entry

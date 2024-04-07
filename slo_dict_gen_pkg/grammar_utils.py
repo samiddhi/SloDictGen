@@ -22,20 +22,18 @@ gfcat: Dict[str, Tuple[str]] = {
     'clitic': ('yes', 'bound')
 }
 
-table_types: Dict[str, Dict[str, Tuple[Tuple[str]]]] = {
-    "noun": {
-        "declension": (gfcat['number'], gfcat['case'])
-    },
-
-    'verb': {
-        'present': (gfcat['number'], gfcat['person'],),
-        'imperative': (gfcat['number'], ('first', 'second'),),
-        'participle': (gfcat['number'], gfcat['gender'],),
-        'infinitive': (("form",), ('infinitive', 'supine'),)
-    },
-}
-
-
+# noinspection PyTypeChecker
+table_types: Dict[str, Dict[str, Tuple[Tuple[str]]]] = dict(
+    noun=dict(
+        declension=(gfcat['number'], gfcat['case'])
+    ),
+    verb={
+        'present' : (gfcat['number'], gfcat['person'],),
+        'imperative': (gfcat['number'], ('first', 'second')),
+        'participle': (gfcat['number'], gfcat['gender']),
+        'Non-Finite': (("form",), ('infinitive','supine')),
+    }
+)
 
 
 #   'owner_number':  ['dual', 'singular', 'plural']
@@ -68,13 +66,14 @@ def ordered_grammar_name(
 
 def concatenate_variables(*items):
     """
-    Concatenates variables into a string, separated by underscores.
+    Concatenates variables into a string, separated by underscores, and
+    ignoring empty strings.
 
     :param items: Arguments to concatenate.
     :return: Concatenated string.
     """
-    result = "_".join(str(item) for item in items if item is not None)
-    return result
+    out = "_".join(str(item) for item in items if item not in {None, "", " "})
+    return out
 
 
 def return_gram_feat_type(sample: str) -> Union[str, None]:
