@@ -23,7 +23,23 @@ sloleks files with vform "conditional": 1
 
 -------------------------------------------------------------------------------
 
-Word Form Count:                               * category is names only
+grammar names standardized order:
+
+nouns:
+case_number
+
+verbs:
+vform_person_number
+vform_number_gender
+
+scheme:
+
+vform_case_person_number_gender
+
+-------------------------------------------------------------------------------
+
+
+Part of Speech Isotopes:                               * category is names only
     verb:
         25 form(s)   : 17269 entries   -e.g.- ahniti          -> 001.xml
         62 form(s)   : 1 entries       -e.g.- biti            -> 001.xml

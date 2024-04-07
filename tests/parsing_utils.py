@@ -167,17 +167,41 @@ def find_file_with_grammar_feature_content(
     return ic(filepaths)
 
 
-def parse_xml_files_in_directory(path):
-    results: Dict[str, Dict[str, Dict[str, ...]]] = {}
+def record_pos_isotopes(path: str) -> Dict[str, Dict[int, Dict[str, ...]]]:
+    """
+    Parses XML files and records the total number of each isotope instance.
+    Where isotope refers to the number of wordforms a particular part of
+    speech has.
 
-    def example_usage(path_name):
-        entries_info = parse_xml_files_in_directory(path_name)
-        for pos, formctdict in entries_info.items():
-            print(f'\n{pos}:')
-            for formct, info in formctdict.items():
-                print(
-                    f"\t{formct:<12} : {str(info['ct']) + ' entries ':<15} -e.g.- "
-                    f"{info['lemma']:<15} -> {info['file'].split('_')[-1]}")
+    E.g. a verb with 2 conjugations is isotope "verb-2".
+
+    :param path: Either one file or directory containing multiple
+    :return: Dictionary with structure:
+            {
+                "part_of_speech" : {
+                    wordforms_int : {
+                        "ct": isotope_quantity_int,
+                        "lemma": example_entry_lemma,
+                        "file": example_entry_location
+                    },
+                    ...
+                },
+                ...
+            }
+    """
+
+    ''' EXAMPLE USAGE
+    entries_info = record_pos_isotopes(parent_path)
+    for pos, formctdict in entries_info.items():
+        print(f'\n{pos}:')
+        for formct, info in formctdict.items():
+            print(
+                f"\t{formct:<12} : {str(info['ct']) + ' entries ':<15} -e.g.- "
+                f"{info.get('lemma', ' '):<15} ->"
+                f" {info.get('file', ' ').split('_')[-1]}")
+    '''
+    results: Dict[str, Dict[int, Dict[str, ...]]] = {}
+    lexicon = Et.Element('lexicon')
 
     def parse_xml_file(file_path):
         tree = Et.parse(file_path)
@@ -186,27 +210,35 @@ def parse_xml_files_in_directory(path):
         entries = root.findall('entry')
 
         for entry in entries:
-            category = entry.find('head/grammar/category').text
+            part_of_speech = entry.find('head/grammar/category').text
             lemma = entry.find('head/headword/lemma').text
             word_forms = entry.findall('body/wordFormList/wordForm')
-            num_word_forms = len(word_forms)
-            num_word_forms_str = f'{num_word_forms} form(s)'
-            if category not in results:
-                results[category] = {num_word_forms_str: {'ct': 1}}
-                if not lemma.istitle():
-                    results[category][num_word_forms_str].update({
-                        'lemma': lemma,
-                        'file': file_path
-                    })
-            elif num_word_forms_str not in results[category]:
-                results[category][num_word_forms_str] = {'ct': 1}
-                if not lemma.istitle():
-                    results[category][num_word_forms_str].update({
-                        'lemma': lemma,
-                        'file': file_path
-                    })
-            else:
-                results[category][num_word_forms_str]['ct'] += 1
+            isotope = len(word_forms)
+
+            if part_of_speech not in results or isotope not in results[
+                    part_of_speech]:
+                if part_of_speech not in results:
+                    results[part_of_speech] = {}
+                if isotope not in results[part_of_speech]:
+                    results[part_of_speech][isotope] = {'ct': 0}
+
+                results[part_of_speech][isotope]['ct'] += 1
+
+                isotope_name = f'{part_of_speech}-{isotope}'
+
+                comment_element = Et.Comment(isotope_name)
+                lexicon.append(comment_element)
+
+                # Construct full entry XML element only for isotope examples
+                full_entry = Et.Element('entry')
+                full_entry.extend(entry)
+                lexicon.append(full_entry)
+
+                # use entry as isotope example
+                results[part_of_speech][isotope].update({
+                    'lemma': lemma,
+                    'file': file_path
+                })
 
     if os.path.isdir(path):
         xml_files = [f for f in os.listdir(path) if f.endswith('.xml')]
@@ -219,6 +251,19 @@ def parse_xml_files_in_directory(path):
         parse_xml_file(path)
     else:
         print(f"Invalid path: {path}")
+
+    # Write lexicon to a new XML file with formatting
+    formatted_xml = Et.tostring(lexicon, encoding='unicode', method='xml')
+    root = Et.fromstring(
+        formatted_xml)  # Parse string back into ElementTree object
+    Et.indent(root)  # Add proper indentation
+    formatted_xml = Et.tostring(root, encoding='unicode',
+                                method='xml')  # Convert back to string
+
+    destination = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
+                   r"\Markdown\XML\all_isotopes.xml")
+    with open(destination, 'w', encoding='utf-8') as f:
+        f.write(formatted_xml)
 
     return results
 
@@ -233,11 +278,3 @@ if __name__ == "__main__":
     example_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
                     r"\Sloleks.3.0\sloleks_3.0_020.xml")
 
-    entries_info = parse_xml_files_in_directory(parent_path)
-    for pos, formctdict in entries_info.items():
-        print(f'\n{pos}:')
-        for formct, info in formctdict.items():
-            print(
-                f"\t{formct:<12} : {str(info['ct']) + ' entries ':<15} -e.g.- "
-                f"{info.get('lemma'," "):<15} ->"
-                f" {info.get('file'," ").split('_')[-1]}")
