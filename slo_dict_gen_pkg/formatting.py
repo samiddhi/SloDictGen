@@ -43,11 +43,15 @@ def common_prefix(strings) -> str:
 
 
 def bold_except(word: str, infix: str):
-    index = word.find(infix)
-    if index != -1:
-        return f"{word[:index]}{infix}<b>{word[index+len(infix):]}</b>"
+    if infix in word and infix != '':
+        split = word.split(infix)
+        sections = [split.pop(0), infix.join(split)]
+        front = f'<b>{sections[0]}</b>' if sections[0] != '' else ''
+        end = f'<b>{sections[1]}</b>' if sections[1] != '' else ''
+        output = front + infix + end
+        return output
     else:
-        return f"<b>{word}</b>"
+        return word
 
 
 def gray_unused(frequency: int, to_gray: str) -> str:
@@ -313,14 +317,16 @@ if __name__ == "__main__":
         :param specific:
         :return:
         """
-        verified = ("morati",)
-        if specific is None:
+        verified = ("imeti", "daniti", "dovoliti", "ahniti", "grizti", "morati", "hoteti",)
+        if specific == "":
             return True if obj.lemma in verified else False
         else:
             return True if obj.lemma != specific else False
 
-    entry = sample_entry_obj("verb")
-    while criterion(entry, "hoteti"):
-        entry = sample_entry_obj("verb")
+    pos = "noun"
+
+    entry = sample_entry_obj(pos)
+    while criterion(entry, ''):
+        entry = sample_entry_obj(pos)
     infsec = Definition(entry, test=True)
     pyperclip.copy(str(infsec))
