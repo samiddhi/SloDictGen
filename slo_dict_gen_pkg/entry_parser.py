@@ -30,7 +30,19 @@ class SloleksEntry:
     part_of_speech: str
     lemma_grammatical_features: Dict[str, str]
     xml_file: str
-    forms_dict: Dict[str, 'WordForm']
+    forms_dict: Dict[str, List['WordForm']]
+    all_forms: List['WordForm']
+    non_weird_forms: List[str] = None
+    why_its_weird: Dict[str, str] = None
+
+    def __post_init__(self):
+        self.non_weird_forms: List[str] = []
+        self.why_its_weird: Dict[str, str] = {}
+        for word_form in self.all_forms:
+            if word_form.grammatical_features.get("negative", None) == "yes":
+                self.why_its_weird[word_form.form_representation] = "negative"
+            else:
+                self.non_weird_forms.append(word_form.form_representation)
 
 
 @dataclass(kw_only=True)
@@ -153,17 +165,29 @@ class XMLParser:
         lemma_grammatical_features = self._parse_grammatical_features(
             entry_element)
 
-        word_forms_dict = {
-            self._parse_form(form_element, lemma, part_of_speech).grammar_name:
-                self._parse_form(form_element, lemma, part_of_speech)
-            for form_element in entry_element.findall('.//wordForm')}
+        # Compiles a general list of forms and a dict by each grammar name
+        forms_list = []
+        word_forms_dict: Dict[str, List[WordForm]] = {}
+        for form_element in entry_element.findall('.//wordForm'):
+            form: WordForm = self._parse_form(
+                form_element,
+                lemma,
+                part_of_speech
+            )
+            forms_list.append(form)
+            key: str = form.grammar_name
+            if key not in word_forms_dict:
+                word_forms_dict[key] = []
+            word_forms_dict[key].append(form)
+
 
         return SloleksEntry(
             lemma=lemma,
             part_of_speech=part_of_speech,
             lemma_grammatical_features=lemma_grammatical_features,
             xml_file=self.xml_file,
-            forms_dict=word_forms_dict
+            forms_dict=word_forms_dict,
+            all_forms=forms_list
         )
 
     def _parse_form(

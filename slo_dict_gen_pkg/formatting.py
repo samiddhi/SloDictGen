@@ -13,12 +13,26 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-def format_string(entry: SloleksEntry, grammar_name: str):
-    com_pref = common_prefix(
-        [rep.form_representation for gn, rep in entry.forms_dict.items()])
-    bolded = bold_except(entry.forms_dict[grammar_name].form_representation,
-                         com_pref)
-    grayed = gray_unused(entry.forms_dict[grammar_name].frequency, bolded)
+def format_forms_for_table(entry: SloleksEntry, grammar_name: str, index: int):
+    """
+    Takes a given word form by reference to its grammar name
+    :param entry:
+    :param grammar_name:
+    :param index:
+    :return:
+    """
+    word_to_format_form = entry.forms_dict[grammar_name][index]
+    word_to_format_rep = word_to_format_form.form_representation
+
+    # Form Weirdness available in SloleksEntry (controversial but more efficient)
+
+    com_pref = common_prefix(entry.non_weird_forms)
+    bolded = bold_except(word_to_format_rep, com_pref)
+    grayed = gray_unused(word_to_format_form.frequency, bolded)
+
+    if word_to_format_rep in entry.why_its_weird:
+        return f'{grayed}<br><span class=gray-small-ital>{entry.why_its_weird[word_to_format_rep]}</span>'
+
     return grayed
 
 
@@ -28,12 +42,12 @@ def common_prefix(strings) -> str:
     return str(os.path.commonprefix(strings))
 
 
-def bold_except(word: str, prefix: str) -> str:
-    to_bold = word[len(prefix):]  # Remove the prefix from the word
-    if to_bold != '':
-        return f"{prefix}<b>{to_bold}</b>"
+def bold_except(word: str, infix: str):
+    index = word.find(infix)
+    if index != -1:
+        return f"{word[:index]}{infix}<b>{word[index+len(infix):]}</b>"
     else:
-        return word
+        return f"<b>{word}</b>"
 
 
 def gray_unused(frequency: int, to_gray: str) -> str:
@@ -74,7 +88,7 @@ class GrammarTableGen:
 class Definition:
     def __init__(self, entry: SloleksEntry, test: bool = False):
         self.entry = entry
-        self.button_sections = [InflectionSection(entry, test=True)]
+        self.button_sections = [InflectionSection(entry)]
 
         button_stuff = ''
         for section in self.button_sections:
@@ -101,7 +115,7 @@ class InflectionSection:
         self.test: bool = test
         self.tables: List[str] = []
 
-        t_types: Tuple[str] = ic(tuple(table_types[pos].items()))
+        t_types: Tuple[str] = tuple(table_types[pos].items())
         for t_type in t_types:
             table = self.table_maker(
                 table_type=t_type,
@@ -111,7 +125,8 @@ class InflectionSection:
                 self.tables.append(table)
 
         self.section = air_section_info('\n'.join(self.tables), entry=self.entry)
-        print(f"{self.wordforms_displayed}/{len(self.entry.forms_dict)} forms displayed")
+        all_forms = [wf for sublist in self.entry.forms_dict.values() for wf in sublist]
+        print(f"{self.wordforms_displayed}/{len(all_forms)} forms displayed")
 
     def __str__(self):
         if self.test:
@@ -123,7 +138,7 @@ class InflectionSection:
             table_type: Tuple[str, Tuple[Tuple, Tuple]],
             test: bool = False,
             **gram_feat
-    ) -> str:
+    ) -> Union[str, None]:
         """
         Generates table
 
@@ -136,7 +151,7 @@ class InflectionSection:
         raw_table = str(raw_table)
         self.wordforms_displayed += added_total
 
-        if added_total>0:
+        if added_total > 0:
             return_val = raw_table if not test else self._table_test(*raw_table)
             return str(return_val)
         return None
@@ -231,15 +246,21 @@ def air_table(entry: SloleksEntry, table_type: Tuple[str, Tuple[Tuple, Tuple]], 
                             number=row if row_feature == "number" else (col if col_feature == "number" else None),
                             gender=row if row_feature == "gender" else (col if col_feature == "gender" else None)
                         )
-                        form: WordForm = entry.forms_dict.get(grammar_name, None)
-                        with table.td(klass='pop-up', title=grammar_name):  # @
-                            if form is not None:
-                                table(format_string(entry, grammar_name))
-                                added += 1
-                                with table.span(klass='pop-up-content'):
-                                    table("Pronunciation:")
-                                    table.br()
-                                    table(ipa(entry.forms_dict[grammar_name]))
+
+                        forms_list: List[WordForm] = entry.forms_dict.get(grammar_name, [])
+                        with table.td(title=grammar_name):  # @
+                            # Won't run if forms_list empty
+                            for index, form in enumerate(forms_list):
+
+                                # Add each word as a separate span element with a unique ID
+                                with table.span(klass='pop-up', id=f"{grammar_name}_{index + 1}", title=f"{grammar_name}_{index + 1}"):
+                                    table(format_forms_for_table(entry, grammar_name, index))
+                                    added += 1
+                                    # Add pronunciation popup for each word
+                                    with table.span(klass='pop-up-content'):
+                                        table("Pronunciation:")
+                                        table.br()
+                                        table(ipa(entry.forms_dict[grammar_name][index]))
                             else:
                                 table('')
     return str(table), added
@@ -281,10 +302,25 @@ def footer():
 
 
 if __name__ == "__main__":
-    verified = ("morati",)
+    def criterion(obj: SloleksEntry, specific: str = None):
+        """
+        Delete when done.
+
+        Allows you to get new sample objects until the one you get is either a specific entry,
+        or any random one that has not already been verified.
+
+        :param obj:
+        :param specific:
+        :return:
+        """
+        verified = ("morati",)
+        if specific is None:
+            return True if obj.lemma in verified else False
+        else:
+            return True if obj.lemma != specific else False
 
     entry = sample_entry_obj("verb")
-    while entry.lemma is not "hoteti":
+    while criterion(entry, "hoteti"):
         entry = sample_entry_obj("verb")
     infsec = Definition(entry, test=True)
     pyperclip.copy(str(infsec))

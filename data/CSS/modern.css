@@ -110,9 +110,23 @@ body {
     color:#838383
 }
 
+.gray-small-ital {
+    font-family: Verdana, sans-serif;
+    color: #838383; /* Same color as .gray */
+    font-size: 0.9em; /* Adjust the numerical value as needed */
+    font-style: italic; /* Italicized text */
+    position: relative;
+    top: -0.4em; /* Adjust this value as needed */
+}
+
+.pop-up + .pop-up {
+    margin-top: 5%; /* Adjust this value as needed */
+}
+
 .pop-up {
     position: relative;
     cursor: pointer;
+    display: block;
 }
 
 .pop-up .pop-up-content {
