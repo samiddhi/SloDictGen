@@ -13,16 +13,17 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-def format_forms_for_table(entry: SloleksEntry, grammar_name: str, index: int):
+def format_forms_for_table(entry: SloleksEntry, grammar_name: str, index_gn: int, index_rep: int):
     """
     Takes a given word form by reference to its grammar name
+    :param index_rep:
     :param entry:
     :param grammar_name:
-    :param index:
+    :param index_gn:
     :return:
     """
-    word_to_format_form = entry.forms_dict[grammar_name][index]
-    word_to_format_rep = word_to_format_form.form_representation
+    word_to_format_form = entry.forms_dict[grammar_name][index_gn]
+    word_to_format_rep = word_to_format_form.representation_list[index_rep].form
 
     # Form Weirdness available in SloleksEntry (controversial but more efficient)
 
@@ -237,7 +238,7 @@ def air_table(entry: SloleksEntry, table_type: Tuple[str, Tuple[Tuple, Tuple]], 
             for row in table_type[1][1]:
                 with table.tr():
 
-                    table.th(_t=row)  ####
+                    table.th(_t=row)
                     for col in table_type[1][0]:
                         row_feature = return_gram_feat_type(row)
 
@@ -254,19 +255,18 @@ def air_table(entry: SloleksEntry, table_type: Tuple[str, Tuple[Tuple, Tuple]], 
                         forms_list: List[WordForm] = entry.forms_dict.get(grammar_name, [])
                         with table.td(title=grammar_name):  # @
                             # Won't run if forms_list empty
-                            for index, form in enumerate(forms_list):
+                            for forms_by_gn_index, form in enumerate(forms_list):
+                                for form_rep_index, form_rep in enumerate(form.representation_list):
 
-                                # Add each word as a separate span element with a unique ID
-                                with table.span(klass='pop-up', id=f"{grammar_name}_{index + 1}", title=f"{grammar_name}_{index + 1}"):
-                                    table(format_forms_for_table(entry, grammar_name, index))
-                                    added += 1
-                                    # Add pronunciation popup for each word
-                                    with table.span(klass='pop-up-content'):
-                                        table("Pronunciation:")
-                                        table.br()
-                                        table(ipa(entry.forms_dict[grammar_name][index]))
-                            else:
-                                table('')
+                                    # Add each word as a separate span element with a unique ID
+                                    with table.span(klass='pop-up', id=f"{grammar_name}_{forms_by_gn_index + 1}", title=f"{grammar_name}_{forms_by_gn_index + 1}"):
+                                        table(format_forms_for_table(entry, grammar_name, forms_by_gn_index, form_rep_index))
+                                        added += 1
+                                        # Add pronunciation popup for each word
+                                        with table.span(klass='pop-up-content'):
+                                            table("Pronunciation:")
+                                            table.br()
+                                            table(ipa(entry.forms_dict[grammar_name][forms_by_gn_index]))
     return str(table), added
 
 
@@ -326,7 +326,7 @@ if __name__ == "__main__":
     pos = "noun"
 
     entry = sample_entry_obj(pos)
-    while criterion(entry, ''):
+    while criterion(entry, 'kres'):
         entry = sample_entry_obj(pos)
     infsec = Definition(entry, test=True)
     pyperclip.copy(str(infsec))

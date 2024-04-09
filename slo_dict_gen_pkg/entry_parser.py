@@ -39,10 +39,15 @@ class SloleksEntry:
         self.non_weird_forms: List[str] = []
         self.why_its_weird: Dict[str, str] = {}
         for word_form in self.all_forms:
-            if word_form.grammatical_features.get("negative", None) == "yes":
-                self.why_its_weird[word_form.form_representation] = "negative"
-            else:
-                self.non_weird_forms.append(word_form.form_representation)
+            for representation in word_form.representation_list:
+                if word_form.grammatical_features.get("negative", None) == "yes":
+                    self.why_its_weird[representation.form] = "negative"
+                elif word_form.grammatical_features.get("animate", None) == "no":
+                    self.why_its_weird[representation.form] = "inanimate"
+                elif word_form.grammatical_features.get("animate", None) == "yes":
+                    self.why_its_weird[representation.form] = "animate"
+                else:
+                    self.non_weird_forms.append(representation.form)
 
 
 @dataclass(kw_only=True)
@@ -87,11 +92,19 @@ class WordForm:
     part_of_speech: str
 
     # info for word form
-    form_representation: str
     msd: str
     accentuation: str
     frequency: int
+
+    # List of sublists whose first element is the representation string
+    # and whose second element is the "norm" attribute value (aka. what the
+    # gray-small-ital css format text will be under it in the table)
+    representation_list: List['Representation']
+
+    #
     grammatical_features: Dict[str, str]
+
+    #
     pronunciation_data: List[Dict[str, str]]
 
     # Vars to be pulled from grammatical_features & pronunciation_data
@@ -114,6 +127,15 @@ class WordForm:
             number=self.number,
             gender=self.gender
         )
+
+
+@dataclass(kw_only=True)
+class Representation:
+    form: str
+    norm: str
+    frequency: int
+    accentuation: str
+    pronunciation_dict: dict
 
 
 class XMLParser:
@@ -168,9 +190,9 @@ class XMLParser:
         # Compiles a general list of forms and a dict by each grammar name
         forms_list = []
         word_forms_dict: Dict[str, List[WordForm]] = {}
-        for form_element in entry_element.findall('.//wordForm'):
-            form: WordForm = self._parse_form(
-                form_element,
+        for wordForm_element in entry_element.findall('.//wordForm'):
+            form: WordForm = self._parse_wordForm(
+                wordForm_element,
                 lemma,
                 part_of_speech
             )
@@ -179,7 +201,6 @@ class XMLParser:
             if key not in word_forms_dict:
                 word_forms_dict[key] = []
             word_forms_dict[key].append(form)
-
 
         return SloleksEntry(
             lemma=lemma,
@@ -190,39 +211,64 @@ class XMLParser:
             all_forms=forms_list
         )
 
-    def _parse_form(
+    def _parse_wordForm(
             self,
-            form_element: Et.Element,
+            wordform_element: Et.Element,
             lemma: str,
             part_of_speech: str
     ) -> WordForm:
         """
         Parses a <wordForm> ElementTree element into a WordForm object.
 
-        :param form_element: <wordForm> ElementTree element to parse.
+        :param wordform_element: <wordForm> ElementTree element to parse.
         :param lemma: Lemma of the wordForm's parent entry.
         :param part_of_speech: Part of speech of the wordForm/lemma.
         :return: WordForm object representing the parsed wordForm element.
         """
-        form_representation = form_element.find('.//form').text
-        msd = form_element.find('.//msd').text
 
-        accentuation_element = form_element.find('.//accentuation/form')
+        representation_list: List[Representation] = []
+        for formrepresentation_element in wordform_element.findall(
+                'formRepresentations'):
+            orthography_elements = formrepresentation_element.findall(
+                'orthographyList/orthography')
+            for orthography_element in orthography_elements:
+                form = orthography_element.find('form').text
+                norm = orthography_element.get('norm', '')
+                frequency_element = orthography_element.find(
+                    'measureList/measure[@type="frequency"]')
+                frequency = int(
+                    frequency_element.text) if frequency_element is not None else 0
+            accentuation = ""  # Implement this
+            pronunciation_dict = {}  # Implement this
+
+
+            representation_obj = Representation(
+                form=form,
+                norm=norm,
+                frequency=frequency,
+                accentuation=accentuation,
+                pronunciation_dict=pronunciation_dict
+            )
+            representation_list.append(representation_obj)
+
+        msd = wordform_element.find('.//msd').text
+
+        accentuation_element = wordform_element.find('.//accentuation/form')
         accentuation = accentuation_element.text if (accentuation_element is
                                                      not None) else None
 
-        freq_element = form_element.find(
+        freq_element = wordform_element.find(
             './/measureList/measure[@type="frequency"]')
         frequency = int(
             freq_element.text) if freq_element is not None else None
 
-        gram_features = self._parse_grammatical_features(form_element)
-        pronunciation_data = self._parse_pronunciation_data(form_element)
+        gram_features = self._parse_grammatical_features(wordform_element)
+        pronunciation_data = self._parse_pronunciation_data(wordform_element)
 
         return WordForm(
             lemma=lemma,
             part_of_speech=part_of_speech,
-            form_representation=form_representation,
+            representation_list=representation_list,
             msd=msd,
             accentuation=accentuation,
             frequency=frequency,
@@ -291,7 +337,6 @@ def test_parser(path):
     print('\n'.join(map(str, parser.entries)))
 
 
-
 if __name__ == "__main__":
     sample_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
                    r"\Markdown\XML\sloleks_3.0_sample.xml")
@@ -299,6 +344,5 @@ if __name__ == "__main__":
                    r"\Sloleks.3.0")
     example_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
                     r"\Sloleks.3.0\sloleks_3.0_028.xml")
-
 
 # endregion

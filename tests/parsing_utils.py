@@ -170,7 +170,11 @@ def find_file_with_grammar_feature_content(
     return ic(filepaths)
 
 
-def record_pos_isotopes(path: str) -> Dict[str, Dict[int, Dict[str, ...]]]:
+def record_pos_isotopes(
+        path: str,
+        write: bool = False,
+        count: bool = False
+) -> Dict[str, Dict[int, Dict[str, ...]]]:
     """
     Parses XML files and records the total number of each isotope instance.
     Where isotope refers to the number of wordforms a particular part of
@@ -178,6 +182,8 @@ def record_pos_isotopes(path: str) -> Dict[str, Dict[int, Dict[str, ...]]]:
 
     E.g. a verb with 2 conjugations is isotope "verb-2".
 
+    :param write: Whether to save a new XML or not
+    :param count: Whether to tally the total for each isotope
     :param path: Either one file or directory containing multiple
     :return: Dictionary with structure:
             {
@@ -211,15 +217,20 @@ def record_pos_isotopes(path: str) -> Dict[str, Dict[int, Dict[str, ...]]]:
         root = tree.getroot()
 
         entries = root.findall('entry')
+        #random.shuffle(entries)
 
         for entry in entries:
             part_of_speech = entry.find('head/grammar/category').text
             lemma = entry.find('head/headword/lemma').text
-            word_forms = entry.findall('body/wordFormList/wordForm')
+            word_forms = entry.findall(
+                'body/wordFormList/wordForm/formRepresentations'
+                '/orthographyList/orthography/form')
             isotope = len(word_forms)
 
-            if part_of_speech not in results or isotope not in results[
-                    part_of_speech]:
+            # Only tallies isotopes if count = True
+            if ((part_of_speech not in results or isotope not in results) or
+                    count[
+                    part_of_speech]):
                 if part_of_speech not in results:
                     results[part_of_speech] = {}
                 if isotope not in results[part_of_speech]:
@@ -255,18 +266,19 @@ def record_pos_isotopes(path: str) -> Dict[str, Dict[int, Dict[str, ...]]]:
     else:
         print(f"Invalid path: {path}")
 
-    # Write lexicon to a new XML file with formatting
-    formatted_xml = Et.tostring(lexicon, encoding='unicode', method='xml')
-    root = Et.fromstring(
-        formatted_xml)  # Parse string back into ElementTree object
-    Et.indent(root)  # Add proper indentation
-    formatted_xml = Et.tostring(root, encoding='unicode',
-                                method='xml')  # Convert back to string
+    if write:
+        # Write lexicon to a new XML file with formatting
+        formatted_xml = Et.tostring(lexicon, encoding='unicode', method='xml')
+        root = Et.fromstring(
+            formatted_xml)  # Parse string back into ElementTree object
+        Et.indent(root)  # Add proper indentation
+        formatted_xml = Et.tostring(root, encoding='unicode',
+                                    method='xml')  # Convert back to string
 
-    destination = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
-                   r"\Markdown\XML\all_isotopes.xml")
-    with open(destination, 'w', encoding='utf-8') as f:
-        f.write(formatted_xml)
+        destination = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
+                       r"\Markdown\XML\all_isotopes.xml")
+        with open(destination, 'w', encoding='utf-8') as f:
+            f.write(formatted_xml)
 
     return results
 
@@ -279,5 +291,13 @@ if __name__ == "__main__":
     parent_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
                    r"\Sloleks.3.0")
     example_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
-                    r"\Sloleks.3.0\sloleks_3.0_020.xml")
+                    r"\Sloleks.3.0\sloleks_3.0_009.xml")
 
+    entries_info = record_pos_isotopes(example_path)
+    for pos, formctdict in entries_info.items():
+        print(f'\n{pos}:')
+        for formct, info in formctdict.items():
+            print(
+                f"\t{formct:<12} : {str(info['ct']) + ' entries ':<15} -e.g.- "
+                f"{info.get('lemma', ' '):<15} ->"
+                f" {info.get('file', ' ').split('_')[-1]}")
