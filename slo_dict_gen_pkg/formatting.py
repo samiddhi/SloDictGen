@@ -1,5 +1,5 @@
 from common.imports import *
-from slo_dict_gen_pkg.entry_parser import SloleksEntry, WordForm, XMLParser
+from slo_dict_gen_pkg.entry_parser import SloleksEntry, WordForm, Representation, XMLParser
 from tests.parsing_utils import sample_entry_obj
 from slo_dict_gen_pkg.grammar_utils import ordered_grammar_name, return_gram_feat_type, gfcat, table_types
 
@@ -257,7 +257,6 @@ def air_table(entry: SloleksEntry, table_type: Tuple[str, Tuple[Tuple, Tuple]], 
                             # Won't run if forms_list empty
                             for forms_by_gn_index, form in enumerate(forms_list):
                                 for form_rep_index, form_rep in enumerate(form.representation_list):
-
                                     # Add each word as a separate span element with a unique ID
                                     with table.span(klass='pop-up', id=f"{grammar_name}_{forms_by_gn_index + 1}", title=f"{grammar_name}_{forms_by_gn_index + 1}"):
                                         table(format_forms_for_table(entry, grammar_name, forms_by_gn_index, form_rep_index))

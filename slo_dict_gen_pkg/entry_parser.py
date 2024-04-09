@@ -32,6 +32,7 @@ class SloleksEntry:
     xml_file: str
     forms_dict: Dict[str, List['WordForm']]
     all_forms: List['WordForm']
+    all_reps: List['Representation']
     non_weird_forms: List[str] = None
     why_its_weird: Dict[str, str] = None
 
