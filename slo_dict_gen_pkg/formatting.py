@@ -23,7 +23,7 @@ def format_forms_for_table(entry: SloleksEntry, grammar_name: str, index_gn: int
     :return:
     """
     word_to_format_form = entry.forms_dict[grammar_name][index_gn]
-    word_to_format_rep = word_to_format_form.representation_list[index_rep].form
+    word_to_format_rep = word_to_format_form.representation_list[index_rep].form_representation
 
     # Form Weirdness available in SloleksEntry (controversial but more efficient)
 

@@ -32,23 +32,33 @@ class SloleksEntry:
     xml_file: str
     forms_dict: Dict[str, List['WordForm']]
     all_forms: List['WordForm']
-    all_reps: List['Representation']
+    all_reps: List['Representation'] = None
     non_weird_forms: List[str] = None
     why_its_weird: Dict[str, str] = None
 
     def __post_init__(self):
         self.non_weird_forms: List[str] = []
         self.why_its_weird: Dict[str, str] = {}
+        self.all_reps: List['Representation'] = []
+
         for word_form in self.all_forms:
-            for representation in word_form.representation_list:
-                if word_form.grammatical_features.get("negative", None) == "yes":
-                    self.why_its_weird[representation.form] = "negative"
-                elif word_form.grammatical_features.get("animate", None) == "no":
-                    self.why_its_weird[representation.form] = "inanimate"
-                elif word_form.grammatical_features.get("animate", None) == "yes":
-                    self.why_its_weird[representation.form] = "animate"
+            for representation in word_form.representations:
+                self.all_reps.append(representation)
+                if word_form.grammatical_features.get("negative",
+                                                      None) == "yes":
+                    self.why_its_weird[
+                        representation.form_representation] = "negative"
+                elif word_form.grammatical_features.get("animate",
+                                                        None) == "no":
+                    self.why_its_weird[
+                        representation.form_representation] = "inanimate"
+                elif word_form.grammatical_features.get("animate",
+                                                        None) == "yes":
+                    self.why_its_weird[
+                        representation.form_representation] = "animate"
                 else:
-                    self.non_weird_forms.append(representation.form)
+                    self.non_weird_forms.append(
+                        representation.form_representation)
 
 
 @dataclass(kw_only=True)
@@ -94,19 +104,14 @@ class WordForm:
 
     # info for word form
     msd: str
-    accentuation: str
-    frequency: int
 
     # List of sublists whose first element is the representation string
     # and whose second element is the "norm" attribute value (aka. what the
     # gray-small-ital css format text will be under it in the table)
-    representation_list: List['Representation']
+    representations: List['Representation']
 
     #
     grammatical_features: Dict[str, str]
-
-    #
-    pronunciation_data: List[Dict[str, str]]
 
     # Vars to be pulled from grammatical_features & pronunciation_data
     v_form: str = None
@@ -132,10 +137,10 @@ class WordForm:
 
 @dataclass(kw_only=True)
 class Representation:
-    form: str
+    form_representation: str
     norm: str
     frequency: int
-    accentuation: str
+    accentuations: List[str]
     pronunciation_dict: dict
 
 
@@ -189,30 +194,30 @@ class XMLParser:
             entry_element)
 
         # Compiles a general list of forms and a dict by each grammar name
-        forms_list = []
-        word_forms_dict: Dict[str, List[WordForm]] = {}
+        forms: List[WordForm] = []
+        word_forms: Dict[str, List[WordForm]] = {}
         for wordForm_element in entry_element.findall('.//wordForm'):
-            form: WordForm = self._parse_wordForm(
+            form: WordForm = self._parse_wordform(
                 wordForm_element,
                 lemma,
                 part_of_speech
             )
-            forms_list.append(form)
+            forms.append(form)
             key: str = form.grammar_name
-            if key not in word_forms_dict:
-                word_forms_dict[key] = []
-            word_forms_dict[key].append(form)
+            if key not in word_forms:
+                word_forms[key] = []
+            word_forms[key].append(form)
 
         return SloleksEntry(
             lemma=lemma,
             part_of_speech=part_of_speech,
             lemma_grammatical_features=lemma_grammatical_features,
             xml_file=self.xml_file,
-            forms_dict=word_forms_dict,
-            all_forms=forms_list
+            forms_dict=word_forms,
+            all_forms=forms
         )
 
-    def _parse_wordForm(
+    def _parse_wordform(
             self,
             wordform_element: Et.Element,
             lemma: str,
@@ -227,54 +232,84 @@ class XMLParser:
         :return: WordForm object representing the parsed wordForm element.
         """
 
-        representation_list: List[Representation] = []
-        for formrepresentation_element in wordform_element.findall(
-                'formRepresentations'):
-            orthography_elements = formrepresentation_element.findall(
-                'orthographyList/orthography')
-            for orthography_element in orthography_elements:
-                form = orthography_element.find('form').text
-                norm = orthography_element.get('norm', '')
-                frequency_element = orthography_element.find(
-                    'measureList/measure[@type="frequency"]')
-                frequency = int(
-                    frequency_element.text) if frequency_element is not None else 0
-            accentuation = ""  # Implement this
-            pronunciation_dict = {}  # Implement this
-
-
-            representation_obj = Representation(
-                form=form,
-                norm=norm,
-                frequency=frequency,
-                accentuation=accentuation,
-                pronunciation_dict=pronunciation_dict
-            )
-            representation_list.append(representation_obj)
-
         msd = wordform_element.find('.//msd').text
 
-        accentuation_element = wordform_element.find('.//accentuation/form')
-        accentuation = accentuation_element.text if (accentuation_element is
-                                                     not None) else None
+        gram_features: Dict[str, str] = self._parse_grammatical_features(
+            wordform_element)
 
-        freq_element = wordform_element.find(
-            './/measureList/measure[@type="frequency"]')
-        frequency = int(
-            freq_element.text) if freq_element is not None else None
+        # Compiles a general list of forms and a dict by each grammar name
+        representations: List[Representation] = []
 
-        gram_features = self._parse_grammatical_features(wordform_element)
-        pronunciation_data = self._parse_pronunciation_data(wordform_element)
+        # <orthography> and <accentuation> are twins in <formRepresentations>
+        orthographies: List = wordform_element.findall('.//orthography')
+        accentuations: List = wordform_element.findall('.//accentuation')
+        pronunciations: List = wordform_element.findall('.//pronunciation')
+
+        for orthography in orthographies:
+            while len(orthographies) < len(accentuations):
+                representation: Representation = self._parse_representation(
+                    orthography_element=orthographies.pop(0),
+                    accentuation_elements=[accentuations.pop(0),
+                                           accentuations.pop(0)],
+                    pronunciation_elements=[pronunciations.pop(0),
+                                            pronunciations.pop(0)]
+                )
+
+        while orthographies:
+            representation: Representation = self._parse_representation(
+                orthography_element=orthographies.pop(0),
+                accentuation_elements=[] if not accentuations else
+                    accentuations.pop(0),
+                pronunciation_elements=[] if not pronunciations else
+                    pronunciations.pop(0)
+            )
+            representations.append(representation)
 
         return WordForm(
             lemma=lemma,
             part_of_speech=part_of_speech,
-            representation_list=representation_list,
+            representations=representations,
             msd=msd,
-            accentuation=accentuation,
-            frequency=frequency,
-            grammatical_features=gram_features,
-            pronunciation_data=pronunciation_data
+            grammatical_features=gram_features
+        )
+
+    @staticmethod
+    def _parse_representation(
+            orthography_element: Et.Element,
+            accentuation_elements: List[Et.Element],
+            pronunciation_elements: List[Et.Element]
+    ) -> Representation:
+
+        try:
+            norm = orthography_element.attrib['norm']
+        except KeyError:
+            norm = None
+
+        form_representation: str = orthography_element.find('.//form').text
+        freq: int = int(orthography_element.find('.//measure['
+                                                 '@type="frequency"]').text)
+
+        accentuations: List(str) = []
+        for accentuation_element in accentuation_elements:
+            accentuations.extend(
+                [form_element.text for form_element
+                 in accentuation_element.findall('.//form')]
+            )
+
+        pronunciations: Dict[str, str] = {}
+        for pronunciation_element in pronunciation_elements:
+            pronunciations.update({
+                form_element.attrib['script']: form_element.text for
+                form_element
+                in pronunciation_element.findall('.//form')
+            })
+
+        return Representation(
+            form_representation=form_representation,
+            norm=norm,
+            frequency=freq,
+            accentuations=accentuations,
+            pronunciation_dict=pronunciations
         )
 
     @staticmethod
@@ -311,39 +346,28 @@ class XMLParser:
 
 
 # region TESTING
-def test_form_class():
-    """
-    Test WordForm class. Contains sample WordForm initialization data so no
-    parse necessary
-    """
-    word_form_instance = WordForm(
-        form_representation="cats",
-        lemma="cat",
-        part_of_speech="noun",
-        msd="idk",
-        accentuation="none",
-        frequency=100,
-        grammatical_features={"case": "nominative", "number": "plural",
-                              "gender": "masculine"},
-        pronunciation_data=[{"DPA": "/katz/", "stress": "none"}]
-    )
-    print(word_form_instance)
-
-
 def test_parser(path):
     """
     Test XMLParser class.
     """
     parser = XMLParser(path)
-    print('\n'.join(map(str, parser.entries)))
+    for entry in parser.entries:
+        print(f'{entry.lemma}:')
+        for wordform_list in entry.forms_dict.values():
+            for wordform in wordform_list:
+                print(f'\t{wordform.grammar_name}')
+                for rep in wordform.representations:
+                    print(f'\t\t{rep}')
 
 
 if __name__ == "__main__":
     sample_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
-                   r"\Markdown\XML\sloleks_3.0_sample.xml")
+                   r"\Markdown\XML\all_isotopes.xml")
     parent_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
                    r"\Sloleks.3.0")
     example_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
-                    r"\Sloleks.3.0\sloleks_3.0_028.xml")
+                    r"\Sloleks.3.0\sloleks_3.0_002.xml")
+
+    test_parser(sample_path)
 
 # endregion
