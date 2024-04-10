@@ -38,12 +38,8 @@ class SloleksEntry:
     all_reps: List['Representation'] = None
     reps_dict: Dict[str, List['Representation']] = None
 
-    non_weird_forms: List[str] = None
-    why_its_weird: Dict[str, str] = None
 
     def __post_init__(self):
-        self.non_weird_forms = []
-        self.why_its_weird = {}
         self.all_reps = []
         self.reps_dict = defaultdict(list)
 
@@ -51,23 +47,6 @@ class SloleksEntry:
             for representation in word_form.representations:
                 self.all_reps.append(representation)
                 self.reps_dict[word_form.grammar_name].append(representation)
-
-                if word_form.grammatical_features.get("negative",
-                                                      None) == "yes":
-                    self.why_its_weird[
-                        representation.form_representation] = "negative"
-                elif word_form.grammatical_features.get("animate",
-                                                        None) == "no":
-                    self.why_its_weird[
-                        representation.form_representation] = "inanimate"
-                elif word_form.grammatical_features.get("animate",
-                                                        None) == "yes":
-                    self.why_its_weird[
-                        representation.form_representation] = "animate"
-                else:
-                    self.non_weird_forms.append(
-                        representation.form_representation)
-
 
 @dataclass(kw_only=True)
 class WordForm:
@@ -260,7 +239,8 @@ class XMLParser:
                     accentuation_elements=[accentuations.pop(0),
                                            accentuations.pop(0)],
                     pronunciation_elements=[pronunciations.pop(0),
-                                            pronunciations.pop(0)]
+                                            pronunciations.pop(0)],
+                    wordform_grammar_features=gram_features
                 )
                 representations.append(representation)
 
@@ -268,9 +248,10 @@ class XMLParser:
             representation: Representation = self._parse_representation(
                 orthography_element=orthographies.pop(0),
                 accentuation_elements=[] if not accentuations else
-                    [accentuations.pop(0)],
+                [accentuations.pop(0)],
                 pronunciation_elements=[] if not pronunciations else
-                    [pronunciations.pop(0)]
+                [pronunciations.pop(0)],
+                wordform_grammar_features=gram_features
             )
             representations.append(representation)
 
@@ -286,13 +267,26 @@ class XMLParser:
     def _parse_representation(
             orthography_element: Et.Element,
             accentuation_elements: List[Et.Element],
-            pronunciation_elements: List[Et.Element]
+            pronunciation_elements: List[Et.Element],
+            wordform_grammar_features: Dict[str, str]
+
     ) -> Representation:
 
         try:
             norm = orthography_element.attrib['norm']
         except KeyError:
             norm = None
+
+        if wordform_grammar_features.get("negative", None) == "yes":
+            norm = "negative" if norm is None else f'{norm}\nnegative'
+        if wordform_grammar_features.get("definiteness", None) == "yes":
+            norm = "definite" if norm is None else f'{norm}\ndefinite'
+        if wordform_grammar_features.get("definiteness", None) == "no":
+            norm = "indefinite" if norm is None else f'{norm}\nindefinite'
+        if wordform_grammar_features.get("animate", None) == "yes":
+            norm = "animate" if norm is None else f'{norm}\nanimate'
+        if wordform_grammar_features.get("animate", None) == "no":
+            norm = "inanimate" if norm is None else f'{norm}\ninanimate'
 
         form_representation: str = orthography_element.find('.//form').text
         freq: int = int(orthography_element.find('.//measure['

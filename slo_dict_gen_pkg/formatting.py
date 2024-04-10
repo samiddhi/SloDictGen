@@ -23,16 +23,17 @@ def format_forms_for_table(entry: SloleksEntry, grammar_name: str, rep_index: in
     """
     to_format_rep_obj = entry.reps_dict[grammar_name][rep_index]
 
-    # Form Weirdness available in SloleksEntry (controversial but more efficient)
+    # Removing negative forms from consideration because they do not share a prefix with the
+    # other wordForms. Otherwise, this breaks the bolded inflection suffixes for the entire entry
+    non_negative_forms = [rep.form_representation for rep in entry.all_reps if "negative" not in rep.norm]
+    shared_prefix = common_prefix(non_negative_forms)
+    bolded = bold_except(to_format_rep_obj.form_representation, shared_prefix)
+    grayed = gray_unused(to_format_rep_obj.frequency, bolded)
 
-    com_pref = common_prefix(entry.non_weird_forms)
-    bolded = bold_except(to_format_rep_obj.form_representation, com_pref)
-    formatted = gray_unused(to_format_rep_obj.frequency, bolded)
-
-    if to_format_rep_obj.form_representation in entry.why_its_weird:
-        formatted = f'{formatted}<br><span class=blue-small-ital>{entry.why_its_weird[to_format_rep_obj.form_representation]}</span>'
     if to_format_rep_obj.norm is not None:
-        formatted = f'{formatted}<br><span class=gray-small-ital>{to_format_rep_obj.norm}</span>'
+        formatted = f'{grayed}<br><span class=gray-small-ital>{to_format_rep_obj.norm}</span>'
+    else:
+        formatted = grayed
 
     return formatted
 
@@ -325,7 +326,7 @@ if __name__ == "__main__":
 
     entry = sample_entry_obj(pos)
     while criterion(entry,
-                    '',
+                    'golf',
                     ['hoteti', 'morati', 'ahniti', 'dovoliti', 'imeti', 'daniti', 'grizti']
     ):
         entry = sample_entry_obj(pos)

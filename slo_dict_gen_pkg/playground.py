@@ -1,6 +1,6 @@
 l = [1,2,3,4]
 
-while l:
-    print(l.pop(0))
+l.append(None)
 
-print(l.)
+print(l)
+print(len(l))
