@@ -4,7 +4,7 @@ from tests.parsing_utils import sample_entry_obj
 from slo_dict_gen_pkg.grammar_utils import ordered_grammar_name, return_gram_feat_type, gfcat, table_types
 
 from airium import Airium
-# from itertools import product
+from itertools import product
 import pyperclip
 import os
 import sys
@@ -13,7 +13,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-def format_forms_for_table(entry: SloleksEntry, grammar_name: str, rep_index: int):
+def format_forms_for_table(entry: SloleksEntry, to_format_rep_obj: Representation):
     """
     Takes given word forms by reference to a shared grammar name
     :param rep_index:
@@ -21,12 +21,11 @@ def format_forms_for_table(entry: SloleksEntry, grammar_name: str, rep_index: in
     :param grammar_name:
     :return:
     """
-    to_format_rep_obj = entry.reps_dict[grammar_name][rep_index]
 
     # Removing negative forms from consideration because they do not share a prefix with the
     # other wordForms. Otherwise, this breaks the bolded inflection suffixes for the entire entry
     non_negative_forms = [rep.form_representation for rep in entry.all_reps
-                          if (rep.norm is not None) and ("negative" not in rep.norm)]
+                          if (rep.norm is None or "negative" not in rep.norm)]
     shared_prefix = common_prefix(non_negative_forms)
     bolded = bold_except(to_format_rep_obj.form_representation, shared_prefix)
     grayed = gray_unused(to_format_rep_obj.frequency, bolded)
@@ -116,59 +115,18 @@ class InflectionSection:
         :param test: (bool) determines whether output is plain table or fully implemented
             code with a head, body, styling, etc. for test purposes
         """
-        self.wordforms_displayed: int = 0
-        self.entry: SloleksEntry = entry
-        pos = self.entry.part_of_speech
         self.test: bool = test
-        self.tables: List[str] = []
+        tables = Tables(entry)
+        raw_tables = str(tables)
+        wordforms_displayed = int(tables)
+        self.section = raw_tables
 
-        t_types: Tuple[str] = tuple(table_types[pos].items())
-        for t_type in t_types:
-            table = self.table_maker(
-                table_type=t_type,
-                vform=t_type if pos == "verb" else None
-            )
-            if table is not None:
-                self.tables.append(table)
-
-        self.section = air_section_info('\n'.join(self.tables), entry=self.entry)
-        print(f"{self.wordforms_displayed}/{len(entry.all_reps)} forms displayed")
+        print(f"{wordforms_displayed}/{len(entry.all_reps)} forms displayed")
 
     def __str__(self):
         if self.test:
             return airhead_embody(self.section, entry=self.entry)
         return self.section
-
-    def table_maker(
-            self,
-            table_type: Tuple[str, Tuple[Tuple, Tuple]],
-            test: bool = False,
-            **gram_feat
-    ) -> Union[str, None]:
-        """
-        Generates table
-
-        :param table_type: (Tuple[str, Tuple[Tuple, Tuple]]) one key+val pair from grammar_utils.py dict
-        :param gram_feat: (kwargs) additional grammarFeature contents needed for grammar_name generation
-        ":param test: (bool) True returns fully formatted html
-        :return: (Airium) final product as Airium object
-        """
-        raw_table, added_total = air_table(entry, table_type=table_type, gram_feat=gram_feat)
-        raw_table = str(raw_table)
-        self.wordforms_displayed += added_total
-
-        if added_total > 0:
-            return_val = raw_table if not test else self._table_test(*raw_table)
-            return str(return_val)
-        return None
-
-    def _table_test(
-            id_val: str = "inflection",
-            *to_section: str) -> str:
-        tables_section = air_section_info('\n'.join(to_section), entry=self.entry)
-        tables_section_button = air_button(tables_section, entry=self.entry, id=id_val)
-        test_page = airhead_embody(tables_section_button, entry=self.entry)
-        return test_page
 
 
 def airhead_embody(*html: Union[Airium, str], entry: SloleksEntry) -> str:
@@ -217,57 +175,115 @@ def air_section_info(*html: Union[Airium, str], entry: SloleksEntry) -> str:
     return str(a) + footer()
 
 
-def air_table(entry: SloleksEntry, table_type: Tuple[str, Tuple[Tuple, Tuple]], gram_feat: Dict[str, str]) -> Tuple[str, int]:
-    """
-    Takes a number of parameters and generates an unstyled html table
+class Tables:
+    def __init__(self, entry: SloleksEntry):
+        self.tables: str = ''
+        self.representations_displayed: int = 0
 
-    :param entry: (SloleksEntry)
-    :param table_type: (Tuple[Tuple, Tuple]): item from dict defined in grammar_utils.py
-    :param gram_feat: (Dict[str,str]) additional grammarFeature contents needed for grammar_name generation
-    :return a: (Airium)
-    """
-    added = 0
-    table = Airium()
-    with table.p(klass="lineabove"):
-        with table.b():
-            table(table_type[0].title())
-        with table.table(klass='inflection'):
-            with table.tr():
-                table.th()
-                for item in table_type[1][0]:
-                    table.th(_t=item)
-            for row in table_type[1][1]:
+        part_of_speech: str = entry.part_of_speech
+        table_type_index: Tuple[str, Tuple[Tuple[str], Tuple[str]]] = tuple(table_types[part_of_speech].items())
+
+        for table_type in table_type_index:
+            table_type_matrix: List[List] = self.make_table_type_matrix(table_type)
+            reps_matrix: List[List[List[Representation]]] = self.make_representations_matrix(
+                entry,
+                table_type_matrix
+            )
+            raw_table, representations_added = self.table_from_matrix(entry, reps_matrix)
+            if representations_added > 0:
+                self.tables += raw_table
+                self.representations_displayed += representations_added
+
+    def __str__(self):
+        return str(self.tables)
+
+    def __int__(self):
+        return int(self.representations_displayed)
+
+    @staticmethod
+    def make_table_type_matrix(table_type: Tuple[str, Tuple[Tuple, Tuple]]) -> List[List]:
+        table_name: str = table_type[0]
+        table_col_labels: Tuple[str] = table_type[1][0]
+        table_row_labels: Tuple[str] = table_type[1][1]
+
+        table_type_matrix = [[table_type[0]] * (len(table_col_labels) + 1) for _ in range(len(table_row_labels) + 1)]
+
+        table_type_matrix[0][1:] = table_col_labels
+        for i, label in enumerate(table_row_labels):
+            table_type_matrix[i + 1][0] = label
+
+        # Fill in the cell values based on row and column labels
+        for i, row in enumerate(table_row_labels):
+            for j, col in enumerate(table_col_labels):
+                row_feature = return_gram_feat_type(row)
+                col_feature = return_gram_feat_type(col)
+                grammar_name = ordered_grammar_name(
+                    v_form=table_type[0] if table_type[0] in gfcat['vform'] else (row if row in {"infinitive", "supine"} else None),
+                    case=row if row_feature == "case" else (col if col_feature == "case" else None),
+                    person=row if row_feature == "person" else (col if col_feature == "person" else None),
+                    number=row if row_feature == "number" else (col if col_feature == "number" else None),
+                    gender=row if row_feature == "gender" else (col if col_feature == "gender" else None)
+                )
+                table_type_matrix[i + 1][j + 1] = [grammar_name]
+        return table_type_matrix
+
+    @staticmethod
+    def make_representations_matrix(entry: SloleksEntry, table_type_matrix: List[List]):
+        table_name = table_type_matrix[0][0]
+        row_labels = [row[0] for row in table_type_matrix]
+        col_labels = table_type_matrix[0][1:]
+        matrix_core = [row[1:] for row in table_type_matrix[1:]]
+
+        for cell in [cell for row in matrix_core for cell in row]:
+            cell_grammar_name = cell.pop(0)
+            cell.extend(entry.reps_dict.get(cell_grammar_name, []))
+
+        row_labels[0] = table_name
+        matrix_restored = [col_labels] + matrix_core
+        for row, row_label in zip(matrix_restored, row_labels):
+            row.insert(0, row_label)
+
+        empty_rows = [i for i, row in enumerate(matrix_restored[1:]) if all(cell == [] for cell in row[1:])]
+        empty_columns = [j for j in range(len(matrix_restored[0])) if all(matrix_restored[i][j] == [] for i in range(1, len(matrix_restored)))]
+        for i in reversed(empty_rows):
+            del matrix_restored[i + 1]
+        for j in reversed(empty_columns):
+            for row in matrix_restored:
+                del row[j]
+
+        return matrix_restored
+
+    @staticmethod
+    def table_from_matrix(entry: SloleksEntry, representation_matrix: List):
+        row_labels = [row[0] for row in representation_matrix[1:]]
+        col_labels = representation_matrix[0][1:]
+        matrix_core = [row[1:] for row in representation_matrix[1:]]
+        added = 0
+        table = Airium()
+        with table.p(klass="lineabove"):
+            with table.b():
+                table(representation_matrix[0][0].title())
+            with table.table(klass='inflection'):
                 with table.tr():
-
-                    table.th(_t=row)
-                    for col in table_type[1][0]:
-                        row_feature = return_gram_feat_type(row)
-
-                        col_feature = return_gram_feat_type(col)
-
-                        grammar_name = ordered_grammar_name(
-                            v_form=table_type[0] if table_type[0] in gfcat['vform'] else (row if row in {"infinitive","supine"} else None),
-                            case=row if row_feature == "case" else (col if col_feature == "case" else None),
-                            person=row if row_feature == "person" else (col if col_feature == "person" else None),
-                            number=row if row_feature == "number" else (col if col_feature == "number" else None),
-                            gender=row if row_feature == "gender" else (col if col_feature == "gender" else None)
-                        )
-
-                        all_representations: List[Representation] = entry.reps_dict.get(grammar_name, [])
-                        with table.td(title=grammar_name):  # @
-                            # Won't run if forms_list empty
-                            for representation_index, representation_obj in enumerate(all_representations):
-                                # Add each word as a separate span element with a unique ID
-                                with table.span(klass='pop-up', id=f"{grammar_name}_{representation_index + 1}", title=f"{grammar_name}_{representation_index + 1}"):
-                                    representation_formatted = format_forms_for_table(entry, grammar_name, representation_index)
-                                    table(representation_formatted)
-                                    added += 1
-                                    # Add pronunciation popup for each word
-                                    with table.span(klass='pop-up-content'):
-                                        table("Pronunciation:")
-                                        table.br()
-                                        table(entry.reps_dict[grammar_name][representation_index].pronunciation_dict["IPA"])
-    return str(table), added
+                    table.th()
+                    for col_label in col_labels:
+                        table.th(_t=col_label)
+                for row_label, row in zip(row_labels, matrix_core):
+                    with table.tr():
+                        table.th(_t=row_label)
+                        for cell in row:
+                            with table.td():
+                                for index, representation in enumerate(cell):
+                                    with table.span(klass='pop-up'):
+                                        representation_formatted = format_forms_for_table(entry, representation)
+                                        table(representation_formatted)
+                                        added += 1
+                                        # Add pronunciation popup for each word
+                                        with table.span(klass='pop-up-content'):
+                                            table("Pronunciation:")
+                                            table.br()
+                                            table(representation.pronunciation_dict.get("IPA", None))
+        return str(table), added
 
 
 def css(aesthetic: str = "modern") -> str:
@@ -323,13 +339,14 @@ if __name__ == "__main__":
         else:
             return True if obj.lemma != specific else False
 
+
     pos = "noun"
 
-    entry = sample_entry_obj(pos)
-    while criterion(entry,
-                    'golf',
-                    ['hoteti', 'morati', 'ahniti', 'dovoliti', 'imeti', 'daniti', 'grizti']
-    ):
-        entry = sample_entry_obj(pos)
-    infsec = Definition(entry, test=True)
+    sample_entry = sample_entry_obj(pos)
+    while criterion(sample_entry,
+                    '',
+                    ['hoteti', 'dovoliti', 'grizti', 'ahniti', 'daniti', 'imeti', 'morati']
+                    ):
+        sample_entry = sample_entry_obj(pos)
+    infsec = Definition(sample_entry, test=True)
     pyperclip.copy(str(infsec))

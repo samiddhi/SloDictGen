@@ -23,12 +23,13 @@ gfcat: Dict[str, Tuple[str]] = {
 }
 
 # noinspection PyTypeChecker
+#           table_name : (top/columns, left/rows)
 table_types: Dict[str, Dict[str, Tuple[Tuple[str]]]] = dict(
     noun=dict(
         declension=(gfcat['number'], gfcat['case'])
     ),
     verb={
-        'present' : (gfcat['number'], gfcat['person'],),
+        'present': (gfcat['number'], gfcat['person'],),
         'imperative': (gfcat['number'], ('first', 'second')),
         'participle': (gfcat['number'], gfcat['gender']),
         'Non-Finite': (("form",), ('infinitive','supine')),
