@@ -25,7 +25,8 @@ def format_forms_for_table(entry: SloleksEntry, grammar_name: str, rep_index: in
 
     # Removing negative forms from consideration because they do not share a prefix with the
     # other wordForms. Otherwise, this breaks the bolded inflection suffixes for the entire entry
-    non_negative_forms = [rep.form_representation for rep in entry.all_reps if "negative" not in rep.norm]
+    non_negative_forms = [rep.form_representation for rep in entry.all_reps
+                          if (rep.norm is not None) and ("negative" not in rep.norm)]
     shared_prefix = common_prefix(non_negative_forms)
     bolded = bold_except(to_format_rep_obj.form_representation, shared_prefix)
     grayed = gray_unused(to_format_rep_obj.frequency, bolded)
