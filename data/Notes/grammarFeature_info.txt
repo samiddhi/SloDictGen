@@ -41,15 +41,15 @@ vform_case_person_number_gender
 
 Part of Speech Isotopes:                       * names only             Handled
     verb:
-        25 form(s)   : 17269 entries   -e.g.- ahniti          -> 001.xml   +
-        62 form(s)   : 1 entries       -e.g.- biti            -> 001.xml
-        24 form(s)   : 3 entries       -e.g.- dovoliti        -> 003.xml   +
-        20 form(s)   : 37 entries      -e.g.- daniti          -> 003.xml   +
-        2 form(s)    : 2 entries       -e.g.- grizti          -> 005.xml   +
-        33 form(s)   : 1 entries       -e.g.- hoteti          -> 006.xml   +
-        34 form(s)   : 1 entries       -e.g.- imeti           -> 006.xml   +
-        35 form(s)   : 1 entries       -e.g.- iti             -> 006.xml
-        19 form(s)   : 4 entries       -e.g.- morati          -> 010.xml   +
+        25 form(s)   : 17269 entries   -e.g.- ahniti          -> 001.xml   .
+        62 form(s)   : 1 entries       -e.g.- biti            -> 001.xml   x
+        24 form(s)   : 3 entries       -e.g.- dovoliti        -> 003.xml   .
+        20 form(s)   : 37 entries      -e.g.- daniti          -> 003.xml   .
+        2 form(s)    : 2 entries       -e.g.- grizti          -> 005.xml   .
+        33 form(s)   : 1 entries       -e.g.- hoteti          -> 006.xml   .
+        34 form(s)   : 1 entries       -e.g.- imeti           -> 006.xml   .
+        35 form(s)   : 1 entries       -e.g.- iti             -> 006.xml   x
+        19 form(s)   : 4 entries       -e.g.- morati          -> 010.xml   .
 
     particle:
         1 form(s)    : 68 entries      -e.g.- anka            -> 001.xml
@@ -70,7 +70,7 @@ Part of Speech Isotopes:                       * names only             Handled
         3 form(s)    : 764 entries     -e.g.- abotno          -> 001.xml
 
     noun:
-        18 form(s)   : 281017 entries  -e.g.- Abdul*          -> 001.xml   +
+        18 form(s)   : 281017 entries  -e.g.- Abdul*          -> 001.xml
         6 form(s)    : 5119 entries    -e.g.- Adis*           -> 001.xml
         19 form(s)   : 525 entries     -e.g.- Ambrož*         -> 001.xml
         1 form(s)    : 55 entries      -e.g.- ad              -> 001.xml
@@ -78,7 +78,7 @@ Part of Speech Isotopes:                       * names only             Handled
         2 form(s)    : 3 entries       -e.g.- dopoldne        -> 004.xml
         5 form(s)    : 1 entries       -e.g.- Golte*          -> 005.xml
         7 form(s)    : 2 entries       -e.g.- golf            -> 005.xml
-        15 form(s)   : 1 entries       -e.g.- kres            -> 009.xml
+        15 form(s)   : 1 entries       -e.g.- kres            -> 009.xml   .
         4 form(s)    : 1 entries       -e.g.- postrv          -> 018.xml
 
     conjunction:

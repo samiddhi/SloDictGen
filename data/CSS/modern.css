@@ -113,10 +113,28 @@ body {
 .gray-small-ital {
     font-family: Verdana, sans-serif;
     color: #838383; /* Same color as .gray */
-    font-size: 0.9em; /* Adjust the numerical value as needed */
+    font-size: 0.7em; /* Adjust the numerical value as needed */
     font-style: italic; /* Italicized text */
     position: relative;
-    top: -0.4em; /* Adjust this value as needed */
+    top: -0.5em; /* Adjust this value as needed */
+}
+
+.red-small-ital {
+    font-family: Verdana, sans-serif;
+    color: #fa7d7d; /* Same color as .gray */
+    font-size: 0.7em; /* Adjust the numerical value as needed */
+    font-style: italic; /* Italicized text */
+    position: relative;
+    top: -0.5em; /* Adjust this value as needed */
+}
+
+.blue-small-ital {
+    font-family: Verdana, sans-serif;
+    color: #7ac3ff; /* Same color as .gray */
+    font-size: 0.7em; /* Adjust the numerical value as needed */
+    font-style: italic; /* Italicized text */
+    position: relative;
+    top: -0.5em; /* Adjust this value as needed */
 }
 
 .pop-up + .pop-up {

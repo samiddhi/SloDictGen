@@ -1,6 +1,7 @@
 from common.imports import *
 from dataclasses import dataclass
 import xml.etree.ElementTree as Et
+from collections import defaultdict
 
 from slo_dict_gen_pkg.grammar_utils import ordered_grammar_name
 
@@ -30,20 +31,27 @@ class SloleksEntry:
     part_of_speech: str
     lemma_grammatical_features: Dict[str, str]
     xml_file: str
-    forms_dict: Dict[str, List['WordForm']]
+
     all_forms: List['WordForm']
+    forms_dict: Dict[str, List['WordForm']]
+
     all_reps: List['Representation'] = None
+    reps_dict: Dict[str, List['Representation']] = None
+
     non_weird_forms: List[str] = None
     why_its_weird: Dict[str, str] = None
 
     def __post_init__(self):
-        self.non_weird_forms: List[str] = []
-        self.why_its_weird: Dict[str, str] = {}
-        self.all_reps: List['Representation'] = []
+        self.non_weird_forms = []
+        self.why_its_weird = {}
+        self.all_reps = []
+        self.reps_dict = defaultdict(list)
 
         for word_form in self.all_forms:
             for representation in word_form.representations:
                 self.all_reps.append(representation)
+                self.reps_dict[word_form.grammar_name].append(representation)
+
                 if word_form.grammatical_features.get("negative",
                                                       None) == "yes":
                     self.why_its_weird[
@@ -254,14 +262,15 @@ class XMLParser:
                     pronunciation_elements=[pronunciations.pop(0),
                                             pronunciations.pop(0)]
                 )
+                representations.append(representation)
 
         while orthographies:
             representation: Representation = self._parse_representation(
                 orthography_element=orthographies.pop(0),
                 accentuation_elements=[] if not accentuations else
-                    accentuations.pop(0),
+                    [accentuations.pop(0)],
                 pronunciation_elements=[] if not pronunciations else
-                    pronunciations.pop(0)
+                    [pronunciations.pop(0)]
             )
             representations.append(representation)
 
@@ -296,13 +305,11 @@ class XMLParser:
                  in accentuation_element.findall('.//form')]
             )
 
-        pronunciations: Dict[str, str] = {}
+        pronunciations: defaultdict[str, str] = defaultdict(str)
         for pronunciation_element in pronunciation_elements:
-            pronunciations.update({
-                form_element.attrib['script']: form_element.text for
-                form_element
-                in pronunciation_element.findall('.//form')
-            })
+            for form_element in pronunciation_element.findall('.//form'):
+                pronunciations[
+                    form_element.attrib['script']] += '\n' + form_element.text
 
         return Representation(
             form_representation=form_representation,

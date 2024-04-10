@@ -13,28 +13,28 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-def format_forms_for_table(entry: SloleksEntry, grammar_name: str, index_gn: int, index_rep: int):
+def format_forms_for_table(entry: SloleksEntry, grammar_name: str, rep_index: int):
     """
-    Takes a given word form by reference to its grammar name
-    :param index_rep:
+    Takes given word forms by reference to a shared grammar name
+    :param rep_index:
     :param entry:
     :param grammar_name:
-    :param index_gn:
     :return:
     """
-    word_to_format_form = entry.forms_dict[grammar_name][index_gn]
-    word_to_format_rep = word_to_format_form.representation_list[index_rep].form_representation
+    to_format_rep_obj = entry.reps_dict[grammar_name][rep_index]
 
     # Form Weirdness available in SloleksEntry (controversial but more efficient)
 
     com_pref = common_prefix(entry.non_weird_forms)
-    bolded = bold_except(word_to_format_rep, com_pref)
-    grayed = gray_unused(word_to_format_form.frequency, bolded)
+    bolded = bold_except(to_format_rep_obj.form_representation, com_pref)
+    formatted = gray_unused(to_format_rep_obj.frequency, bolded)
 
-    if word_to_format_rep in entry.why_its_weird:
-        return f'{grayed}<br><span class=gray-small-ital>{entry.why_its_weird[word_to_format_rep]}</span>'
+    if to_format_rep_obj.form_representation in entry.why_its_weird:
+        formatted = f'{formatted}<br><span class=blue-small-ital>{entry.why_its_weird[to_format_rep_obj.form_representation]}</span>'
+    if to_format_rep_obj.norm is not None:
+        formatted = f'{formatted}<br><span class=gray-small-ital>{to_format_rep_obj.norm}</span>'
 
-    return grayed
+    return formatted
 
 
 def common_prefix(strings) -> str:
@@ -62,9 +62,9 @@ def gray_unused(frequency: int, to_gray: str) -> str:
         return to_gray
 
 
-def ipa(form: WordForm) -> str:
+def ipa(representation: Representation) -> str:
     formatted = ""
-    for pronunciation_style in form.pronunciation_data:
+    for pronunciation_style in representation.pronunciation_dict:
         formatted += f'<br>{pronunciation_style["IPA"]}'
     return formatted
 
@@ -130,8 +130,7 @@ class InflectionSection:
                 self.tables.append(table)
 
         self.section = air_section_info('\n'.join(self.tables), entry=self.entry)
-        all_forms = [wf for sublist in self.entry.forms_dict.values() for wf in sublist]
-        print(f"{self.wordforms_displayed}/{len(all_forms)} forms displayed")
+        print(f"{self.wordforms_displayed}/{len(entry.all_reps)} forms displayed")
 
     def __str__(self):
         if self.test:
@@ -252,20 +251,20 @@ def air_table(entry: SloleksEntry, table_type: Tuple[str, Tuple[Tuple, Tuple]], 
                             gender=row if row_feature == "gender" else (col if col_feature == "gender" else None)
                         )
 
-                        forms_list: List[WordForm] = entry.forms_dict.get(grammar_name, [])
+                        all_representations: List[Representation] = entry.reps_dict.get(grammar_name, [])
                         with table.td(title=grammar_name):  # @
                             # Won't run if forms_list empty
-                            for forms_by_gn_index, form in enumerate(forms_list):
-                                for form_rep_index, form_rep in enumerate(form.representation_list):
-                                    # Add each word as a separate span element with a unique ID
-                                    with table.span(klass='pop-up', id=f"{grammar_name}_{forms_by_gn_index + 1}", title=f"{grammar_name}_{forms_by_gn_index + 1}"):
-                                        table(format_forms_for_table(entry, grammar_name, forms_by_gn_index, form_rep_index))
-                                        added += 1
-                                        # Add pronunciation popup for each word
-                                        with table.span(klass='pop-up-content'):
-                                            table("Pronunciation:")
-                                            table.br()
-                                            table(ipa(entry.forms_dict[grammar_name][forms_by_gn_index]))
+                            for representation_index, representation_obj in enumerate(all_representations):
+                                # Add each word as a separate span element with a unique ID
+                                with table.span(klass='pop-up', id=f"{grammar_name}_{representation_index + 1}", title=f"{grammar_name}_{representation_index + 1}"):
+                                    representation_formatted = format_forms_for_table(entry, grammar_name, representation_index)
+                                    table(representation_formatted)
+                                    added += 1
+                                    # Add pronunciation popup for each word
+                                    with table.span(klass='pop-up-content'):
+                                        table("Pronunciation:")
+                                        table.br()
+                                        table(entry.reps_dict[grammar_name][representation_index].pronunciation_dict["IPA"])
     return str(table), added
 
 
@@ -305,18 +304,18 @@ def footer():
 
 
 if __name__ == "__main__":
-    def criterion(obj: SloleksEntry, specific: str = None):
+    def criterion(obj: SloleksEntry, specific: str, verified: List[str]):
         """
         Delete when done.
 
         Allows you to get new sample objects until the one you get is either a specific entry,
         or any random one that has not already been verified.
 
+        :param verified:
         :param obj:
         :param specific:
         :return:
         """
-        verified = ("imeti", "daniti", "dovoliti", "ahniti", "grizti", "morati", "hoteti",)
         if specific == "":
             return True if obj.lemma in verified else False
         else:
@@ -325,7 +324,10 @@ if __name__ == "__main__":
     pos = "noun"
 
     entry = sample_entry_obj(pos)
-    while criterion(entry, 'kres'):
+    while criterion(entry,
+                    '',
+                    ['hoteti', 'morati', 'ahniti', 'dovoliti', 'imeti', 'daniti', 'grizti']
+    ):
         entry = sample_entry_obj(pos)
     infsec = Definition(entry, test=True)
     pyperclip.copy(str(infsec))
