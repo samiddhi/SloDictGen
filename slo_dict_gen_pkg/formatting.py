@@ -13,84 +13,6 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-def format_forms_for_table(entry: SloleksEntry, to_format_rep_obj: Representation):
-    """
-    Takes given word forms by reference to a shared grammar name
-    :param rep_index:
-    :param entry:
-    :param grammar_name:
-    :return:
-    """
-
-    # Removing negative forms from consideration because they do not share a prefix with the
-    # other wordForms. Otherwise, this breaks the bolded inflection suffixes for the entire entry
-    non_negative_forms = [rep.form_representation for rep in entry.all_reps
-                          if (rep.norm is None or "negative" not in rep.norm)]
-    shared_prefix = common_prefix(non_negative_forms)
-    bolded = bold_except(to_format_rep_obj.form_representation, shared_prefix)
-    grayed = gray_unused(to_format_rep_obj.frequency, bolded)
-
-    if to_format_rep_obj.norm is not None:
-        formatted = f'{grayed}<br><span class=gray-small-ital>{to_format_rep_obj.norm}</span>'
-    else:
-        formatted = grayed
-
-    return formatted
-
-
-def common_prefix(strings) -> str:
-    if not strings:
-        return ""
-    return str(os.path.commonprefix(strings))
-
-
-def bold_except(word: str, infix: str):
-    if infix in word and infix != '':
-        split = word.split(infix)
-        sections = [split.pop(0), infix.join(split)]
-        front = f'<b>{sections[0]}</b>' if sections[0] != '' else ''
-        end = f'<b>{sections[1]}</b>' if sections[1] != '' else ''
-        output = front + infix + end
-        return output
-    else:
-        return word
-
-
-def gray_unused(frequency: int, to_gray: str) -> str:
-    if frequency == 0:
-        return f"<span class=gray>{to_gray}</span>"
-    else:
-        return to_gray
-
-
-def ipa(representation: Representation) -> str:
-    formatted = ""
-    for pronunciation_style in representation.pronunciation_dict:
-        formatted += f'<br>{pronunciation_style["IPA"]}'
-    return formatted
-
-
-### IMPLEMENTING
-
-class GrammarTableGen:
-    """
-    Generates a grammar table from a SloleksEntry object
-
-    Instance variables:
-        table (str)
-    """
-
-    def __init__(self, entry: SloleksEntry, pos_to_copy: str = None):
-        """
-        Manages the creation of a table from SloleksEntry object
-
-        :param entry: (SloleksEntry)
-        :param pos_to_copy: (str) Indicates which (default None) part of
-            speech to copy to clipboard
-        """
-        raise NotImplementedError
-
-
 class Definition:
     def __init__(self, entry: SloleksEntry, test: bool = False):
         self.entry = entry
@@ -98,9 +20,9 @@ class Definition:
 
         button_stuff = ''
         for section in self.button_sections:
-            button_stuff += air_button(str(section), entry=self.entry)
+            button_stuff += HTMLib.air_button(str(section), entry=self.entry)
 
-        self.formatted = airhead_embody(button_stuff, entry=self.entry)
+        self.formatted = HTMLib.airhead_embody(button_stuff, entry=self.entry)
 
     def __str__(self):
         return str(self.formatted)
@@ -127,52 +49,6 @@ class InflectionSection:
         if self.test:
             return airhead_embody(self.section, entry=self.entry)
         return self.section
-
-
-def airhead_embody(*html: Union[Airium, str], entry: SloleksEntry) -> str:
-    a: Airium = Airium()
-
-    a('<!DOCTYPE html>')
-    with (a.html(lang="en")):
-        with a.head():
-            a.meta(charset="utf-8")
-            a.meta(name="viewport", content="width=device-width, initial-scale=1.0")
-            a.meta(charset="utf-8")
-            a.title(_t=entry.lemma)
-            with a.style():
-                a(css("modern"))
-        with a.body():
-            for item in html:
-                a(str(item))
-            with a.script():
-                a(js())
-    return str(a)
-
-
-def air_button(*html: Union[Airium, str], entry: SloleksEntry, id: str = "inflection") -> str:
-    a: Airium = Airium()
-
-    with a.div(klass='container'):
-        a.button(klass='button', onclick=f"toggleTable('inflection_{entry.lemma}')", _t=f'{id}s')
-        with a.div(klass='content', id=f'{id}_{entry.lemma}'):
-            lg.warning("after debugging, must reset klass to 'content hidden'")
-            for input in html:
-                a(str(input))
-    return str(a)
-
-
-def air_section_info(*html: Union[Airium, str], entry: SloleksEntry) -> str:
-    a = Airium(base_indent="")
-    with a.p(klass='heading'):
-        a(f'<b>{entry.part_of_speech}-{len(entry.forms_dict)}</b>; ')
-        feature_string = ''
-        for feature_type, feature in entry.lemma_grammatical_features.items():
-            a(f'<em>{feature_type}: {feature}</em>,')
-        a(feature_string[:-1])
-        for input in html:
-            a(str(input))
-
-    return str(a) + footer()
 
 
 class Tables:
@@ -253,8 +129,7 @@ class Tables:
 
         return matrix_restored
 
-    @staticmethod
-    def table_from_matrix(entry: SloleksEntry, representation_matrix: List):
+    def table_from_matrix(self, entry: SloleksEntry, representation_matrix: List):
         row_labels = [row[0] for row in representation_matrix[1:]]
         col_labels = representation_matrix[0][1:]
         matrix_core = [row[1:] for row in representation_matrix[1:]]
@@ -275,7 +150,7 @@ class Tables:
                             with table.td():
                                 for index, representation in enumerate(cell):
                                     with table.span(klass='pop-up'):
-                                        representation_formatted = format_forms_for_table(entry, representation)
+                                        representation_formatted = self.format_forms_for_table(entry, representation)
                                         table(representation_formatted)
                                         added += 1
                                         # Add pronunciation popup for each word
@@ -285,40 +160,137 @@ class Tables:
                                             table(representation.pronunciation_dict.get("IPA", None))
         return str(table), added
 
+    def format_forms_for_table(self, entry: SloleksEntry, to_format_rep_obj: Representation):
+        """
+        Takes given word forms by reference to a shared grammar name
+        :param rep_index:
+        :param entry:
+        :param grammar_name:
+        :return:
+        """
 
-def css(aesthetic: str = "modern") -> str:
-    """
-    Takes css aesthetic and returns relevant style element contents
+        # Removing negative forms from consideration because they do not share a prefix with the
+        # other wordForms. Otherwise, this breaks the bolded inflection suffixes for the entire entry
+        non_negative_forms = [rep.form_representation for rep in entry.all_reps
+                              if (rep.norm is None or "negative" not in rep.norm)]
+        shared_prefix = self.common_prefix(non_negative_forms)
+        bolded = self.bold_except(to_format_rep_obj.form_representation, shared_prefix)
+        grayed = self.gray_unused(to_format_rep_obj.frequency, bolded)
 
-    :param aesthetic:
-    :return: CSS text
-    """
-    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'CSS', f'{aesthetic}.css'))
-    with open(path, "r") as file:
-        return file.read()
+        if to_format_rep_obj.norm is not None:
+            formatted = f'{grayed}<br><span class=gray-small-ital>{to_format_rep_obj.norm}</span>'
+        else:
+            formatted = grayed
+
+        return formatted
+
+    @staticmethod
+    def common_prefix(strings) -> str:
+        if not strings:
+            return ""
+        return str(os.path.commonprefix(strings))
+
+    @staticmethod
+    def bold_except(word: str, infix: str):
+        if infix in word and infix != '':
+            split = word.split(infix)
+            sections = [split.pop(0), infix.join(split)]
+            front = f'<b>{sections[0]}</b>' if sections[0] != '' else ''
+            end = f'<b>{sections[1]}</b>' if sections[1] != '' else ''
+            output = front + infix + end
+            return output
+        else:
+            return word
+
+    @staticmethod
+    def gray_unused(frequency: int, to_gray: str) -> str:
+        if frequency == 0:
+            return f"<span class=gray>{to_gray}</span>"
+        else:
+            return to_gray
 
 
-def js(filename: str = "scripts") -> str:
-    """
-    Fetches JS script file contents
+class HTMLib:
+    @staticmethod
+    def airhead_embody(*html: Union[Airium, str], entry: SloleksEntry) -> str:
+        a: Airium = Airium()
 
-    :return: JS text
-    """
-    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'JS', f'{filename}.js'))
-    with open(path, "r") as file:
-        return file.read()
+        a('<!DOCTYPE html>')
+        with (a.html(lang="en")):
+            with a.head():
+                a.meta(charset="utf-8")
+                a.meta(name="viewport", content="width=device-width, initial-scale=1.0")
+                a.meta(charset="utf-8")
+                a.title(_t=entry.lemma)
+                with a.style():
+                    a(HTMLib.css("modern"))
+            with a.body():
+                for item in html:
+                    a(str(item))
+                with a.script():
+                    a(HTMLib.js())
+        return str(a)
 
+    @staticmethod
+    def air_button(*html: Union[Airium, str], entry: SloleksEntry, id: str = "inflection") -> str:
+        a: Airium = Airium()
 
-def footer():
-    return '''
-        <p class=lineabove> Inflections not found in the <a 
-        href="https://viri.cjvt.si/gigafida/">Gigafida Corpus</a> are 
-        <span class=gray>grayed out</span>. 
-        They are the correct inflections, but this is a non-exhaustive database of 
-        <em>written</em> Slovene. For instance, the locative dual form of Stalin 
-        (<em>stalinih</em>) is unsurprisingly absent -- but fear not, as the locative <em>plural</em> (also <em>stalinih</em>) 
-        has one occurrence in the corpus.</p>
-    '''
+        with a.div(klass='container'):
+            a.button(klass='button', onclick=f"toggleTable('inflection_{entry.lemma}')", _t=f'{id}s')
+            with a.div(klass='content', id=f'{id}_{entry.lemma}'):
+                lg.warning("after debugging, must reset klass to 'content hidden'")
+                for input in html:
+                    a(str(input))
+        return str(a)
+
+    @staticmethod
+    def air_section_info(*html: Union[Airium, str], entry: SloleksEntry) -> str:
+        a = Airium(base_indent="")
+        with a.p(klass='heading'):
+            a(f'<b>{entry.part_of_speech}-{len(entry.forms_dict)}</b>; ')
+            feature_string = ''
+            for feature_type, feature in entry.lemma_grammatical_features.items():
+                a(f'<em>{feature_type}: {feature}</em>,')
+            a(feature_string[:-1])
+            for input in html:
+                a(str(input))
+
+        return str(a) + footer()
+
+    @staticmethod
+    def css(aesthetic: str = "modern") -> str:
+        """
+        Takes css aesthetic and returns relevant style element contents
+
+        :param aesthetic:
+        :return: CSS text
+        """
+        path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'CSS', f'{aesthetic}.css'))
+        with open(path, "r") as file:
+            return file.read()
+
+    @staticmethod
+    def js(filename: str = "scripts") -> str:
+        """
+        Fetches JS script file contents
+
+        :return: JS text
+        """
+        path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'JS', f'{filename}.js'))
+        with open(path, "r") as file:
+            return file.read()
+
+    @staticmethod
+    def footer():
+        return '''
+            <p class=lineabove> Inflections not found in the <a 
+            href="https://viri.cjvt.si/gigafida/">Gigafida Corpus</a> are 
+            <span class=gray>grayed out</span>. 
+            They are the correct inflections, but this is a non-exhaustive database of 
+            <em>written</em> Slovene. For instance, the locative dual form of Stalin 
+            (<em>stalinih</em>) is unsurprisingly absent -- but fear not, as the locative <em>plural</em> (also <em>stalinih</em>) 
+            has one occurrence in the corpus.</p>
+        '''
 
 
 if __name__ == "__main__":
