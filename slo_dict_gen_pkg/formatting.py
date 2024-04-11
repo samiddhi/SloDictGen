@@ -12,6 +12,7 @@ import sys
 # Add the parent directory
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+failure: bool = False
 
 class Definition:
     def __init__(self, entry: SloleksEntry, test: bool = False):
@@ -43,7 +44,9 @@ class InflectionSection:
         wordforms_displayed = int(tables)
         self.section = raw_tables
 
-        print(f"{wordforms_displayed}/{len(entry.all_reps)} forms displayed")
+        if wordforms_displayed != len(entry.all_reps):
+            lg.critical(f"{wordforms_displayed}/{len(entry.all_reps)} forms displayed for {entry.lemma}")
+        print(f"{wordforms_displayed}/{len(entry.all_reps)} forms displayed for {entry.lemma}")
 
     def __str__(self):
         if self.test:
@@ -101,6 +104,7 @@ class Tables:
                 number: str = row if row_feature == "number" else (col if col_feature == "number" else None)
                 gender: str = table_type[0] if table_type[0] in gfcat['gender'] + ['agender'] else (row if row_feature == "gender" else (col if col_feature == "gender" else None))
                 degree: str = row if row_feature == "degree" else None
+                clitic: str = row if row_feature == "clitic" else None
 
                 grammar_names: List(str) = ordered_grammar_name(
                     v_form=v_form,
@@ -109,6 +113,7 @@ class Tables:
                     number=number,
                     gender=gender,
                     degree=degree,
+                    clitic=clitic,
                     return_type="list"
                 )
 
@@ -124,9 +129,9 @@ class Tables:
 
         for cell in [cell for row in matrix_core for cell in row]:
             cell_grammar_names = cell.pop(0)
-            for entry_grammar_name in entry.reps_dict:
-                if all(grammar_feature in entry_grammar_name for grammar_feature in cell_grammar_names):
-                    cell.extend(entry.reps_dict.get(entry_grammar_name, []))
+            for rep_grammar_names in entry.reps_dict:
+                if all(grammar_feature in rep_grammar_names for grammar_feature in cell_grammar_names):
+                    cell.extend(entry.reps_dict.get(rep_grammar_names, []))
 
         row_labels[0] = table_name
         matrix_restored = [col_labels] + matrix_core
@@ -190,8 +195,10 @@ class Tables:
 
         # Removing negative forms from consideration because they do not share a prefix with the
         # other wordForms. Otherwise, this breaks the bolded inflection suffixes for the entire entry
-        non_negative_forms = [rep.form_representation for rep in entry.all_reps
-                              if (rep.norms and "negative" not in rep.norms)]
+        non_negative_forms = []
+        for rep in entry.all_reps:
+            non_negative_forms = non_negative_forms + [rep.form_representation] if "negative" not in rep.norms else non_negative_forms
+
         shared_prefix = self.common_prefix(non_negative_forms)
         bolded = self.bold_except(to_format_rep_obj.form_representation, shared_prefix)
         grayed = self.gray_unused(to_format_rep_obj.frequency, bolded)
@@ -340,12 +347,14 @@ if __name__ == "__main__":
             return True if obj.lemma != specific else False
 
 
-    pos = ("numeral")
+    pos = ("pronoun")
+
+    # Issues: se (pron)
 
     sample_entry = sample_entry_obj(pos)
     while criterion(sample_entry,
-                    '',
-                    ['iti', 'hoteti', 'dovoliti', 'grizti', 'ahniti', 'daniti', 'imeti', 'morati']
+                    'on',
+                    []
                     ):
         sample_entry = sample_entry_obj(pos)
     infsec = Definition(sample_entry, test=True)

@@ -6,7 +6,7 @@ ic.configureOutput(includeContext=True)
 
 import logging
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.CRITICAL,
     format='%(levelname)s: %(filename)s - %(funcName)s - line %(lineno)d'
            '\n\t%(message)s'
 )

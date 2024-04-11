@@ -76,13 +76,6 @@ table_types: Dict[str, Dict[str, List[List[str]]]] = dict(
     },
 )
 
-'''
-    
-    numeral={
-        '': [gfcat[''], gfcat['']],
-    },'''
-
-
 #   'owner_number':  ['dual', 'singular', 'plural']
 #   'owner_gender':  ['masculine', 'neuter', 'feminine']
 
@@ -95,6 +88,7 @@ def ordered_grammar_name(
         number: str = None,
         gender: str = None,
         degree: str = None,
+        clitic: str = None,
         return_type: str = "tuple"
 ):
     """
@@ -112,10 +106,10 @@ def ordered_grammar_name(
     """
     if return_type == "string":
         return concatenate_variables(
-            v_form, case, person, number, gender, degree
+            v_form, case, person, number, gender, degree, clitic
         )
     else:
-        types = [v_form, case, person, number, gender, degree]
+        types = [v_form, case, person, number, gender, degree, clitic]
         non_none_types = [item for item in types if item is not None]
         if return_type == "list":
             return non_none_types
@@ -170,8 +164,8 @@ def return_gram_feat_type(sample: str) -> Union[str, None]:
             return_value = "animate/negative"
             return ic([sample, return_value])[1]
         if sample == "yes":
-            lg.warning("'yes' appears in three grammar features")
-            return_value = "animate/clitic/negative"
+            lg.info("'yes' appears in three grammar features")
+            return_value = "clitic"
             return ic([sample, return_value])[1]
         if sample in values:
             if sample in {"participle"}:

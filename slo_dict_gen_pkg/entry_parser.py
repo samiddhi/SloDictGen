@@ -107,6 +107,7 @@ class WordForm:
     number: str = None
     gender: str = None
     degree: str = None
+    clitic: str = None
 
     def __post_init__(self):
         self.v_form = self.grammatical_features.get("vform", None)
@@ -121,6 +122,7 @@ class WordForm:
              else
              None)
         self.degree = self.grammatical_features.get("degree", None)
+        self.clitic = self.grammatical_features.get("clitic", None)
         self.grammar_names = ordered_grammar_name(
             v_form=self.v_form,
             case=self.case,
@@ -128,6 +130,7 @@ class WordForm:
             number=self.number,
             gender=self.gender,
             degree=self.degree,
+            clitic=self.clitic,
             return_type="tuple"
         )
 
