@@ -61,13 +61,16 @@ table_types: Dict[str, Dict[str, List[List[str]]]] = dict(
     abbreviation=dict(
         form=[['form', ], ['form', ], ]
     ),
+    pronoun={
+        'agender': [gfcat['number'], gfcat['case']],
+        'masculine': [gfcat['number'], gfcat['case']],
+        'feminine': [gfcat['number'], gfcat['case']],
+        'neuter': [gfcat['number'], gfcat['case']],
+    },
 )
 
 '''
     
-    pronoun={
-        '': [gfcat[''], gfcat['']],
-    },
     numeral={
         '': [gfcat[''], gfcat['']],
     },'''

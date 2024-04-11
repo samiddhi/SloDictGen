@@ -110,9 +110,11 @@ body {
     color:#838383
 }
 
-.gray-small-ital {
+.gray-small-ital,
+.blue-small-ital,
+.red-small-ital,
+.yellow-small-ital {
     font-family: Verdana, sans-serif;
-    color: #838383; /* Same color as .gray */
     font-size: 0.7em; /* Adjust the numerical value as needed */
     font-style: italic; /* Italicized text */
     position: relative;
@@ -122,27 +124,51 @@ body {
     white-space: nowrap; /* Prevent text wrapping */
 }
 
-.gray-small-ital + .gray-small-ital {
-  margin-top: 0%; /* Adjust this value as needed */
-}
-
-.red-small-ital {
-    font-family: Verdana, sans-serif;
-    color: #fa7d7d; /* Same color as .gray */
-    font-size: 0.7em; /* Adjust the numerical value as needed */
-    font-style: italic; /* Italicized text */
-    position: relative;
-    top: -0.5em; /* Adjust this value as needed */
+.gray-small-ital {
+    color: #838383;
 }
 
 .blue-small-ital {
-    font-family: Verdana, sans-serif;
-    color: #7ac3ff; /* Same color as .gray */
-    font-size: 0.7em; /* Adjust the numerical value as needed */
-    font-style: italic; /* Italicized text */
-    position: relative;
-    top: -0.5em; /* Adjust this value as needed */
+    color: #7ac3ff;
 }
+
+.red-small-ital {
+    color: #fa7d7d;
+}
+
+.yellow-small-ital {
+    color: #ffea00;
+}
+
+.gray-small-ital ~ .blue-small-ital,
+.gray-small-ital ~ .red-small-ital,
+.gray-small-ital ~ .yellow-small-ital,
+.blue-small-ital ~ .gray-small-ital,
+.blue-small-ital ~ .red-small-ital,
+.blue-small-ital ~ .yellow-small-ital,
+.red-small-ital ~ .gray-small-ital,
+.red-small-ital ~ .blue-small-ital,
+.red-small-ital ~ .yellow-small-ital,
+.yellow-small-ital ~ .gray-small-ital,
+.yellow-small-ital ~ .blue-small-ital,
+.yellow-small-ital ~ .red-small-ital {
+    margin-top: 0%; /* Adjust this value as needed */
+}
+.blue-underline {
+    text-decoration: underline;
+    text-decoration-color: #7ac3ff;
+}
+
+.red-underline {
+    text-decoration: underline;
+    text-decoration-color: #fa7d7d;
+}
+
+.yellow-underline {
+    text-decoration: underline;
+    text-decoration-color: #ffea00;
+}
+
 
 .pop-up + .pop-up {
     margin-top: 5%; /* Adjust this value as needed */

@@ -113,7 +113,10 @@ class WordForm:
         self.case = self.grammatical_features.get("case", None)
         self.person = self.grammatical_features.get("person", None)
         self.number = self.grammatical_features.get("number", None)
-        self.gender = self.grammatical_features.get("gender", None)
+        self.gender = self.grammatical_features.get(
+            "gender",
+             "agender" if self.part_of_speech in ["pronoun", "adjective"] else
+             None)
         self.degree = self.grammatical_features.get("degree", None)
         self.grammar_names = ordered_grammar_name(
             v_form=self.v_form,
@@ -239,6 +242,7 @@ class XMLParser:
         for orthography in orthographies:
             while len(orthographies) < len(accentuations):
                 representation: Representation = self._parse_representation(
+                    part_of_speech=part_of_speech,
                     orthography_element=orthographies.pop(0),
                     accentuation_elements=[accentuations.pop(0),
                                            accentuations.pop(0)],
@@ -250,6 +254,7 @@ class XMLParser:
 
         while orthographies:
             representation: Representation = self._parse_representation(
+                part_of_speech=part_of_speech,
                 orthography_element=orthographies.pop(0),
                 accentuation_elements=[] if not accentuations else
                 [accentuations.pop(0)],
@@ -272,11 +277,16 @@ class XMLParser:
             orthography_element: Et.Element,
             accentuation_elements: List[Et.Element],
             pronunciation_elements: List[Et.Element],
-            wordform_grammar_features: Dict[str, str]
+            wordform_grammar_features: Dict[str, str],
+            part_of_speech: str
 
     ) -> Representation:
 
         norms = []
+
+        if part_of_speech in ["pronoun", "adjective"]:
+            norms.append(wordform_grammar_features.get("gender", "agender"))
+
         try:
             norms.append(orthography_element.attrib['norm'])
         except KeyError:

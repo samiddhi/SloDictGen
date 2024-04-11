@@ -99,7 +99,7 @@ class Tables:
                 case: str = row if row_feature == "case" else (col if col_feature == "case" else None)
                 person: str = row if row_feature == "person" else (col if col_feature == "person" else None)
                 number: str = row if row_feature == "number" else (col if col_feature == "number" else None)
-                gender: str = table_type[0] if table_type[0] in gfcat['gender'] else (row if row_feature == "gender" else (col if col_feature == "gender" else None))
+                gender: str = table_type[0] if table_type[0] in gfcat['gender'] + ['agender'] else (row if row_feature == "gender" else (col if col_feature == "gender" else None))
                 degree: str = row if row_feature == "degree" else None
 
                 grammar_names: List(str) = ordered_grammar_name(
@@ -151,7 +151,8 @@ class Tables:
         table = Airium()
         with table.p(klass="lineabove"):
             with table.b():
-                table(representation_matrix[0][0].title())
+                header: str = representation_matrix[0][0]
+                table(header.title() if header != 'agender' else 'General')
             with table.table(klass='inflection'):
                 # Prevent header in table for non-inflected words
                 if col_labels and col_labels[0] != 'form':
@@ -199,7 +200,15 @@ class Tables:
         if to_format_rep_obj.norms:
             formatted += '<br>'
         for norm in to_format_rep_obj.norms:
-            formatted += f'\n<span class=gray-small-ital>{norm}</span>'
+            if norm in ["masculine", "feminine", "neuter", "agender"]:
+                color = {
+                    "masculine": "blue",
+                    "feminine": "red",
+                    "neuter": "yellow"
+                }.get(norm, None)
+                formatted = f'\n<span class={color}-underline>{formatted}</span>' if norm != "agender" else formatted
+            else:
+                formatted += f'\n<span class=gray-small-ital>{norm}</span>'
 
         return formatted
 
@@ -331,7 +340,7 @@ if __name__ == "__main__":
             return True if obj.lemma != specific else False
 
 
-    pos = ("adverb")
+    pos = ("pronoun")
 
     sample_entry = sample_entry_obj(pos)
     while criterion(sample_entry,
