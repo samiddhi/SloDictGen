@@ -57,7 +57,7 @@ class Tables:
         self.representations_displayed: int = 0
 
         part_of_speech: str = entry.part_of_speech
-        table_type_index: Tuple[str, Tuple[Tuple[str], Tuple[str]]] = tuple(table_types[part_of_speech].items())
+        table_type_index: List[Tuple[str, List[List[str]]]] = list(table_types[part_of_speech].items())
 
         for table_type in table_type_index:
             table_type_matrix: List[List] = self.make_table_type_matrix(table_type)
@@ -77,10 +77,10 @@ class Tables:
         return int(self.representations_displayed)
 
     @staticmethod
-    def make_table_type_matrix(table_type: Tuple[str, Tuple[Tuple, Tuple]]) -> List[List]:
+    def make_table_type_matrix(table_type: tuple[str, list[list[str]]]) -> List[List]:
         table_name: str = table_type[0]
-        table_col_labels: Tuple[str] = table_type[1][0]
-        table_row_labels: Tuple[str] = table_type[1][1]
+        table_col_labels: List[str] = table_type[1][0]
+        table_row_labels: List[str] = table_type[1][1]
 
         table_type_matrix = [[table_type[0]] * (len(table_col_labels) + 1) for _ in range(len(table_row_labels) + 1)]
 
@@ -93,14 +93,15 @@ class Tables:
             for j, col in enumerate(table_col_labels):
                 row_feature = return_gram_feat_type(row)
                 col_feature = return_gram_feat_type(col)
-                grammar_name = ordered_grammar_name(
+                grammar_names: List(str) = ordered_grammar_name(
                     v_form=table_type[0] if table_type[0] in gfcat['vform'] else (row if row in {"infinitive", "supine"} else None),
                     case=row if row_feature == "case" else (col if col_feature == "case" else None),
                     person=row if row_feature == "person" else (col if col_feature == "person" else None),
                     number=row if row_feature == "number" else (col if col_feature == "number" else None),
-                    gender=row if row_feature == "gender" else (col if col_feature == "gender" else None)
+                    gender=row if row_feature == "gender" else (col if col_feature == "gender" else None),
+                    return_type="list"
                 )
-                table_type_matrix[i + 1][j + 1] = [grammar_name]
+                table_type_matrix[i + 1][j + 1] = [grammar_names]
         return table_type_matrix
 
     @staticmethod
@@ -111,8 +112,10 @@ class Tables:
         matrix_core = [row[1:] for row in table_type_matrix[1:]]
 
         for cell in [cell for row in matrix_core for cell in row]:
-            cell_grammar_name = cell.pop(0)
-            cell.extend(entry.reps_dict.get(cell_grammar_name, []))
+            cell_grammar_names = cell.pop(0)
+            for entry_grammar_name in entry.reps_dict:
+                if all(grammar_feature in entry_grammar_name for grammar_feature in cell_grammar_names):
+                    cell.extend(entry.reps_dict.get(entry_grammar_name, []))
 
         row_labels[0] = table_name
         matrix_restored = [col_labels] + matrix_core
@@ -139,19 +142,24 @@ class Tables:
             with table.b():
                 table(representation_matrix[0][0].title())
             with table.table(klass='inflection'):
-                with table.tr():
-                    table.th()
-                    for col_label in col_labels:
-                        table.th(_t=col_label)
+                # Prevent header in table for non-inflected words
+                if col_labels and col_labels[0] != 'form':
+                    with table.tr():
+                        table.th()
+                        for col_label in col_labels:
+                            table.th(_t=col_label)
                 for row_label, row in zip(row_labels, matrix_core):
                     with table.tr():
-                        table.th(_t=row_label)
+                        if row_label != 'form':
+                            table.th(_t=row_label)
                         for cell in row:
                             with table.td():
                                 for index, representation in enumerate(cell):
                                     with table.span(klass='pop-up'):
                                         representation_formatted = self.format_forms_for_table(entry, representation)
                                         table(representation_formatted)
+                                        if representation_formatted == 'bome':
+                                            ice(representation_formatted)
                                         added += 1
                                         # Add pronunciation popup for each word
                                         with table.span(klass='pop-up-content'):
@@ -312,7 +320,7 @@ if __name__ == "__main__":
             return True if obj.lemma != specific else False
 
 
-    pos = "noun"
+    pos = "verb"
 
     sample_entry = sample_entry_obj(pos)
     while criterion(sample_entry,

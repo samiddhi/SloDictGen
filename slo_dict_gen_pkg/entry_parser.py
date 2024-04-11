@@ -46,7 +46,7 @@ class SloleksEntry:
         for word_form in self.all_forms:
             for representation in word_form.representations:
                 self.all_reps.append(representation)
-                self.reps_dict[word_form.grammar_name].append(representation)
+                self.reps_dict[word_form.grammar_names].append(representation)
 
 @dataclass(kw_only=True)
 class WordForm:
@@ -113,12 +113,13 @@ class WordForm:
         self.person = self.grammatical_features.get("person", None)
         self.number = self.grammatical_features.get("number", None)
         self.gender = self.grammatical_features.get("gender", None)
-        self.grammar_name = ordered_grammar_name(
+        self.grammar_names = ordered_grammar_name(
             v_form=self.v_form,
             case=self.case,
             person=self.person,
             number=self.number,
-            gender=self.gender
+            gender=self.gender,
+            return_type="tuple"
         )
 
 
@@ -190,7 +191,7 @@ class XMLParser:
                 part_of_speech
             )
             forms.append(form)
-            key: str = form.grammar_name
+            key: List[str] = form.grammar_names
             if key not in word_forms:
                 word_forms[key] = []
             word_forms[key].append(form)
@@ -356,7 +357,7 @@ def test_parser(path):
         print(f'{entry.lemma}:')
         for wordform_list in entry.forms_dict.values():
             for wordform in wordform_list:
-                print(f'\t{wordform.grammar_name}')
+                print(f'\t{wordform.grammar_names}')
                 for rep in wordform.representations:
                     print(f'\t\t{rep}')
 

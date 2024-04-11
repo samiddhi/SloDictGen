@@ -1,39 +1,46 @@
 from common.imports import *
 
 # Grammar Feature categories
-gfcat: Dict[str, Tuple[str]] = {
-    'aspect': ('perfective', 'progressive', 'biaspectual'),
-    'number': ('singular', 'dual', 'plural'),
-    'negative': ('yes', 'no'),
-    'case': ('nominative', 'genitive', 'dative', 'accusative', 'locative',
-             'instrumental'),
-    'animate': ('yes', 'no'),
-    'definiteness': ('yes', 'no'),
-    'word_type': (
+gfcat: Dict[str, List[str]] = {
+    'aspect': ['perfective', 'progressive', 'biaspectual'],
+    'number': ['singular', 'dual', 'plural'],
+    'negative': ['yes', 'no'],
+    'case': ['nominative', 'genitive', 'dative', 'accusative', 'locative',
+             'instrumental'],
+    'animate': ['yes', 'no'],
+    'definiteness': ['yes', 'no'],
+    'word_type': [
         'special', 'personal', 'relative', 'general', 'auxiliary', 'cardinal',
         'proper', 'ordinal', 'reflexive', 'pronominal', 'possessive',
         'coordinating', 'negative', 'interrogative', 'subordinating', 'main',
-        'demonstrative', 'indefinite', 'common'),
-    'person': ('first', 'second', 'third'),
-    'degree': ('superlative', 'positive', 'comparative'),
-    'vform': ('present', 'imperative', 'participle', 'infinitive', 'supine'),
-    'gender': ('masculine', 'feminine', 'neuter'),
-    'form': ('letter', 'roman', 'digit'),
-    'clitic': ('yes', 'bound')
+        'demonstrative', 'indefinite', 'common'],
+    'person': ['first', 'second', 'third'],
+    'degree': ['superlative', 'positive', 'comparative'],
+    'vform': [
+        'present', 'imperative', 'participle', 'conditional', 'future',
+        'infinitive', 'supine'
+    ],
+    'gender': ['masculine', 'feminine', 'neuter'],
+    'form': ['letter', 'roman', 'digit'],
+    'clitic': ['yes', 'bound']
 }
 
-# noinspection PyTypeChecker
 #           table_name : (top/columns, left/rows)
-table_types: Dict[str, Dict[str, Tuple[Tuple[str]]]] = dict(
+table_types: Dict[str, Dict[str, List[List[str]]]] = dict(
     noun=dict(
-        declension=(gfcat['number'], gfcat['case'])
+        declension=[gfcat['number'], gfcat['case']]
     ),
     verb={
-        'present': (gfcat['number'], gfcat['person'],),
-        'imperative': (gfcat['number'], ('first', 'second')),
-        'participle': (gfcat['number'], gfcat['gender']),
-        'Non-Finite': (("form",), ('infinitive','supine')),
-    }
+        'present': [gfcat['number'], gfcat['person'], ],
+        'imperative': [gfcat['number'], ['first', 'second']],
+        'participle': [gfcat['number'], gfcat['gender']],
+        'Non-Finite': [["form", ], ['infinitive', 'supine']],
+        'conditional': [["form", ], ["form", ], ],
+        'future': [gfcat['number'], gfcat['person'], ],
+    },
+    particle=dict(
+        form=[["form", ], ["form", ], ]
+    )
 )
 
 
@@ -48,6 +55,7 @@ def ordered_grammar_name(
         person: str = None,
         number: str = None,
         gender: str = None,
+        return_type: str = "tuple"
 ):
     """
     Ensures that grammatical data is ordered correctly before concatenating
@@ -62,7 +70,16 @@ def ordered_grammar_name(
     :return: String of found items concatenated with an underscore in the
         correct order.
     """
-    return concatenate_variables(v_form, case, person, number, gender)
+    if return_type == "string":
+        return concatenate_variables(v_form, case, person, number, gender)
+    else:
+        types = [v_form, case, person, number, gender]
+        non_none_types = [item for item in types if item is not None]
+        if return_type == "list":
+            return non_none_types
+        elif return_type == "tuple":
+            return tuple(non_none_types)
+
 
 
 def concatenate_variables(*items):
