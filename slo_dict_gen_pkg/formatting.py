@@ -100,6 +100,7 @@ class Tables:
                 person: str = row if row_feature == "person" else (col if col_feature == "person" else None)
                 number: str = row if row_feature == "number" else (col if col_feature == "number" else None)
                 gender: str = table_type[0] if table_type[0] in gfcat['gender'] else (row if row_feature == "gender" else (col if col_feature == "gender" else None))
+                degree: str = row if row_feature == "degree" else None
 
                 grammar_names: List(str) = ordered_grammar_name(
                     v_form=v_form,
@@ -107,6 +108,7 @@ class Tables:
                     person=person,
                     number=number,
                     gender=gender,
+                    degree=degree,
                     return_type="list"
                 )
 
@@ -329,7 +331,7 @@ if __name__ == "__main__":
             return True if obj.lemma != specific else False
 
 
-    pos = ("adjective")
+    pos = ("adverb")
 
     sample_entry = sample_entry_obj(pos)
     while criterion(sample_entry,

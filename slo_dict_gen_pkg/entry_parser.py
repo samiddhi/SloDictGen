@@ -106,6 +106,7 @@ class WordForm:
     person: str = None
     number: str = None
     gender: str = None
+    degree: str = None
 
     def __post_init__(self):
         self.v_form = self.grammatical_features.get("vform", None)
@@ -113,12 +114,14 @@ class WordForm:
         self.person = self.grammatical_features.get("person", None)
         self.number = self.grammatical_features.get("number", None)
         self.gender = self.grammatical_features.get("gender", None)
+        self.degree = self.grammatical_features.get("degree", None)
         self.grammar_names = ordered_grammar_name(
             v_form=self.v_form,
             case=self.case,
             person=self.person,
             number=self.number,
             gender=self.gender,
+            degree=self.degree,
             return_type="tuple"
         )
 
@@ -289,6 +292,12 @@ class XMLParser:
             norms.append("animate")
         if wordform_grammar_features.get("animate", None) == "no":
             norms.append("inanimate")
+        if wordform_grammar_features.get("degree", None) == 'positive':
+            norms.append('positive')
+        if wordform_grammar_features.get("degree", None) == 'comparative':
+            norms.append('comparative')
+        if wordform_grammar_features.get("degree", None) == 'superlative':
+            norms.append('superlative')
 
         form_representation: str = orthography_element.find('.//form').text
         freq: int = int(orthography_element.find('.//measure['

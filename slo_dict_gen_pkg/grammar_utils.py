@@ -15,7 +15,7 @@ gfcat: Dict[str, List[str]] = {
         'coordinating', 'negative', 'interrogative', 'subordinating', 'main',
         'demonstrative', 'indefinite', 'common'],
     'person': ['first', 'second', 'third'],
-    'degree': ['superlative', 'positive', 'comparative'],
+    'degree': ['positive', 'comparative', 'superlative'],
     'vform': [
         'present', 'imperative', 'participle', 'conditional', 'future',
         'infinitive', 'supine'
@@ -34,8 +34,8 @@ table_types: Dict[str, Dict[str, List[List[str]]]] = dict(
         'present': [gfcat['number'], gfcat['person'], ],
         'imperative': [gfcat['number'], ['first', 'second']],
         'participle': [gfcat['number'], gfcat['gender']],
-        'Non-Finite': [["form", ], ['infinitive', 'supine']],
-        'conditional': [["form", ], ["form", ], ],
+        'Non-Finite': [['form', ], ['infinitive', 'supine']],
+        'conditional': [['form', ], ['form', ], ],
         'future': [gfcat['number'], gfcat['person'], ],
     },
     adjective={
@@ -43,27 +43,28 @@ table_types: Dict[str, Dict[str, List[List[str]]]] = dict(
         'feminine': [gfcat['number'], gfcat['case']],
         'neuter': [gfcat['number'], gfcat['case']],
     },
+    adverb=dict(
+        form=[['form', ], ['form', ], ]
+    ),
     particle=dict(
-        form=[["form", ], ["form", ], ]
+        form=[['form', ], ['form', ], ]
     ),
     interjection=dict(
-        form=[["form", ], ["form", ], ]
+        form=[['form', ], ['form', ], ]
     ),
     conjunction=dict(
-        form=[["form", ], ["form", ], ]
+        form=[['form', ], ['form', ], ]
     ),
     preposition=dict(
-        form=[["form", ], ["form", ], ]
+        form=[['form', ], ['form', ], ]
     ),
     abbreviation=dict(
-        form=[["form", ], ["form", ], ]
+        form=[['form', ], ['form', ], ]
     ),
 )
 
 '''
-    adverb={
-        '': [gfcat[''], gfcat['']],
-    },
+    
     pronoun={
         '': [gfcat[''], gfcat['']],
     },
@@ -83,6 +84,7 @@ def ordered_grammar_name(
         person: str = None,
         number: str = None,
         gender: str = None,
+        degree: str = None,
         return_type: str = "tuple"
 ):
     """
@@ -99,9 +101,11 @@ def ordered_grammar_name(
         correct order.
     """
     if return_type == "string":
-        return concatenate_variables(v_form, case, person, number, gender)
+        return concatenate_variables(
+            v_form, case, person, number, gender, degree
+        )
     else:
-        types = [v_form, case, person, number, gender]
+        types = [v_form, case, person, number, gender, degree]
         non_none_types = [item for item in types if item is not None]
         if return_type == "list":
             return non_none_types
@@ -164,7 +168,7 @@ def return_gram_feat_type(sample: str) -> Union[str, None]:
                 lg.warning('"participle" removed from "type" feature '
                            'for functionality')
             return key
-    if sample not in {"form"}:
+    if sample not in {'form'}:
         lg.warning(f'"{sample}" not a known grammar feature.')
     return None
 
