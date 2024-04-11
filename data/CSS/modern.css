@@ -116,7 +116,14 @@ body {
     font-size: 0.7em; /* Adjust the numerical value as needed */
     font-style: italic; /* Italicized text */
     position: relative;
-    top: -0.5em; /* Adjust this value as needed */
+    cursor: pointer;
+    display: block;
+    top: -0.1em; /* Adjust this value as needed */
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.gray-small-ital + .gray-small-ital {
+  margin-top: 0%; /* Adjust this value as needed */
 }
 
 .red-small-ital {

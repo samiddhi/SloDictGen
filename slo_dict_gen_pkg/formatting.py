@@ -82,7 +82,7 @@ class Tables:
         table_col_labels: List[str] = table_type[1][0]
         table_row_labels: List[str] = table_type[1][1]
 
-        table_type_matrix = [[table_type[0]] * (len(table_col_labels) + 1) for _ in range(len(table_row_labels) + 1)]
+        table_type_matrix: List[List[str]] = [[table_type[0]] * (len(table_col_labels) + 1) for _ in range(len(table_row_labels) + 1)]
 
         table_type_matrix[0][1:] = table_col_labels
         for i, label in enumerate(table_row_labels):
@@ -93,14 +93,23 @@ class Tables:
             for j, col in enumerate(table_col_labels):
                 row_feature = return_gram_feat_type(row)
                 col_feature = return_gram_feat_type(col)
+
+                # Handle exceptions for when the table type name is needed
+                v_form: str = table_type[0] if table_type[0] in gfcat['vform'] else row if row in {"infinitive", "supine"} else None
+                case: str = row if row_feature == "case" else (col if col_feature == "case" else None)
+                person: str = row if row_feature == "person" else (col if col_feature == "person" else None)
+                number: str = row if row_feature == "number" else (col if col_feature == "number" else None)
+                gender: str = table_type[0] if table_type[0] in gfcat['gender'] else (row if row_feature == "gender" else (col if col_feature == "gender" else None))
+
                 grammar_names: List(str) = ordered_grammar_name(
-                    v_form=table_type[0] if table_type[0] in gfcat['vform'] else (row if row in {"infinitive", "supine"} else None),
-                    case=row if row_feature == "case" else (col if col_feature == "case" else None),
-                    person=row if row_feature == "person" else (col if col_feature == "person" else None),
-                    number=row if row_feature == "number" else (col if col_feature == "number" else None),
-                    gender=row if row_feature == "gender" else (col if col_feature == "gender" else None),
+                    v_form=v_form,
+                    case=case,
+                    person=person,
+                    number=number,
+                    gender=gender,
                     return_type="list"
                 )
+
                 table_type_matrix[i + 1][j + 1] = [grammar_names]
         return table_type_matrix
 
@@ -158,9 +167,8 @@ class Tables:
                                     with table.span(klass='pop-up'):
                                         representation_formatted = self.format_forms_for_table(entry, representation)
                                         table(representation_formatted)
-                                        if representation_formatted == 'bome':
-                                            ice(representation_formatted)
-                                        added += 1
+                                        if representation_formatted != '':
+                                            added += 1
                                         # Add pronunciation popup for each word
                                         with table.span(klass='pop-up-content'):
                                             table("Pronunciation:")
@@ -180,15 +188,16 @@ class Tables:
         # Removing negative forms from consideration because they do not share a prefix with the
         # other wordForms. Otherwise, this breaks the bolded inflection suffixes for the entire entry
         non_negative_forms = [rep.form_representation for rep in entry.all_reps
-                              if (rep.norm is None or "negative" not in rep.norm)]
+                              if (rep.norms and "negative" not in rep.norms)]
         shared_prefix = self.common_prefix(non_negative_forms)
         bolded = self.bold_except(to_format_rep_obj.form_representation, shared_prefix)
         grayed = self.gray_unused(to_format_rep_obj.frequency, bolded)
 
-        if to_format_rep_obj.norm is not None:
-            formatted = f'{grayed}<br><span class=gray-small-ital>{to_format_rep_obj.norm}</span>'
-        else:
-            formatted = grayed
+        formatted = grayed
+        if to_format_rep_obj.norms:
+            formatted += '<br>'
+        for norm in to_format_rep_obj.norms:
+            formatted += f'\n<span class=gray-small-ital>{norm}</span>'
 
         return formatted
 
@@ -320,12 +329,12 @@ if __name__ == "__main__":
             return True if obj.lemma != specific else False
 
 
-    pos = "verb"
+    pos = ("adjective")
 
     sample_entry = sample_entry_obj(pos)
     while criterion(sample_entry,
                     '',
-                    ['hoteti', 'dovoliti', 'grizti', 'ahniti', 'daniti', 'imeti', 'morati']
+                    ['iti', 'hoteti', 'dovoliti', 'grizti', 'ahniti', 'daniti', 'imeti', 'morati']
                     ):
         sample_entry = sample_entry_obj(pos)
     infsec = Definition(sample_entry, test=True)

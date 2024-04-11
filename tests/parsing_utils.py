@@ -112,7 +112,7 @@ def generate_all_grammar_features(path: str) -> Dict[str, Set]:
     return dict_return
 
 
-def sample_entry_obj(p_o_s: str = "noun") -> SloleksEntry:
+def sample_entry_obj(p_o_s: str = "verb") -> SloleksEntry:
     file = (r"C:\Users\sangha\Documents\Danny's\SloDictGen"
             r"\data"
             r"\Markdown\XML\all_isotopes.xml")

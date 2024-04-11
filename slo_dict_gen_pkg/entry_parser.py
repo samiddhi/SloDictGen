@@ -126,7 +126,7 @@ class WordForm:
 @dataclass(kw_only=True)
 class Representation:
     form_representation: str
-    norm: str
+    norms: List[str]
     frequency: int
     accentuations: List[str]
     pronunciation_dict: dict
@@ -273,21 +273,22 @@ class XMLParser:
 
     ) -> Representation:
 
+        norms = []
         try:
-            norm = orthography_element.attrib['norm']
+            norms.append(orthography_element.attrib['norm'])
         except KeyError:
-            norm = None
+            pass
 
         if wordform_grammar_features.get("negative", None) == "yes":
-            norm = "negative" if norm is None else f'{norm}\nnegative'
+            norms.append("negative")
         if wordform_grammar_features.get("definiteness", None) == "yes":
-            norm = "definite" if norm is None else f'{norm}\ndefinite'
+            norms.append("definite")
         if wordform_grammar_features.get("definiteness", None) == "no":
-            norm = "indefinite" if norm is None else f'{norm}\nindefinite'
+            norms.append("indefinite")
         if wordform_grammar_features.get("animate", None) == "yes":
-            norm = "animate" if norm is None else f'{norm}\nanimate'
+            norms.append("animate")
         if wordform_grammar_features.get("animate", None) == "no":
-            norm = "inanimate" if norm is None else f'{norm}\ninanimate'
+            norms.append("inanimate")
 
         form_representation: str = orthography_element.find('.//form').text
         freq: int = int(orthography_element.find('.//measure['
@@ -308,7 +309,7 @@ class XMLParser:
 
         return Representation(
             form_representation=form_representation,
-            norm=norm,
+            norms=norms,
             frequency=freq,
             accentuations=accentuations,
             pronunciation_dict=pronunciations

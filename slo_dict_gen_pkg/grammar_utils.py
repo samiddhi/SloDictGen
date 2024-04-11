@@ -38,10 +38,38 @@ table_types: Dict[str, Dict[str, List[List[str]]]] = dict(
         'conditional': [["form", ], ["form", ], ],
         'future': [gfcat['number'], gfcat['person'], ],
     },
+    adjective={
+        'masculine': [gfcat['number'], gfcat['case']],
+        'feminine': [gfcat['number'], gfcat['case']],
+        'neuter': [gfcat['number'], gfcat['case']],
+    },
     particle=dict(
         form=[["form", ], ["form", ], ]
-    )
+    ),
+    interjection=dict(
+        form=[["form", ], ["form", ], ]
+    ),
+    conjunction=dict(
+        form=[["form", ], ["form", ], ]
+    ),
+    preposition=dict(
+        form=[["form", ], ["form", ], ]
+    ),
+    abbreviation=dict(
+        form=[["form", ], ["form", ], ]
+    ),
 )
+
+'''
+    adverb={
+        '': [gfcat[''], gfcat['']],
+    },
+    pronoun={
+        '': [gfcat[''], gfcat['']],
+    },
+    numeral={
+        '': [gfcat[''], gfcat['']],
+    },'''
 
 
 #   'owner_number':  ['dual', 'singular', 'plural']
