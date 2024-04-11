@@ -39,6 +39,7 @@ table_types: Dict[str, Dict[str, List[List[str]]]] = dict(
         'future': [gfcat['number'], gfcat['person'], ],
     },
     adjective={
+        'agender': [gfcat['number'], gfcat['case']],
         'masculine': [gfcat['number'], gfcat['case']],
         'feminine': [gfcat['number'], gfcat['case']],
         'neuter': [gfcat['number'], gfcat['case']],
@@ -62,6 +63,12 @@ table_types: Dict[str, Dict[str, List[List[str]]]] = dict(
         form=[['form', ], ['form', ], ]
     ),
     pronoun={
+        'agender': [gfcat['number'], gfcat['case']],
+        'masculine': [gfcat['number'], gfcat['case']],
+        'feminine': [gfcat['number'], gfcat['case']],
+        'neuter': [gfcat['number'], gfcat['case']],
+    },
+    numeral={
         'agender': [gfcat['number'], gfcat['case']],
         'masculine': [gfcat['number'], gfcat['case']],
         'feminine': [gfcat['number'], gfcat['case']],

@@ -340,7 +340,7 @@ if __name__ == "__main__":
             return True if obj.lemma != specific else False
 
 
-    pos = ("pronoun")
+    pos = ("numeral")
 
     sample_entry = sample_entry_obj(pos)
     while criterion(sample_entry,

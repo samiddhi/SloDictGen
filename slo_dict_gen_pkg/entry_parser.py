@@ -115,7 +115,10 @@ class WordForm:
         self.number = self.grammatical_features.get("number", None)
         self.gender = self.grammatical_features.get(
             "gender",
-             "agender" if self.part_of_speech in ["pronoun", "adjective"] else
+             "agender" if self.part_of_speech in ["pronoun",
+                                                  "adjective",
+                                                  "numeral"]
+             else
              None)
         self.degree = self.grammatical_features.get("degree", None)
         self.grammar_names = ordered_grammar_name(
@@ -284,7 +287,7 @@ class XMLParser:
 
         norms = []
 
-        if part_of_speech in ["pronoun", "adjective"]:
+        if part_of_speech in ["pronoun", "adjective", "numeral"]:
             norms.append(wordform_grammar_features.get("gender", "agender"))
 
         try:
