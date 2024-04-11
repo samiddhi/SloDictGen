@@ -42,10 +42,16 @@ class InflectionSection:
         tables = Tables(entry)
         raw_tables = str(tables)
         wordforms_displayed = int(tables)
-        self.section = raw_tables
 
         if wordforms_displayed != len(entry.all_reps):
             lg.critical(f"{wordforms_displayed}/{len(entry.all_reps)} forms displayed for {entry.lemma}")
+            warning = ((f'Warning: <span class=red-underline>'
+                            f'{wordforms_displayed}</span>/{len(entry.all_reps)} '
+                            f'wordforms displayed. All valid forms listed at bottom of page.<br>')
+                            + raw_tables)
+            reps_listed = ", ".join([rep.form_representation for rep in entry.all_reps])
+            self.section = warning + f'<p class="lineabove">{reps_listed}</p>'
+
         print(f"{wordforms_displayed}/{len(entry.all_reps)} forms displayed for {entry.lemma}")
 
     def __str__(self):
@@ -353,7 +359,7 @@ if __name__ == "__main__":
 
     sample_entry = sample_entry_obj(pos)
     while criterion(sample_entry,
-                    'on',
+                    'se',
                     []
                     ):
         sample_entry = sample_entry_obj(pos)
