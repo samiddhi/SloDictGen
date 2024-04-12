@@ -1,7 +1,12 @@
 thanks for reading me
 
 libraries:
-    icecream
-    tqdm
-    airium
-    pyperclip
+    tables
+        icecream
+        tqdm
+        airium
+        pyperclip
+
+    parser:
+        beautifulsoup4
+        openpyxl
