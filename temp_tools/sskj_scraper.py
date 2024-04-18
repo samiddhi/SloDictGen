@@ -91,7 +91,17 @@ class Cleaner:
     was in the outputs for "a". Could be improved upon, but it's a one hit
     wonder...
     """
-    def remove_entries(file_path, letter):
+
+    def __init__(self, directory, letters):
+        for letter in letters:
+            file_path = os.path.join(directory, f'Letter_{letter}.html')
+
+            removed_entries = self.remove_entries(file_path, letter)
+            print(f"Removed entries from Letter_{letter}.html:")
+            for entry in removed_entries:
+                print(entry)
+
+    def remove_entries(self, file_path, letter):
         removed_entries = []
 
         with open(file_path, 'r', encoding='utf-8') as file:
@@ -117,12 +127,3 @@ class Cleaner:
 
         return removed_entries
 
-    def main():
-        directory = r"C:\Users\sangha\Documents\Danny's\SloDictGen\scraper\Scraped_HTML"
-        for letter in "čšž":  # abcdefghijklmnopqrstuvwxyz
-            file_path = os.path.join(directory, f'Letter_{letter}.html')
-
-            removed_entries = remove_entries(file_path, letter)
-            print(f"Removed entries from Letter_{letter}.html:")
-            for entry in removed_entries:
-                print(entry)

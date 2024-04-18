@@ -112,16 +112,35 @@ def generate_all_grammar_features(path: str) -> Dict[str, Set]:
     return dict_return
 
 
-def sample_entry_obj(p_o_s: str = "verb") -> SloleksEntry:
-    file = (r"C:\Users\sangha\Documents\Danny's\SloDictGen"
-            r"\data"
-            r"\Markdown\XML\all_isotopes.xml")
-    parser: XMLParser = XMLParser(file)
+def sample_entry_obj(
+        p_o_s: str = None,
+        path: str = r"C:\Users\sangha\Documents\Danny's\SloDictGen"
+                    r"\data\XML\all_isotopes.xml",
+        lemma: str = None
+) -> SloleksEntry:
+    """
+    Returns item with given part of speech OR given lemma
+
+    :param p_o_s: default None
+    :param lemma: default None
+    :param path: default all_isotopes.xml
+    :return:
+    """
+    parser: XMLParser = XMLParser(path)
     random.shuffle(parser.entries)
-    for entry in parser.entries:
-        if entry.part_of_speech == p_o_s:
-            return entry
-    raise ic(Exception(f"No '{p_o_s}' found in entries from {file}"))
+    if lemma is not None and p_o_s is not None:
+        for entry in parser.entries:
+            if entry.part_of_speech == p_o_s and entry.lemma == lemma:
+                return entry
+        raise ic(Exception(f"No {p_o_s} '{lemma}' found in entries from"
+                           f" {path}"))
+    elif lemma is not None or p_o_s is not None:
+        for entry in parser.entries:
+            if entry.part_of_speech == p_o_s or entry.lemma == lemma:
+                return entry
+        raise ic(Exception(f"No matching entries from {path}"))
+    else:
+        return parser.entries[0]
 
 
 def find_file_with_grammar_feature_content(

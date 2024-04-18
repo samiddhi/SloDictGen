@@ -1,4 +1,5 @@
 from common.imports import *
+from unidecode import unidecode
 
 # Grammar Feature categories
 gfcat: Dict[str, List[str]] = {
@@ -175,6 +176,25 @@ def return_gram_feat_type(sample: str) -> Union[str, None]:
     if sample not in {'form'}:
         lg.warning(f'"{sample}" not a known grammar feature.')
     return None
+
+
+def de_critic(word: str, inpt: str = ''):
+    """
+    Strips diacritics off of Slovenian words (leaving carons)
+
+    :param word: str to be stripped
+    :param inpt: ignore
+    :return: stripped str
+    """
+    # if word + if word[0] not in "čžšČŽŠ"
+    if word:
+        if word[0] not in "čžšČŽŠ":
+            outpt = inpt + unidecode(word[0])
+        else:
+            outpt = inpt + word[0]
+        return de_critic(word[1:], outpt)
+    else:
+        return inpt
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 from common.imports import *
-from slo_dict_gen_pkg.entry_parser import SloleksEntry, WordForm, Representation, XMLParser
+from slo_dict_gen_pkg.sloleks_parser import SloleksEntry, WordForm, Representation, XMLParser
 from tests.parsing_utils import sample_entry_obj
 from slo_dict_gen_pkg.grammar_utils import ordered_grammar_name, return_gram_feat_type, gfcat, table_types
 
@@ -51,6 +51,8 @@ class InflectionSection:
                             + raw_tables)
             reps_listed = ", ".join([rep.form_representation for rep in entry.all_reps])
             self.section = warning + f'<p class="lineabove">{reps_listed}</p>'
+        else:
+            self.section = raw_tables
 
         print(f"{wordforms_displayed}/{len(entry.all_reps)} forms displayed for {entry.lemma}")
 
@@ -335,33 +337,12 @@ class HTMLib:
 
 
 if __name__ == "__main__":
-    def criterion(obj: SloleksEntry, specific: str, verified: List[str]):
-        """
-        Delete when done.
-
-        Allows you to get new sample objects until the one you get is either a specific entry,
-        or any random one that has not already been verified.
-
-        :param verified:
-        :param obj:
-        :param specific:
-        :return:
-        """
-        if specific == "":
-            return True if obj.lemma in verified else False
-        else:
-            return True if obj.lemma != specific else False
-
 
     pos = ("pronoun")
 
     # Issues: se (pron)
 
-    sample_entry = sample_entry_obj(pos)
-    while criterion(sample_entry,
-                    'se',
-                    []
-                    ):
-        sample_entry = sample_entry_obj(pos)
+    sample_entry = sample_entry_obj(path=r"C:\\Users\\sangha\\Documents\\Danny's\\SloDictGen\\data\\Sloleks.3.0\\sloleks_3.0_009.xml", lemma='ležeč', p_o_s="adjective")
+
     infsec = Definition(sample_entry, test=True)
     pyperclip.copy(str(infsec))

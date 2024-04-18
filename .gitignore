@@ -3,6 +3,7 @@ data/Sloleks.3.0.zip
 tests/playground.py
 tests/__pycache__
 slo_dict_gen_pkg/__pycache__
+data/HTML/SSKJ_entries_html/html_entries_to_pydict.py
 
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
