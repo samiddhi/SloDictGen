@@ -6,7 +6,7 @@ import re
 from bs4 import BeautifulSoup
 import pickle
 
-from slo_dict_gen_pkg.grammar_utils import ordered_grammar_name, de_critic
+from slo_dict_gen_pkg.grammar_utils import ordered_grammar_name, de_critic, ALPHA
 
 
 @dataclass
@@ -115,12 +115,23 @@ class HTMLParser:
         with open(filename, 'wb') as f:
             pickle.dump(data, f)
 
-letter = "c"
-HTMLParser(
-    r"C:\Users\sangha\Documents\Danny's\SloDictGen\data\HTML"
-    f"\\SSKJ_entries_html\\Letter_{letter}.html",
-    r"C:\Users\sangha\Documents\Danny's\SloDictGen\data\pickles"
-    f"\\html_objects\\Letter_{letter}.pkl"
-)
+
+def get_sskjentrys() -> List[SskjEntry]:
+    """
+    :return:
+    """
+    all_objs = []
+    for letter in ALPHA:
+        with open(pkl_path + f'\\Letter_{letter}.pkl', 'rb') as file:
+            all_objs.extend(pickle.load(file))
+    return all_objs
+
+if __name__ == "__main__":
+    data_path = r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
+    html_path = data_path + r"\html\SSKJ_entries_html"
+    pkl_path = data_path + r"\pickles\html_objects"
+
+    all_sskjentrys = get_sskjentrys()
+
 
 

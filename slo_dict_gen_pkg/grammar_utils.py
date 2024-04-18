@@ -1,6 +1,8 @@
 from common.imports import *
 from unidecode import unidecode
 
+ALPHA: str = "abcčdefghijklmnopqrsštuvwxyzž"
+
 # Grammar Feature categories
 gfcat: Dict[str, List[str]] = {
     'aspect': ['perfective', 'progressive', 'biaspectual'],
