@@ -6,3 +6,6 @@ max_line_length = 79
 [slo_dict_gen_pkg/formatting.py]
 max_line_length = 200
 
+[README.md]
+max_line_length = 200
+
