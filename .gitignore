@@ -1,5 +1,6 @@
 data/Sloleks.3.0/*
 data/Sloleks.3.0.zip
+data/chromedriver.exe
 tests/playground.py
 tests/__pycache__
 slo_dict_gen_pkg/__pycache__

@@ -5,22 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Your Page Title</title>
     <link rel="stylesheet" href="sskj.css" />
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        var examples = document.querySelectorAll('[data-group="example"]');
-        examples.forEach(function (example) {
-          var nextSibling = example.parentNode.nextSibling;
-          if (
-            nextSibling &&
-            nextSibling.nodeType === Node.TEXT_NODE &&
-            nextSibling.textContent.trim() === ";"
-          ) {
-            nextSibling.textContent = nextSibling.textContent.replace(";", "");
-          }
-        });
-      });
-    </script>
-  </head>
+    <script src="sskj_scripts.js" defer></script>  </head>
   <body>
     <div class="list-group-item entry">
       <div class="entry-content">

@@ -1,3 +1,5 @@
+import random
+
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -10,6 +12,7 @@ import time
 import sys
 from unidecode import unidecode
 import string
+from time import sleep
 
 
 class ScraperOld:
@@ -153,10 +156,11 @@ class Scraper:
             self,
             start_url: str,
             output_folder: str,
-            file_name: str
+            file_name: str,
+            translate: bool = False
     ) -> None:
         """
-        Initializes the Scraper instance, sets up the Selenium WebDriver in 
+        Initializes the Scraper instance, sets up the Selenium WebDriver not in
         headless mode, and determines base URL from the start URL. It also 
         initiates the scraping process.
 
@@ -164,21 +168,39 @@ class Scraper:
             URL format.
         :param output_folder: The directory path where output files are saved.
         :param file_name: The output file name
+        :param translate: set true if link is google translate to enable
+            next page clicking
         """
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")
+
         driver_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen"
                        r"\data\chromedriver.exe")
-        self.driver: webdriver.Chrome = webdriver.Chrome(
+
+        options = Options()
+
+        if translate:
+            options = webdriver.ChromeOptions()
+
+            prefs = {
+                "translate_whitelists": {"si": "en"},
+                "translate": {"enabled": "True"}
+            }
+            options.add_experimental_option('prefs', prefs)
+
+        self.translate = translate
+        self.driver = webdriver.Chrome(
             service=Service(driver_path),
-            options=chrome_options
-        )
+            options=options)
+
+        if not translate:
+            sleep(20)
+
         self.start_url: str = start_url
         self.base_url: str = (f"{urlparse(start_url).scheme}:"
                               f"//{urlparse(start_url).netloc}")
         self.output_folder: str = output_folder
         self.filename: str = file_name
         self.output_file: str = f'{output_folder}/{file_name}.html'
+        self.pages_scraped = 0
         self.scrape()
 
     def scrape(self) -> None:
@@ -188,6 +210,7 @@ class Scraper:
 
         :return: None.
         """
+
         current_url = self.start_url
         total_entries = 0
         while current_url:
@@ -196,7 +219,6 @@ class Scraper:
             total_entries += len(entries)
             self.save_entries(entries)
             current_url = self.find_next_page_url(html_content)
-            time.sleep(0.2)  # to mitigate potential rate-limiting issues
         print(f'Entries: {total_entries}\n\n')
 
     def fetch_page_content(self, url: str) -> str:
@@ -208,6 +230,9 @@ class Scraper:
         :return: HTML content of the page as a string.
         """
         self.driver.get(url)
+        # Branch-less sleep based on translate value
+        sleep(float(self.translate)*3
+              +float(not self.translate)*2)
         return self.driver.page_source
 
     def parse_entries(self, html_content: str) -> List[str]:
@@ -234,11 +259,13 @@ class Scraper:
         :param html_content: The HTML content of the current page.
         :return: The URL of the next page or None if no next page is found.
         """
+        self.pages_scraped += 1
+        print(f'{self.pages_scraped} pages scraped.')
         soup = BeautifulSoup(html_content, 'html.parser')
         next_button = soup.find('ul', class_='pagination').find_all('a')[-1]
         if next_button and ("Next" in next_button.text or "Naslednja" in
                             next_button.text):
-            return self.base_url + next_button['href']
+            return next_button['href'] if self.translate else self.base_url + next_button['href']
         return None
 
     def save_entries(self, entries: List[str]) -> None:
@@ -262,10 +289,15 @@ class Scraper:
 
 
 def main() -> None:
+    raw_goog = (r"https://www-fran-si.translate.goog/iskanje"
+                r"?FilteredDictionaryIds=133&Query=*&View=1&_x_tr_sl=sl&_x_tr_tl=en&_x_tr_hl=en&_x_tr_pto=wapp")
+    fran = (r"https://www.fran.si/iskanje?FilteredDictionaryIds=133&View=1"
+            r"&Query=*")
     x = Scraper(
-        start_url=r"https://fran.si/iskanje?FilteredDictionaryIds=133&View=1&Query=w*",
-        file_name="All_Scraped",
-        output_folder=r"C:\Users\sangha\Desktop\scraped_en_slo"
+        start_url=fran,
+        file_name="franagan",
+        output_folder=r"C:\Users\sangha\Desktop\scraped_en_slo",
+        translate=False
     )
 
 
