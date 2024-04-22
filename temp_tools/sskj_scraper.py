@@ -12,7 +12,7 @@ import time
 import sys
 from unidecode import unidecode
 import string
-from time import sleep
+from tqdm import tqdm
 
 
 class ScraperOld:
@@ -149,7 +149,7 @@ class Cleaner:
 
 class Scraper:
     """
-    A class designed to scrape web content using Selenium. tailored for fran.si
+    A class designed to scrape web content using Selenium, tailored for fran.si
     """
 
     def __init__(
@@ -157,87 +157,69 @@ class Scraper:
             start_url: str,
             output_folder: str,
             file_name: str,
-            translate: bool = False
+            total_pages: int = 4884  # Add total pages if known or
+            # expected
     ) -> None:
-        """
-        Initializes the Scraper instance, sets up the Selenium WebDriver not in
-        headless mode, and determines base URL from the start URL. It also 
-        initiates the scraping process.
-
-        :param start_url: The URL from which scraping starts. Assumes a proper
-            URL format.
-        :param output_folder: The directory path where output files are saved.
-        :param file_name: The output file name
-        :param translate: set true if link is google translate to enable
-            next page clicking
-        """
-
-        driver_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen"
-                       r"\data\chromedriver.exe")
-
+        driver_path = r"C:\Users\sangha\Documents\Danny's\SloDictGen\data\chromedriver.exe"
         options = Options()
-
-        if translate:
-            options = webdriver.ChromeOptions()
-
-            prefs = {
-                "translate_whitelists": {"si": "en"},
-                "translate": {"enabled": "True"}
-            }
-            options.add_experimental_option('prefs', prefs)
-
-        self.translate = translate
-        self.driver = webdriver.Chrome(
-            service=Service(driver_path),
-            options=options)
-
-        if not translate:
-            sleep(20)
-
+        self.driver = webdriver.Chrome(service=Service(driver_path),
+                                       options=options)
         self.start_url: str = start_url
-        self.base_url: str = (f"{urlparse(start_url).scheme}:"
-                              f"//{urlparse(start_url).netloc}")
+        self.base_url: str = f"{urlparse(start_url).scheme}://{urlparse(start_url).netloc}"
         self.output_folder: str = output_folder
         self.filename: str = file_name
-        self.output_file: str = f'{output_folder}/{file_name}.html'
+        self.output_file: str = os.path.join(output_folder,
+                                             f'{file_name}.html')
+        self.total_pages = total_pages
         self.pages_scraped = 0
         self.scrape()
 
     def scrape(self) -> None:
-        """
-        Manages the complete scraping cycle, from fetching page content to 
-        finding the next page.
-
-        :return: None.
-        """
-
         current_url = self.start_url
         total_entries = 0
-        while current_url:
-            html_content = self.fetch_page_content(current_url)
-            entries = self.parse_entries(html_content)
-            total_entries += len(entries)
-            self.save_entries(entries)
-            current_url = self.find_next_page_url(html_content)
+        timings = []
+
+        with tqdm(total=self.total_pages) as pbar:
+            while current_url:
+                start_time = time.time()
+
+                html_content = self.fetch_page_content(current_url)
+                entries = self.parse_entries(html_content)
+                total_entries += len(entries)
+                self.save_entries(entries)
+
+                elapsed_time = time.time() - start_time
+                timings.append(elapsed_time)
+
+                current_url = self.find_next_page_url(html_content)
+                self.pages_scraped += 1
+                pbar.update(1)
+
+                # Calculate average time per page from all collected timings
+                avg_time = sum(timings) / len(timings)
+                remaining_pages = self.total_pages - self.pages_scraped
+                estimated_time_left = remaining_pages * avg_time
+
+                pbar.set_postfix_str(
+                    f"Est. Time Left: {estimated_time_left / 60:.2f} min")
+
         print(f'Entries: {total_entries}\n\n')
 
     def fetch_page_content(self, url: str) -> str:
         """
-        Utilizes Selenium WebDriver to navigate to a URL and fetches the 
+        Utilizes Selenium WebDriver to navigate to a URL and fetches the
         entire HTML content of the page.
 
         :param url: The URL to navigate to and fetch content.
         :return: HTML content of the page as a string.
         """
         self.driver.get(url)
-        # Branch-less sleep based on translate value
-        sleep(float(self.translate)*3
-              +float(not self.translate)*2)
+        time.sleep(.1)
         return self.driver.page_source
 
     def parse_entries(self, html_content: str) -> List[str]:
         """
-        Parses HTML content to extract specific entries, removes unwanted 
+        Parses HTML content to extract specific entries, removes unwanted
         elements, and formats them.
 
         :param html_content: The HTML content as a string.
@@ -260,12 +242,12 @@ class Scraper:
         :return: The URL of the next page or None if no next page is found.
         """
         self.pages_scraped += 1
-        print(f'{self.pages_scraped} pages scraped.')
+
         soup = BeautifulSoup(html_content, 'html.parser')
         next_button = soup.find('ul', class_='pagination').find_all('a')[-1]
         if next_button and ("Next" in next_button.text or "Naslednja" in
                             next_button.text):
-            return next_button['href'] if self.translate else self.base_url + next_button['href']
+            return self.base_url + next_button['href']
         return None
 
     def save_entries(self, entries: List[str]) -> None:
@@ -289,16 +271,15 @@ class Scraper:
 
 
 def main() -> None:
-    raw_goog = (r"https://www-fran-si.translate.goog/iskanje"
-                r"?FilteredDictionaryIds=133&Query=*&View=1&_x_tr_sl=sl&_x_tr_tl=en&_x_tr_hl=en&_x_tr_pto=wapp")
-    fran = (r"https://www.fran.si/iskanje?FilteredDictionaryIds=133&View=1"
-            r"&Query=*")
+    fran = r"https://www.fran.si/iskanje?page=3790&FilteredDictionaryIds=133&View=1&Query=*"
+
     x = Scraper(
         start_url=fran,
-        file_name="franagan",
-        output_folder=r"C:\Users\sangha\Desktop\scraped_en_slo",
-        translate=False
+        file_name="3790-",
+        output_folder=r"C:\Users\sangha\Desktop\si_sskj_4-22-24",
+        total_pages=-4884-3789
     )
+    pass
 
 
 if __name__ == "__main__":
