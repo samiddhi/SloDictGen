@@ -11,11 +11,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
-
 function removeDiacriticsExceptCarons(text) {
   const carons = "čžšČŽŠ";
   let result = "";
-
   for (let i = 0; i < text.length; i++) {
     let char = text[i];
     if (carons.includes(char)) {
@@ -27,13 +25,11 @@ function removeDiacriticsExceptCarons(text) {
   }
   return result;
 }
-
 document.addEventListener("DOMContentLoaded", () => {
   // Select all <a> elements within <span class="font_xlarge">
   // and all elements with class "color_orange"
   const selectors = "span.font_xlarge a, .color_orange";
   const elements = document.querySelectorAll(selectors);
-
   elements.forEach((element) => {
     // Process the text content of each element
     const originalText = element.textContent;

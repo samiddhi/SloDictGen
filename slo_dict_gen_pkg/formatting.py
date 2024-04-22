@@ -313,13 +313,13 @@ class HTMLib:
             return file.read()
 
     @staticmethod
-    def js(filename: str = "scripts") -> str:
+    def js(filename: str = "table_scripts") -> str:
         """
         Fetches JS script file contents
 
         :return: JS text
         """
-        path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'JS', f'{filename}.js'))
+        path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'js', f'{filename}.js'))
         with open(path, "r") as file:
             return file.read()
 

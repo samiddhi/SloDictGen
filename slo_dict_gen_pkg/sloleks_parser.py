@@ -1,7 +1,9 @@
+from slo_dict_gen_pkg.grammar_utils import ordered_grammar_name
 from common.imports import *
 from dataclasses import dataclass
 import xml.etree.ElementTree as Et
 from collections import defaultdict
+
 
 
 @dataclass(kw_only=True)
@@ -86,6 +88,7 @@ class WordForm:
     # info from parent entry
     lemma: str
     part_of_speech: str
+
 
     # info for word form
     msd: str

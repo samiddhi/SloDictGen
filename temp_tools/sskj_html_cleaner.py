@@ -2,7 +2,13 @@ import os
 import re
 from bs4 import BeautifulSoup
 
+
 class HTMLTagRemover:
+    """
+    Removes citations, redundant <div class="entry-content">,  <font> tags,
+    and lastly blank lines from an html file. Specifically for data scraped
+    from franDOTsi
+    """
     def __init__(self, directory: str):
         self.directory = directory
         self.removed_count = 0
@@ -48,9 +54,9 @@ class HTMLTagRemover:
     def process_html_content(self, html_content: str) -> str:
         """Process HTML content to modify tags."""
         soup = BeautifulSoup(html_content, 'html.parser')
-        #self.remove_citation_tags(soup)
-        #self.remove_and_preserve_tags(soup)
-        #self.remove_font_tags(soup)
+        self.remove_citation_tags(soup)
+        self.remove_and_preserve_tags(soup)
+        self.remove_font_tags(soup)
         processed_html = self.remove_blank_lines(str(soup))
         return processed_html
 
@@ -67,6 +73,7 @@ class HTMLTagRemover:
     def get_removal_count(self) -> int:
         """Get the total count of modifications made."""
         return self.removed_count
+
 
 # Example usage
 directory_path = './'  # Assumes this file is in the same directory with HTML files

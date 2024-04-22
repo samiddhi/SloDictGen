@@ -25,12 +25,13 @@
 ---
 ## Multi-step process to generate dictionaries:
    1. Grammar Tables
-      - [Parse Sloleks3.0 XML files](slo_dict_gen_pkg/sloleks_parser.py)
-	  - [Parsed Data to HTML](slo_dict_gen_pkg/formatting.py)
-	  - [HTML -> dictionary format](slo_dict_gen_pkg/~TBD~)
+      - Parse Sloleks3.0 XML files with [XMLParser](slo_dict_gen_pkg/sloleks_parser.py)
+	  - Parsed data to HTML with [Definition](slo_dict_gen_pkg/formatting.py)
+	  - HTML -> dictionary format with [TBD]()
    2. SSKJ
-	  - [Scrape SSKJ site (slo & en)](temp_tools/sskj_scraper.py)
-	  - ~TBD~
+	  - Scrape SSKJ site (slo & en) with [Scraper](temp_tools/sskj_scraper.py)
+      - Clean up scraped html with [HTMLTagRemover](temp_tools/sskj_html_cleaner.py)
+      - ~TBD~
 
 ---
 ### RESOURCES:
