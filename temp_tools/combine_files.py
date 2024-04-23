@@ -12,11 +12,26 @@ def combine_html_files(file_paths: List[str], output_file_path: str) -> None:
             with open(file_path, 'r', encoding='utf-8') as infile:
                 outfile.write(infile.read() + "\n")  # Add a newline between files for readability
 
-# Specify the paths to your files in alphabetical order
-file_paths = [
-    '1. á-soslédica.html',
-    '2. soslédje-žvrkljáti.html'
-]
-output_file_path = 'si_sskj.html'
 
-combine_html_files(file_paths, output_file_path)
+def main() -> None:
+    # Specify the paths to your files in alphabetical order
+    file_paths = [
+        '1. á-kíhavec.html',
+        '2. kíhavica-previjálka.html',
+        '3. previjálnica-squint.html',
+        '4. strabismus-zvrkljáti.html'
+    ]
+    output_file_path = 'en_sskj.html'
+
+    file_paths = [
+        '1. á-nacvréti.html',
+        '2. načákati_se-soslédica.html',
+        '3. soslédje-žvrkljáti.html'
+    ]
+    output_file_path = 'si_sskj.html'
+
+    combine_html_files(file_paths, output_file_path)
+
+
+if __name__ == "__main__":
+    main()

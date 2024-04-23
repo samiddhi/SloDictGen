@@ -30,8 +30,10 @@
 	  - HTML -> dictionary format with [TBD]()
    2. SSKJ
 	  - Scrape SSKJ site (slo & en) with [Scraper](temp_tools/sskj_scraper.py)
+        - If (when) scraping takes multiple attempts (multiple scraped files), combine each language with [combine_html_files](temp_tools/combine_files.py)
+          - should have en_sskj.html & si_sskj.html in one directory
       - Clean up scraped html with [HTMLTagRemover](temp_tools/sskj_html_cleaner.py)
-      - ~TBD~
+      - 
 
 ---
 ### RESOURCES:
