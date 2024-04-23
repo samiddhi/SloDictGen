@@ -16,6 +16,9 @@
     for scraper:
         selenium
 
+    for sskj pairing:
+        lxml
+
 ---
 ## Files needed:
    - data/[chromedriver.exe](https://chromedriver.chromium.org/downloads)
@@ -29,11 +32,11 @@
 	  - Parsed data to HTML with [Definition](slo_dict_gen_pkg/formatting.py)
 	  - HTML -> dictionary format with [TBD]()
    2. SSKJ
-	  - Scrape SSKJ site (slo & en) with [Scraper](temp_tools/sskj_scraper.py)
+	  - Scrape SSKJ site (slo & en) with [Scraper()](temp_tools/sskj_html_utils.py)
         - If (when) scraping takes multiple attempts (multiple scraped files), combine each language with [combine_html_files](temp_tools/combine_files.py)
           - should have en_sskj.html & si_sskj.html in one directory
-      - Clean up scraped html with [HTMLTagRemover](temp_tools/sskj_html_cleaner.py)
-      - Pair html \<div class="entry-content"\> elements into JSON
+      - Clean up scraped html with [HTMLTagRemover()](temp_tools/sskj_html_utils.py)
+      - Pair html \<div class="entry-content"\> elements into JSON with [PairToJson()](temp_tools/sskj_html_utils)
 
 ---
 ### RESOURCES:
