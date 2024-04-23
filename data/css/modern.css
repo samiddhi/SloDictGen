@@ -1,0 +1,204 @@
+/*!
+ * modern-minimalist.css v1
+ */
+/**
+ * Theme: Modern Minimalist
+ */
+
+/**
+From Gilbert-Penrose Templeton:
+
+Overall, your stylesheet looks well-structured and follows many modern web development standards. However, here are some critical points and suggestions for improvement:
+
+1. **Comments and Documentation**: You have a good start with comments at the beginning of the file, but consider adding more comments throughout the stylesheet to explain the purpose of specific sections or rules, especially for more complex styles.
+
+2. **Font Stacks**: While using `Verdana, sans-serif` for the `font-family` is fine, consider adding more fallbacks to ensure compatibility across different platforms and devices.
+
+3. **Container Class**: The `container` class is well-defined with a maximum width and margin. Ensure that this class is used consistently throughout your HTML to maintain layout consistency.
+
+4. **Button Styling**: The button styles are adequate, but you may want to consider adding focus and active states for better accessibility and user experience.
+
+5. **Color Usage**: The color scheme appears consistent and appropriate, but ensure that color contrast meets accessibility standards, especially for text against background colors.
+
+6. **CSS Resets or Normalize**: Consider including a CSS reset or normalize.css to ensure consistent rendering across different browsers.
+
+7. **Unit Usage**: You've used `px` for most measurements, which is common, but consider using relative units like `em`, `rem`, or `%` for better scalability and responsiveness.
+
+8. **Overlapping Pop-ups**: The positioning of the pop-up content might overlap with other elements, especially on smaller screens. Consider adjusting the positioning to ensure it doesn't obscure other content.
+
+9. **Accessibility**: Ensure that your styles accommodate users with disabilities by following accessibility best practices, such as providing sufficient color contrast and ensuring keyboard navigation.
+
+10. **Vendor Prefixes**: Depending on browser support requirements, you may need to include vendor prefixes for certain CSS properties, although this is becoming less common with modern browsers.
+
+11. **Media Queries**: Consider adding media queries for responsive design to ensure your styles adapt well to different screen sizes and devices.
+**/
+
+body {
+    font-family: Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 10px
+}
+
+.content {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    padding: 20px;
+    overflow-x: auto;
+}
+
+.heading {
+    background-color: #f2f2f2;
+    padding: 10px 20px;
+    margin: 0;
+}
+
+.inflection {
+    width: 100%;
+    border-collapse: collapse;
+    padding: 0px
+}
+
+.inflection th, .inflection td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+}
+
+.inflection th {
+    background-color: #f2f2f2;
+}
+
+.hidden {
+    display: none;
+}
+
+.button {
+    font-family: Verdana, sans-serif;
+    background-color: #fa7d7d;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.button:hover {
+    background-color: #7ac3ff;
+}
+
+.lineabove {
+    border-top: 1px solid #ccc; /* Added line above */
+    margin-top: 10px; /* Added margin top */
+    margin-bottom: 6px;
+    padding-top: 10px
+}
+
+.gray {
+    font-family: Verdana, sans-serif;
+    color:#838383
+}
+
+.gray-small-ital,
+.blue-small-ital,
+.red-small-ital,
+.yellow-small-ital {
+    font-family: Verdana, sans-serif;
+    font-size: 0.7em; /* Adjust the numerical value as needed */
+    font-style: italic; /* Italicized text */
+    position: relative;
+    cursor: pointer;
+    display: block;
+    top: -0.1em; /* Adjust this value as needed */
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.gray-small-ital {
+    color: #838383;
+}
+
+.blue-small-ital {
+    color: #7ac3ff;
+}
+
+.red-small-ital {
+    color: #fa7d7d;
+}
+
+.yellow-small-ital {
+    color: #ffea00;
+}
+
+.gray-small-ital ~ .blue-small-ital,
+.gray-small-ital ~ .red-small-ital,
+.gray-small-ital ~ .yellow-small-ital,
+.blue-small-ital ~ .gray-small-ital,
+.blue-small-ital ~ .red-small-ital,
+.blue-small-ital ~ .yellow-small-ital,
+.red-small-ital ~ .gray-small-ital,
+.red-small-ital ~ .blue-small-ital,
+.red-small-ital ~ .yellow-small-ital,
+.yellow-small-ital ~ .gray-small-ital,
+.yellow-small-ital ~ .blue-small-ital,
+.yellow-small-ital ~ .red-small-ital {
+    margin-top: 0%; /* Adjust this value as needed */
+}
+.blue-underline {
+    text-decoration: underline;
+    text-decoration-color: #7ac3ff;
+}
+
+.red-underline {
+    text-decoration: underline;
+    text-decoration-color: #fa7d7d;
+}
+
+.yellow-underline {
+    text-decoration: underline;
+    text-decoration-color: #ffea00;
+}
+
+
+.pop-up + .pop-up {
+    margin-top: 5%; /* Adjust this value as needed */
+}
+
+.pop-up {
+    position: relative;
+    cursor: pointer;
+    display: block;
+}
+
+.pop-up .pop-up-content {
+    visibility: hidden;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute;
+    z-index: 1;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: nowrap; /* Prevent text wrapping */
+    width: max-content; /* Adjust width to fit content dynamically */
+}
+
+.pop-up:hover .pop-up-content {
+    visibility: visible;
+    opacity: 1;
+}
