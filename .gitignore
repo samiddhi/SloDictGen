@@ -4,7 +4,6 @@ data/chromedriver.exe
 tests/playground.py
 tests/__pycache__
 slo_dict_gen_pkg/__pycache__
-data/HTML
 data/html/sskj
 
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
