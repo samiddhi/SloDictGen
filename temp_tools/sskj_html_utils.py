@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
-from typing import List, Optional
+from typing import Dict, List, Optional
 import os
 import time
 import sys
@@ -18,6 +18,11 @@ import re
 
 from lxml import etree
 import json
+
+from icecream import ic
+
+# Add the parent directory
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 class PairToJson:
@@ -33,9 +38,11 @@ class PairToJson:
             eng_content = self.serialize_div_content(eng)
             # Use the link as the key; it's expected to be found in each entry
             slo_link = \
-            slo.xpath(".//span[contains(@class, 'font_xlarge')]/a/@href")[0]
+                slo.xpath(".//span[contains(@class, 'font_xlarge')]/a/@href")[
+                    0]
             eng_link = \
-            eng.xpath(".//span[contains(@class, 'font_xlarge')]/a/@href")[0]
+                eng.xpath(".//span[contains(@class, 'font_xlarge')]/a/@href")[
+                    0]
             if slo_link == eng_link:
                 paired_data[slo_link] = {
                     'slovenian_content': slo_content,
@@ -57,7 +64,8 @@ class PairToJson:
 
     @staticmethod
     def parse_html_stream(file_path: str):
-        context = etree.iterparse(file_path, events=('end',), tag='div', html=True)
+        context = etree.iterparse(file_path, events=('end',), tag='div',
+                                  html=True)
         for event, elem in context:
             if 'entry-content' in elem.get('class', '').split():
                 yield elem
@@ -82,11 +90,11 @@ class HTMLTagRemover:
     and lastly blank lines from an html file. Specifically for data scraped
     from franDOTsi
     """
+
     def __init__(self, directory: str):
         self.directory = directory
         self.removed_count = 0
         self.process_files
-
 
     def read_file(self, file_path: str) -> str:
         """Read the contents of a file."""
@@ -123,7 +131,8 @@ class HTMLTagRemover:
 
     def remove_blank_lines(self, html_content: str) -> str:
         """Remove all blank lines from the HTML content using regex."""
-        cleaned_content = re.sub(r'^\s*$', '', html_content, flags=re.MULTILINE)
+        cleaned_content = re.sub(r'^\s*$', '', html_content,
+                                 flags=re.MULTILINE)
         return cleaned_content
 
     def process_html_content(self, html_content: str) -> str:
@@ -269,8 +278,65 @@ class Scraper:
         self.driver.quit()
 
 
+class FindUntranslatedHTML:
+    def __init__(
+            self,
+            path: str = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
+                         r"\html\sskj\paired_entries.json")
+    ) -> None:
+        """
+        Reads JSON file generated with PairToJson class for untranslated
+        English versions of HTML
+
+        :param path: path to JSON
+        """
+        self.untranslated: List[str] = []
+
+        with open(path, 'rb') as file:
+            pairs: Dict[str, Dict[str, str]] = json.load(file)
+
+        for unique_link in pairs:
+            stripped: List[str] = [
+                self.stripchars(
+                    html,
+                    [' ', ' ', '\r', '\n', '\t']
+                ) for html in pairs[unique_link].values()
+            ]
+
+            frontsearch, backsearch = True, True
+            front, back = 0, 0
+            en, slo = stripped[0], stripped[1]
+            longest = max(len(en), len(slo))
+            for i in range(0, longest-1):
+                if frontsearch and en[i] == slo[i]:
+                    front += 1
+                elif backsearch:
+                    frontsearch = False
+                else:
+                    break
+
+                if backsearch and en[-i] == slo[-i]:
+                    back += 1
+                elif frontsearch:
+                    backsearch = False
+                else:
+                    break
+
+            if max(front, back) >= longest/4:
+                self.untranslated.append(pairs[unique_link]["english_content"])
+
+        with open('untranslated.txt', 'w') as f:
+            print('\n\n'.join(self.untranslated), file=f)
+
+
+    def stripchars(self, inpt: str, chars: List[str]) -> str:
+        if not chars:
+            return inpt
+        outpt = ''.join(inpt.split(chars[0]))
+        return self.stripchars(outpt, chars[1:])
+
 def main() -> None:
-    pass
+    FindUntranslatedHTML()
 
 
 if __name__ == "__main__":
