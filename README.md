@@ -37,7 +37,9 @@
           - should have en_sskj.html & si_sskj.html in one directory
       - Clean up scraped html with [HTMLTagRemover()](temp_tools/sskj_html_utils.py)
       - Pair html \<div class="entry-content"\> elements into JSON with [PairToJson()](temp_tools/sskj_html_utils)
+        - PairToJson assumes the files are identically ordered and will break when a mismatch is encountered. This needs to be manually corrected in the html files.
+
 
 ---
 ### RESOURCES:
-   - [Scraping a translated page](https://www.listendata.com/2020/10/translating-web-page-while-scraping.html)
+   - [Scraping a translated page](https://www.listendata.com/2020/10/translating-web-page-while-scraping.html) ~ *broken* ~
