@@ -7,7 +7,7 @@ from xml.etree import ElementTree as Et
 from icecream import ic
 from tqdm import tqdm
 
-from slo_dict_gen_pkg import SloleksEntry, XMLParser
+from slo_dict_gen_pkg import SloleksEntry, XMLtoSloleksEntrys
 
 import random
 
@@ -126,7 +126,7 @@ def sample_entry_obj(
     :param path: default all_isotopes.xml
     :return:
     """
-    parser: XMLParser = XMLParser(path)
+    parser: XMLtoSloleksEntrys = XMLtoSloleksEntrys(path)
     random.shuffle(parser.entries)
     if lemma is not None and p_o_s is not None:
         for entry in parser.entries:

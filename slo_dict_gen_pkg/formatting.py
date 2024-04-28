@@ -1,5 +1,7 @@
 from common.imports import *
-from slo_dict_gen_pkg.sloleks_parser import SloleksEntry, WordForm, Representation, XMLParser
+from slo_dict_gen_pkg.sloleks_parser import XMLtoSloleksEntrys
+from slo_dict_gen_pkg.sloleks_objs import Representation
+from slo_dict_gen_pkg import SloleksEntry, WordForm
 from tests.parsing_utils import sample_entry_obj
 from slo_dict_gen_pkg.grammar_utils import ordered_grammar_name, return_gram_feat_type, gfcat, table_types
 
