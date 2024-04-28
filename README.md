@@ -31,10 +31,11 @@
 
 ---
 ## Multi-step process to generate dictionaries:
-   1. Grammar Tables
-      - Parse Sloleks3.0 XML files with [XMLParser](slo_dict_gen_pkg/sloleks_parser.py)
-	  - Parsed data to HTML with [Definition](slo_dict_gen_pkg/formatting.py)
-	  - HTML -> dictionary format with [TBD]()
+   1. Sloleks
+      1. Grammar Tables
+            - Parse Sloleks3.0 XML files with [XMLParser](slo_dict_gen_pkg/sloleks_parser.py)
+            - Parsed data to HTML with [Definition](slo_dict_gen_pkg/formatting.py)
+            - lemma+wordform mapping saved as JSON file with [LemmaFormsParser](slo_dict_gen_pkg/sloleks_parser.py) - [GPT](https://chat.openai.com/share/aef8d7da-ae6b-431b-94ae-4c6bfca90130)
    2. SSKJ
 	  - Scrape SSKJ site (slo & en) with [Scraper()](temp_tools/sskj_html_utils.py)
         - If (when) scraping takes multiple attempts (multiple scraped files), combine each language with [combine_html_files](temp_tools/combine_files.py)

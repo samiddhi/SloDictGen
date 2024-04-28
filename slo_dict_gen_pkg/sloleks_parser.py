@@ -1,151 +1,13 @@
-from slo_dict_gen_pkg.grammar_utils import ordered_grammar_name
-from common.imports import *
-from dataclasses import dataclass
-import xml.etree.ElementTree as Et
+from slo_dict_gen_pkg.sloleks_objs import SloleksEntry, WordForm, Representation
 from collections import defaultdict
+import xml.etree.ElementTree as Et
+import json
+import os
+
+from typing import Dict, Optional, List
 
 
-
-@dataclass(kw_only=True)
-class SloleksEntry:
-    """
-    Represents an entry in the Sloleks database.
-
-    Instance Variables:
-        lemma (str)
-
-        part_of_speech (str)
-
-        lemma_grammatical_features (Dict[str, str]):
-            Dictionary that may contain:  ['gender', 'vform', 'form',
-            'animate', 'definiteness', 'number', 'person', 'type', 'degree',
-            'aspect', 'case']
-
-        xml_file (str):
-            XML file path
-
-        forms_dict (Dict[str, WordForm]):
-            Dictionary mapping form grammar names to WordForm objects.
-    """
-    lemma: str
-    part_of_speech: str
-    lemma_grammatical_features: Dict[str, str]
-    xml_file: str
-
-    all_forms: List['WordForm']
-    forms_dict: Dict[str, List['WordForm']]
-
-    all_reps: List['Representation'] = None
-    reps_dict: Dict[str, List['Representation']] = None
-
-
-    def __post_init__(self):
-        self.all_reps = []
-        self.reps_dict = defaultdict(list)
-
-        for word_form in self.all_forms:
-            for representation in word_form.representations:
-                self.all_reps.append(representation)
-                self.reps_dict[word_form.grammar_names].append(representation)
-
-@dataclass(kw_only=True)
-class WordForm:
-    """
-    Represents a word form with associated grammatical information.
-
-    Instance Variables:
-        lemma (str): Lemma of form's parent entry.
-
-        part_of_speech (str): Part of speech of form/lemma.
-
-        form_representation (str): The word form.
-
-        msd (str): Morphosyntactic descriptor of the form.
-
-        accentuation (str): Accentuation of the form.
-
-        frequency (int): Form's frequency in gigafida.
-
-        grammatical_features (Dict[str, str]): Gram. features of the form.
-
-        pronunciation_data (List[Dict[str, str]]):  Pronunciation data of the
-        form. List of dicts with key as pronunciation notation (IPA,
-        SAMPA), and value as pronunciation string.
-
-        v_form (str): Verb form.
-
-        case (str): Grammatical case.
-
-        person (str): Grammatical person.
-
-        number (str): Singular/Dual/Plural.
-
-        gender (str): Grammatical gender.
-
-        grammar_name (str): Grammar name used for indexing WordForms within
-        Entry.
-    """
-    # info from parent entry
-    lemma: str
-    part_of_speech: str
-
-
-    # info for word form
-    msd: str
-
-    # List of sublists whose first element is the representation string
-    # and whose second element is the "norm" attribute value (aka. what the
-    # gray-small-ital css format text will be under it in the table)
-    representations: List['Representation']
-
-    #
-    grammatical_features: Dict[str, str]
-
-    # Vars to be pulled from grammatical_features & pronunciation_data
-    v_form: str = None
-    case: str = None
-    person: str = None
-    number: str = None
-    gender: str = None
-    degree: str = None
-    clitic: str = None
-
-    def __post_init__(self):
-        self.v_form = self.grammatical_features.get("vform", None)
-        self.case = self.grammatical_features.get("case", None)
-        self.person = self.grammatical_features.get("person", None)
-        self.number = self.grammatical_features.get("number", None)
-        self.gender = self.grammatical_features.get(
-            "gender",
-             "agender" if self.part_of_speech in ["pronoun",
-                                                  "adjective",
-                                                  "numeral"]
-             else
-             None)
-        self.degree = self.grammatical_features.get("degree", None)
-        self.clitic = self.grammatical_features.get("clitic", None)
-        self.grammar_names = ordered_grammar_name(
-            v_form=self.v_form,
-            case=self.case,
-            person=self.person,
-            number=self.number,
-            gender=self.gender,
-            degree=self.degree,
-            clitic=self.clitic,
-            return_type="tuple"
-        )
-
-
-@dataclass(kw_only=True)
-class Representation:
-    form_representation: str
-    norms: List[str]
-    frequency: int
-    accentuations: List[str]
-    pronunciation_dict: dict
-
-
-class XMLParser:
+class XMLtoSloleksEntrys:
     """
     Parses XML files containing entries and forms data into SloleksEntry
     objects.
@@ -196,7 +58,7 @@ class XMLParser:
 
         # Compiles a general list of forms and a dict by each grammar name
         forms: List[WordForm] = []
-        word_forms: Dict[str, List[WordForm]] = {}
+        word_forms: Dict[str, List[WordForm]] = defaultdict()
         for wordForm_element in entry_element.findall('.//wordForm'):
             form: WordForm = self._parse_wordform(
                 wordForm_element,
@@ -373,30 +235,73 @@ class XMLParser:
                  for form_element in pronunciation_element.findall('.//form')})
         return pronunciation_data
 
+    @staticmethod
+    def test(path) -> None:
+        """
+        Test XMLParser class.
+        """
+        parser = XMLtoSloleksEntrys(path)
+        for entry in parser.entries:
+            print(f'{entry.lemma}:')
+            for wordform_list in entry.forms_dict.values():
+                for wordform in wordform_list:
+                    print(f'\t{wordform.grammar_names}')
+                    for rep in wordform.representations:
+                        print(f'\t\t{rep}')
 
-# region TESTING
-def test_parser(path):
-    """
-    Test XMLParser class.
-    """
-    parser = XMLParser(path)
-    for entry in parser.entries:
-        print(f'{entry.lemma}:')
-        for wordform_list in entry.forms_dict.values():
-            for wordform in wordform_list:
-                print(f'\t{wordform.grammar_names}')
-                for rep in wordform.representations:
-                    print(f'\t\t{rep}')
+
+class LemmaFormsParser:
+    """Class for parsing XML files containing lexicological information."""
+    def __init__(self, directory: str) -> None:
+        """
+        Initialize the LemmaFormsParser with the directory containing XML files.
+
+        :param directory: The directory path containing XML files.
+        """
+        self.directory = directory
+        self.data: Dict[str, List[str]] = {}
+
+    def parse_xml_files(self) -> None:
+        """Parse XML files in the specified directory and build the data dictionary."""
+        for filename in os.listdir(self.directory):
+            if filename.endswith(".xml"):
+                filepath = os.path.join(self.directory, filename)
+                tree = Et.parse(filepath)
+                root = tree.getroot()
+                for entry in root.findall(".//entry"):
+                    lemma = entry.find(".//lemma").text.strip()
+                    for orthlist in entry.findall(".//orthographyList"):
+                        for form in orthlist.findall(".//form"):
+                            wordform = form.text.strip()
+                            if lemma in self.data:
+                                self.data[lemma].append(wordform)
+                            else:
+                                self.data[lemma] = [wordform]
+
+    def save_data_as_json(self, filepath: str) -> None:
+        """
+        Save the parsed data as JSON to a file.
+
+        :param filepath: The file path to save the JSON data.
+        """
+        with open(filepath, "w", encoding="utf-8") as file:
+            json.dump(self.data, file, ensure_ascii=False, indent=4)
 
 
 if __name__ == "__main__":
-    sample_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
-                   r"\Markdown\XML\all_isotopes.xml")
+    test_sample_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
+                        r"\xml\all_isotopes.xml")
+    test_path = r"C:\Users\sangha\Documents\Danny's\SloDictGen\data\xml"
     parent_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
                    r"\Sloleks.3.0")
-    example_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
-                    r"\Sloleks.3.0\sloleks_3.0_002.xml")
+    parent_sample_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
+                          r"\Sloleks.3.0\sloleks_3.0_002.xml")
 
-    test_parser(sample_path)
+    # Trie Parsing
+    parser = LemmaFormsParser(parent_path)
+    parser.parse_xml_files()
+    parser.save_data_as_json(r"C:\Users\sangha\Documents\Danny's\SloDictGen"
+                             r"\data\pickles\sloleks_lemmas_forms.json")
 
-# endregion
+
+
