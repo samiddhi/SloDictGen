@@ -16,8 +16,12 @@
     for scraper:
         selenium
 
+    for scoller:
+        pyautogui
+
     for sskj pairing:
         lxml
+
 
 ---
 ## Files needed:
