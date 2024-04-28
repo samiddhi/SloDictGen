@@ -1,27 +1,24 @@
-from selenium import webdriver
+import pyautogui
 import time
 
-# Initialize the web driver (make sure you have the appropriate driver installed and added to PATH)
-driver = webdriver.Chrome()
+sites = [f"https://uncle-ayiro.github.io/SloDictGen/data/html/sskj/si_sskj_split/si_sskj_{num}.html"
+         for num in range(1, 4)]
 
-# Open the desired webpage
-driver.get(r"C:\Users\sangha\Documents\Danny's\SloDictGen\data\html\sskj\si_sskj.html")
+# Delay before starting (in seconds)
+initial_delay = 5
+# Delay between each scroll action (in seconds)
+scroll_delay = 0.01
+# Number of scrolls
+num_scrolls = 200000
 
-# Scroll down the page gradually
-scroll_pause_time = 1  # Adjust this value as needed
-screen_height = driver.execute_script("return window.screen.height;")
-i = 1
-while True:
-    # Scroll down to the bottom of the page
-    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    # Wait for the page to load
-    time.sleep(scroll_pause_time)
-    # Calculate new scroll height and compare with the last scroll height
-    new_height = driver.execute_script("return document.body.scrollHeight")
-    if new_height == screen_height:
-        break
-    screen_height = new_height
-    i += 1
+# Wait for the initial delay before starting
+time.sleep(initial_delay)
 
-# Close the browser
-driver.quit()
+# Loop to simulate scrolling
+for _ in range(num_scrolls):
+    # Simulate a mouse click to focus on the browser window
+    #pyautogui.click()
+    # Scroll down by moving the mouse wheel
+    pyautogui.scroll(-75)
+    # Wait for the scroll delay
+    time.sleep(scroll_delay)
