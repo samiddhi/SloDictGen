@@ -1,4 +1,8 @@
-from typing import Dict, List, Set, Union, Tuple
+from typing import Dict, List, Set, Union, Tuple, Optional
+
+import os
+proj_dir = os.path.abspath(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 from icecream import ic
 ic.configureOutput(includeContext=True)

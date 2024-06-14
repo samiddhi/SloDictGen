@@ -1,11 +1,10 @@
 from slo_dict_gen_pkg.sloleks_objs import SloleksEntry, WordForm, \
     Representation
+from common.imports import *
 from collections import defaultdict
 import xml.etree.ElementTree as Et
 import json
 import os
-
-from typing import Dict, Optional, List
 
 
 class XMLtoSloleksEntrys:
@@ -300,8 +299,6 @@ class LemmaFormsParser:
 def sloleks_to_pickles() -> None:
     from tqdm import tqdm
     import pickle
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    proj_dir = os.path.abspath(os.path.join(current_dir, '..'))
     slolex_dir = os.path.abspath(os.path.join(proj_dir, 'data', 'Sloleks.3.0'))
 
     xml_files = [f for f in os.listdir(slolex_dir) if f.endswith(".xml")]
