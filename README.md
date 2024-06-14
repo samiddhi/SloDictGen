@@ -9,9 +9,10 @@
         airium
         pyperclip
 
-    for parser:
+    for parsers:
         beautifulsoup4
         openpyxl
+        unidecode
 
     for scraper:
         selenium
@@ -36,6 +37,9 @@
             - Parse Sloleks3.0 XML files with [XMLParser](slo_dict_gen_pkg/sloleks_parser.py)
             - Parsed data to HTML with [Definition](slo_dict_gen_pkg/formatting.py)
             - lemma+wordform mapping saved as JSON file with [LemmaFormsParser](slo_dict_gen_pkg/sloleks_parser.py) - [GPT](https://chat.openai.com/share/aef8d7da-ae6b-431b-94ae-4c6bfca90130)
+            - Data parsed from XMLs to pickle with [sloleks_to_pickles](slo_dict_gen_pkg/sloleks_parser.py)
+              - can skip this step + save time by modding next step's code
+            - Convert pickles to SQLite database with [sloleks_to_sqlite.py](slo_dict_gen_pkg/sloleks_to_sqlite.py) - [GPT](https://chatgpt.com/share/d25f1a4e-545d-42d2-87d1-cdcdf5e0eb69)
    2. SSKJ
 	  - Scrape SSKJ site (slo & en) with [Scraper()](temp_tools/sskj_html_utils.py)
         - If (when) scraping takes multiple attempts (multiple scraped files), combine each language with [combine_html_files](temp_tools/combine_files.py)

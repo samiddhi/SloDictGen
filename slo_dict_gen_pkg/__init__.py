@@ -7,4 +7,4 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 __all__ = ["formatting", 'XMLtoSloleksEntrys', 'grammar_utils', 'os', "List",
-           "Dict", "lg", "SloleksEntry", "WordForm", "Representation"]
+           "Dict", "logging", "SloleksEntry", "WordForm", "Representation"]

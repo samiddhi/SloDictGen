@@ -1,4 +1,5 @@
-from slo_dict_gen_pkg.sloleks_objs import SloleksEntry, WordForm, Representation
+from slo_dict_gen_pkg.sloleks_objs import SloleksEntry, WordForm, \
+    Representation
 from collections import defaultdict
 import xml.etree.ElementTree as Et
 import json
@@ -27,8 +28,17 @@ class XMLtoSloleksEntrys:
 
         :param xml_file: Path to the XML file to parse.
         """
-        self.xml_file = xml_file
-        self.entries = self._parse_xml_file()
+        self.xml_file: str = xml_file
+        self.entries: List[SloleksEntry] = self._parse_xml_file()
+
+    def __str__(self):
+        return self.entries
+
+    def __iter__(self):
+        return iter(self.entries)
+
+    def __len__(self):
+        return len(self.entries)
 
     def _parse_xml_file(self) -> List[SloleksEntry]:
         """
@@ -182,7 +192,7 @@ class XMLtoSloleksEntrys:
         freq: int = int(orthography_element.find('.//measure['
                                                  '@type="frequency"]').text)
 
-        accentuations: List(str) = []
+        accentuations: List[str] = []
         for accentuation_element in accentuation_elements:
             accentuations.extend(
                 [form_element.text for form_element
@@ -251,11 +261,10 @@ class XMLtoSloleksEntrys:
 
 
 class LemmaFormsParser:
-    """Class for parsing XML files containing lexicological information."""
+    """Parses xml file for the lemma of each entry and its respective forms"""
+
     def __init__(self, directory: str) -> None:
         """
-        Initialize the LemmaFormsParser with the directory containing XML files.
-
         :param directory: The directory path containing XML files.
         """
         self.directory = directory
@@ -288,20 +297,27 @@ class LemmaFormsParser:
             json.dump(self.data, file, ensure_ascii=False, indent=4)
 
 
+def sloleks_to_pickles() -> None:
+    from tqdm import tqdm
+    import pickle
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    proj_dir = os.path.abspath(os.path.join(current_dir, '..'))
+    slolex_dir = os.path.abspath(os.path.join(proj_dir, 'data', 'Sloleks.3.0'))
+
+    xml_files = [f for f in os.listdir(slolex_dir) if f.endswith(".xml")]
+
+    for filename in tqdm(xml_files, desc='Processing files'):
+        # Process the current XML file
+        entries = list(XMLtoSloleksEntrys(os.path.join(slolex_dir, filename)))
+
+        # Save the entries as a pickle file with the same name as the XML file
+        pickle_file_path = os.path.join(
+            proj_dir, 'data', 'pickles', 'sloleksentry_objects',
+            os.path.splitext(filename)[0] + '.pkl'
+        )
+        with open(pickle_file_path, 'wb') as f:
+            pickle.dump(entries, f)
+
+
 if __name__ == "__main__":
-    test_sample_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
-                        r"\xml\all_isotopes.xml")
-    test_path = r"C:\Users\sangha\Documents\Danny's\SloDictGen\data\xml"
-    parent_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
-                   r"\Sloleks.3.0")
-    parent_sample_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
-                          r"\Sloleks.3.0\sloleks_3.0_002.xml")
-
-    # Trie Parsing
-    parser = LemmaFormsParser(parent_path)
-    parser.parse_xml_files()
-    parser.save_data_as_json(r"C:\Users\sangha\Documents\Danny's\SloDictGen"
-                             r"\data\pickles\sloleks_lemmas_forms.json")
-
-
-
+    pass

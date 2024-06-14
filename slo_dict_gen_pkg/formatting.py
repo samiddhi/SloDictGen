@@ -16,6 +16,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 failure: bool = False
 
+
 class Definition:
     def __init__(self, entry: SloleksEntry, test: bool = False):
         self.entry = entry
@@ -46,17 +47,17 @@ class InflectionSection:
         wordforms_displayed = int(tables)
 
         if wordforms_displayed != len(entry.all_reps):
-            lg.critical(f"{wordforms_displayed}/{len(entry.all_reps)} forms displayed for {entry.lemma}")
+            logging.critical(f"{wordforms_displayed}/{len(entry.all_reps)} forms displayed for {entry.lemma}")
             warning = ((f'Warning: <span class=red-underline>'
-                            f'{wordforms_displayed}</span>/{len(entry.all_reps)} '
-                            f'wordforms displayed. All valid forms listed at bottom of page.<br>')
-                            + raw_tables)
+                        f'{wordforms_displayed}</span>/{len(entry.all_reps)} '
+                        f'wordforms displayed. All valid forms listed at bottom of page.<br>')
+                       + raw_tables)
             reps_listed = ", ".join([rep.form_representation for rep in entry.all_reps])
             self.section = warning + f'<p class="lineabove">{reps_listed}</p>'
         else:
             self.section = raw_tables
 
-        print(f"{wordforms_displayed}/{len(entry.all_reps)} forms displayed for {entry.lemma}")
+        #print(f"{wordforms_displayed}/{len(entry.all_reps)} forms displayed for {entry.lemma}")
 
     def __str__(self):
         if self.test:
@@ -283,7 +284,7 @@ class HTMLib:
         with a.div(klass='container'):
             a.button(klass='button', onclick=f"toggleTable('inflection_{entry.lemma}')", _t=f'{id}s')
             with a.div(klass='content', id=f'{id}_{entry.lemma}'):
-                lg.warning("after debugging, must reset klass to 'content hidden'")
+                logging.warning("after debugging, must reset klass to 'content hidden'")
                 for input in html:
                     a(str(input))
         return str(a)
@@ -339,12 +340,13 @@ class HTMLib:
 
 
 if __name__ == "__main__":
-
     pos = ("pronoun")
 
     # Issues: se (pron)
 
-    sample_entry = sample_entry_obj(path=r"C:\\Users\\sangha\\Documents\\Danny's\\SloDictGen\\data\\Sloleks.3.0\\sloleks_3.0_009.xml", lemma='ležeč', p_o_s="adjective")
+    current_dir: str = os.path.dirname(os.path.abspath(__file__))
+    xml_file_path: str = os.path.abspath(os.path.join(current_dir, '..', 'data', 'Sloleks.3.0', 'sloleks_3.0_009.xml'))
+    sample_entry: SloleksEntry = sample_entry_obj(path=xml_file_path, lemma='ležeč', p_o_s="adjective")
 
-    infsec = Definition(sample_entry, test=True)
-    pyperclip.copy(str(infsec))
+    infsec: Definition = Definition(sample_entry, test=True)
+    pyperclip.copy(str(InflectionSection(sample_entry)))

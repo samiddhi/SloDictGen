@@ -1,7 +1,7 @@
 from common.imports import *
 
 import os
-from typing import List, Set, Dict
+from typing import List, Set, Dict, Any
 from xml.etree import ElementTree as Et
 
 from icecream import ic
@@ -193,7 +193,7 @@ def record_pos_isotopes(
         path: str,
         write: bool = False,
         count: bool = False
-) -> Dict[str, Dict[int, Dict[str, ...]]]:
+) -> Dict[str, Dict[int, Dict[str, Any]]]:
     """
     Parses XML files and records the total number of each isotope instance.
     Where isotope refers to the number of wordforms a particular part of
@@ -303,14 +303,21 @@ def record_pos_isotopes(
 
 
 if __name__ == "__main__":
-    sample_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
-                   r"\Markdown\XML\sloleks_3.0_sample.xml")
-    sample_parent = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
-                     r"\Markdown\XML")
-    parent_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
-                   r"\Sloleks.3.0")
-    example_path = (r"C:\Users\sangha\Documents\Danny's\SloDictGen\data"
-                    r"\Sloleks.3.0\sloleks_3.0_009.xml")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    proj_dir = os.path.abspath(os.path.join(current_dir, '..'))
+    slolex_dir = os.path.abspath(os.path.join(proj_dir, 'data', 'Sloleks.3.0'))
+
+    sample_parent = os.path.abspath(os.path.join(
+        proj_dir, 'data', 'xml'
+    ))
+
+    sample_path = os.path.abspath(os.path.join(
+        sample_parent, 'sloleks_3.0_sample.xml'
+    ))
+
+    example_path = os.path.abspath(os.path.join(
+        slolex_dir, 'sloleks_3.0_009.xml'
+    ))
 
     entries_info = record_pos_isotopes(example_path)
     for pos, formctdict in entries_info.items():
