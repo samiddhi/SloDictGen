@@ -1,5 +1,5 @@
 from common.imports import *
-from slo_dict_gen_pkg.sloleks_parser import XMLtoSloleksEntrys
+from slo_dict_gen_pkg.parsers import XMLtoSloleksEntrys
 from slo_dict_gen_pkg.sloleks_objs import Representation
 from slo_dict_gen_pkg import SloleksEntry, WordForm
 from tests.parsing_utils import sample_entry_obj

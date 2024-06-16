@@ -1,4 +1,4 @@
-from .sloleks_parser import XMLtoSloleksEntrys
+from .parsers import XMLtoSloleksEntrys
 from .sloleks_objs import SloleksEntry, WordForm, Representation
 from common.imports import *
 import os
