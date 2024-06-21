@@ -11,8 +11,8 @@ import sqlite3
 
 sskj_entries_db: str = os.path.abspath(os.path.join(
     proj_dir, 'data', 'db', 'sskj_entries.db'))
-sskj_entries_db: str = os.path.abspath(os.path.join(
-    proj_dir, 'data', 'db', 'sskj_entries.db'))
+sloleks_db: str = os.path.abspath(os.path.join(
+    proj_dir, 'data', 'db', 'sloleks.db'))
 
 
 class SloleksToSQLite:

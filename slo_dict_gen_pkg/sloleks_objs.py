@@ -2,7 +2,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Dict, List
 
-from slo_dict_gen_pkg.grammar_utils import ordered_grammar_name
+from utils.grammar_utils import ordered_grammar_name
 
 
 @dataclass(kw_only=True)
