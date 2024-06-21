@@ -1,7 +1,19 @@
-from typing import Callable, Any, Iterable, List
+from typing import Callable, Any, Iterable, List, Tuple
 from tqdm import tqdm
 from icecream import ic
 from utils.json_utils import extend_json_array
+import os
+import sys
+
+
+def get_os() -> str:
+    if sys.platform.startswith('win'):
+        return "win"
+    elif sys.platform.startswith('darwin'):
+        return "mac"
+    else:
+        return "other"
+
 
 def batch_and_process(
         data: Any,
@@ -11,7 +23,8 @@ def batch_and_process(
         batch_func: Callable[[Iterable[Any]], None],
         log_path: str = None,
         _track: bool = False,
-        _batch_limit: int = float('inf')
+        _batch_limit: int = float('inf'),
+        _skip: Tuple[Any] = (None, )
 ) -> None:
     """
     Batch data by specified size into list, process data before batching, pass batch to specified ``batch_func`` arg
@@ -23,6 +36,7 @@ def batch_and_process(
     :param batch_func: The function to pass each batch into.
     :param _track: ``True`` prints total batch and length counts
     :param _batch_limit: ``int`` limits total batch count for testing purposes
+    :param _skip: Default ``None``, denotes which values to exclude from batching
     :return: None
     """
     current_batch = []
@@ -32,6 +46,8 @@ def batch_and_process(
     length_count = 0
 
     for item in tqdm(data):
+        if item in _skip:
+            continue
         processed_item = item if process_func is None else process_func(item)
         item_length = length_func(processed_item)
 
@@ -47,7 +63,7 @@ def batch_and_process(
             length_count += current_length
             current_batch = [processed_item]
             current_length = item_length
-            current_batch_data= [item]
+            current_batch_data = [item]
             if _batch_limit <= batch_count:
                 break
 
@@ -64,15 +80,4 @@ def batch_and_process(
 
 
 if __name__ == "__main__":
-    def upp(s: str):
-        return s.upper()
-    def werd(l: List[str]):
-        print("".join(l))
-
-    batch_and_process(
-        data="woa you may get the big cow mad bro",
-        process_func=upp,
-        length_func=len,
-        max_length=4,
-        batch_func=werd
-    )
+    print(get_os())

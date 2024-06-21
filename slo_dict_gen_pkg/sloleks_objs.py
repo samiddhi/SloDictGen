@@ -5,7 +5,7 @@ from typing import Dict, List
 from utils.grammar_utils import ordered_grammar_name
 
 
-@dataclass(kw_only=True)
+@dataclass()
 class SloleksEntry:
     """
     Represents an entry in the Sloleks database.
@@ -47,7 +47,7 @@ class SloleksEntry:
                 self.reps_dict[word_form.grammar_names].append(representation)
 
 
-@dataclass(kw_only=True)
+@dataclass()
 class WordForm:
     """
     Represents a word form with associated grammatical information.
@@ -135,7 +135,7 @@ class WordForm:
         )
 
 
-@dataclass(kw_only=True)
+@dataclass()
 class Representation:
     form_representation: str
     norms: List[str]

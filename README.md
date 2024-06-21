@@ -23,6 +23,11 @@
     for sskj pairing:
         lxml
 
+    translator:
+        openai
+        python-dotenv
+        tiktoken
+
 
 ---
 ## Files needed:

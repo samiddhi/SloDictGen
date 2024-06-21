@@ -1,6 +1,5 @@
 from openai import OpenAI
 import tiktoken
-import winsound
 
 import json
 import sqlite3
@@ -9,14 +8,14 @@ from functools import partial
 from common.imports import *
 from utils.html_utils import extract_htmltext_except
 from utils.sqlite_utils import fetch_by_id, sskj_entries_db
-from utils.py_utils import batch_and_process
+from utils.py_utils import batch_and_process, get_os
 from utils.grammar_utils import has_chars, de_critic
 from utils.json_utils import extend_json_array, add_to_json_array
 
 from dotenv import load_dotenv
 
-
-load_dotenv()
+dotenv_path = os.path.join(proj_dir, '.env')
+load_dotenv(dotenv_path)
 
 # Set up the client with API key from environment variable
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -105,7 +104,6 @@ def slo_to_en_gpt(
                 {"role": "user", "content": prompt}
             ]
         )
-        winsound.PlaySound("SystemExit", winsound.SND_ALIAS)
     except:
         return [], None
 
@@ -219,11 +217,13 @@ def main_translate_sequence() -> None:
     try:
         with open(id_log, 'r', encoding='utf-8') as f:
             translated_ids = json.load(f)
-        ids = list(set(ids) - set(translated_ids))
+        ids = [None if id in translated_ids else id for id in ids]
     except FileNotFoundError:
         pass
 
     ids.sort()
+    if get_os() == "mac":
+        ids.reverse()
 
     batch_and_process(
         data=ids,

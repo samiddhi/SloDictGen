@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../SloDictGen/.idea/SloDictGen.iml" filepath="$PROJECT_DIR$/../SloDictGen/.idea/SloDictGen.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/SloDictGen.iml" filepath="$PROJECT_DIR$/.idea/SloDictGen.iml" />
     </modules>
   </component>
 </project>
