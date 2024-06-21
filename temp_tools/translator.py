@@ -217,13 +217,13 @@ def main_translate_sequence() -> None:
     try:
         with open(id_log, 'r', encoding='utf-8') as f:
             translated_ids = json.load(f)
-        ids = [None if id in translated_ids else id for id in ids]
     except FileNotFoundError:
         pass
 
     ids.sort()
     if get_os() == "mac":
         ids.reverse()
+    ids = [None if id in translated_ids else id for id in ids]
 
     batch_and_process(
         data=ids,
