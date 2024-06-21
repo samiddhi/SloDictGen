@@ -1,16 +1,24 @@
-import os
+from common.imports import *
+from slo_dict_gen_pkg import SloleksEntry, Representation, logging, SskjEntry
+from slo_dict_gen_pkg.formatting import InflectionSection
+from utils.html_utils import extract_htmltext_except
+
+from tqdm import tqdm
+from bs4 import BeautifulSoup
+
 import pickle
 import sqlite3
-from tqdm import tqdm
-from typing import List
-from slo_dict_gen_pkg import SloleksEntry, Representation, logging
-from formatting import InflectionSection
+
+sskj_entries_db: str = os.path.abspath(os.path.join(
+    proj_dir, 'data', 'db', 'sskj_entries.db'))
+sskj_entries_db: str = os.path.abspath(os.path.join(
+    proj_dir, 'data', 'db', 'sskj_entries.db'))
 
 
 class SloleksToSQLite:
     def __init__(self, db_name: str, working_directory: str):
         """
-        Converts all pickled SloleksEntry Objects at path into SQLite database
+        Instantiation generates SQLite database from all pkl'd SloleksEntry objects at path
 
         :param db_name: name of db including .db
         :param working_directory: directory with pickles and db destination
@@ -131,7 +139,122 @@ class SloleksToSQLite:
         conn.commit()
 
 
+class SskjEntrystoSQLite:
+    def __init__(self, db_name: str, data: List[SskjEntry]):
+        db_dir = os.path.abspath(
+            os.path.join(proj_dir, 'data', 'db'))
+        db_path = os.path.abspath(
+            os.path.join(db_dir, db_name))
+        # Create database and table
+        self.create_database(db_path)
+
+        # Insert entries into the database
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        try:
+            for entry in tqdm(data):
+                self.insert_entry(entry, None, cursor)
+            conn.commit()
+        except sqlite3.DatabaseError as e:
+            print(f"Database error: {e}")
+            conn.rollback()
+        finally:
+            conn.close()
+
+    @staticmethod
+    def parse_html_for_header_qualifiers(html: str) -> List[str]:
+        soup = BeautifulSoup(html, 'html.parser')
+        tags = soup.find_all(attrs={"data-group": "header qualifier"})
+        unique_qualifiers = set()
+        for tag in tags:
+            unique_qualifiers.add(str(tag.text).strip())
+
+        return list(unique_qualifiers)
+
+    @staticmethod
+    def create_database(db_path: str):
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS sskj_entries (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                html TEXT,
+                accentuation TEXT,
+                lemma TEXT,
+                definitions TEXT,
+                header_qualifiers TEXT,
+                parent INTEGER,
+                children TEXT,
+                UNIQUE(html, accentuation)
+            )
+        ''')
+        conn.commit()
+        conn.close()
+
+    @staticmethod
+    def find_entry_id(html: str, accentuation: str, cursor) -> Optional[int]:
+        cursor.execute('''
+            SELECT id FROM sskj_entries WHERE html = ? AND accentuation = ?
+        ''', (html, accentuation))
+        result = cursor.fetchone()
+        return result[0] if result else None
+
+    def insert_entry(self, entry: SskjEntry, parent_id: Optional[int],
+                     cursor) -> int:
+        existing_id = self.find_entry_id(entry.html, entry.accentuation,
+                                         cursor)
+        if existing_id is not None:
+            return existing_id
+
+        definitions = '; '.join(entry.definitions)
+        header_qualifiers = ';'.join(
+            self.parse_html_for_header_qualifiers(entry.html))
+        cursor.execute('''
+            INSERT INTO sskj_entries (html, accentuation, lemma, definitions, header_qualifiers, parent, children)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (entry.html, entry.accentuation, entry.lemma, definitions,
+              header_qualifiers, parent_id, ''))
+        entry_id = cursor.lastrowid
+        children_ids = []
+        if entry.sub_words:
+            for sub_entry in entry.sub_words:
+                sub_entry_id = self.insert_entry(sub_entry, entry_id, cursor)
+                children_ids.append(sub_entry_id)
+        cursor.execute('''
+            UPDATE sskj_entries
+            SET children = ?
+            WHERE id = ?
+        ''', (';'.join(map(str, children_ids)), entry_id))
+        return entry_id
+
+
+class Merger:
+    def __init__(self):
+        # Instantiation generates merged SQLite database from local SloleksToSQLite and parsers.py/HTMLParser classes
+        raise NotImplementedError("y'ain't done it")
+
+
+### from sqlite_utils.py
+def fetch_by_id(cursor: sqlite3.Cursor, col: str, table: str, row_id: int) -> str:
+    """
+    Fetches the specified column content from a given table for a specific row id.
+
+    :param cursor: SQLite cursor object.
+    :param col: Column name to fetch.
+    :param table: Table name to fetch from.
+    :param row_id: The id of the row to fetch.
+    :return: Column content as a string.
+    """
+    query = f"SELECT {col} FROM {table} WHERE id = ?"
+    cursor.execute(query, (row_id,))
+    row = cursor.fetchone()
+    return row[0] if row else ""
+
+
+
 if __name__ == "__main__":
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     pickles_dir = os.path.join(base_dir, 'data', 'pickles',
                                'sloleksentry_objects')
+
+    Merger()
