@@ -1,12 +1,10 @@
 from common.imports import *
-from slo_dict_gen_pkg.parsers import XMLtoSloleksEntrys
 from slo_dict_gen_pkg.sloleks_objs import Representation
-from slo_dict_gen_pkg import SloleksEntry, WordForm
-from tests.parsing_utils import sample_entry_obj
+from slo_dict_gen_pkg import SloleksEntry
+from utils.parsing_utils import sample_entry_obj
 from utils.grammar_utils import ordered_grammar_name, return_gram_feat_type, gfcat, table_types
 
 from airium import Airium
-from itertools import product
 import pyperclip
 import os
 import sys

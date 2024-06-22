@@ -12,7 +12,8 @@ import logging
 logging.basicConfig(level=logging.DEBUG, encoding='utf-8')
 
 # Create a file handler for critical messages
-file_handler = logging.FileHandler('logfile.log')
+log_dir = os.path.join(proj_dir, 'general_issues.log')
+file_handler = logging.FileHandler(log_dir)
 file_handler.setLevel(logging.CRITICAL)
 
 # Add a formatter to the file handler

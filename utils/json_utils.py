@@ -116,7 +116,7 @@ def get_key_frequencies(json_path: str, batch_size: int, output_file: str) -> No
 
 
 if __name__ == '__main__':
-    with open('frequency.json', 'r', encoding='utf-8') as file:
+    with open('../data/notes/html_text_freqs.json', 'r', encoding='utf-8') as file:
         data = json.load(file)
 
     # Filter keys with values >= 2
