@@ -1,3 +1,8 @@
+'''
+To Do:
+ - REPLACE 'of "to' <----> "of 'to"
+'''
+
 from common.imports import proj_dir
 import os
 from utils.json_utils import read_json
@@ -14,6 +19,8 @@ std_log = os.path.abspath(os.path.join(
     translation_station, 'std_log.json'))
 id_log = os.path.abspath(os.path.join(
     translation_station, 'id_log.json'))
+
+
 
 
 def show(s, n, c=5):
