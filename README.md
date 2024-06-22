@@ -54,12 +54,10 @@
         - ~~PairToJson assumes the files are identically ordered and will break when a mismatch is encountered. This needs to be manually corrected in the html files.~~
       - Generate SQLite Database for SSKJ Entries by passing [`HTMLParser`](slo_dict_gen_pkg/parsers.py)'s `.sskjentrys` attribute into [`SskjEntrystoSQLite`](slo_dict_gen_pkg/parsers.py)'s `data` arg
         - depricated prerequisite: ~~Parse HTML to pkls with [`HTMLParser`](slo_dict_gen_pkg/parsers.py)'s save_path arg~~
-      - Get SSKJ entries into GPT translatable format with [`main_translate_sequence`](temp_tools/translator.py)
-        - `_connect` & `_verify` must both be set `False`. 
-        - Ensure unique filename
-      - Token Minimization:
-        - Find most frequently occurring keys with (write) [`get_key_frequencies()`](utils/json_utils.py) & (read) 
-          - x
+      - Generate GPT translations from db with [`main_translate_sequence`](temp_tools/translator.py)
+        - `_connect` & `_verify` must both be set `False`.
+        - ran from both ends on two computers for faster translations ~72hr total processing time
+      - Clean translations with 
 
 ---
 ### RESOURCES:

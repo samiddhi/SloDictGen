@@ -1,3 +1,5 @@
+"""This is one well-built one-use MF"""
+
 from openai import OpenAI
 import tiktoken
 
@@ -21,32 +23,28 @@ load_dotenv(dotenv_path)
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
-def log_input_output(log_file_path: str, inpt: any, outpt: any):
+def log_input_output(log_file_path: str, inpt: any, output: any):
     """Log the input and output to a text file.
 
     :param log_file_path: The path to the log file.
     :param inpt: The user input.
-    :param outpt: The output from the GPT API.
+    :param output: The output from the GPT API.
     """
     log = {
         "in": inpt,
-        "out": outpt
+        "out": output
     }
     add_to_json_array(log_file_path, log)
 
 
 def slo_to_en_gpt(
         user_input: List[Dict[str, None]],
-        log_file_path: str,
-        error_log_path: str,
         connect: bool = False,
         verify: bool = False
 ) -> Tuple[List[Dict[str, str]], Optional[str]]:
     """Translate a Slovenian dictionary into English.
 
     :param user_input: The user input containing the Slovenian dictionary.
-    :param log_file_path: Path for standard-runtime log (chat history)
-    :param error_log_path: Path for error log
     :param connect: default ``False``, Safeguard against unnecessary API calls
     :param verify: default ``False``, Safeguard against unnecessary API calls
     :return: A JSON object with the translated dictionary or empty list.
@@ -88,25 +86,23 @@ def slo_to_en_gpt(
     
     """
 
-
     if not (connect and verify):
         blank_response = [{key: "" for key in entry} for entry in user_input]
         return blank_response, blank_response.__str__()
 
-
-    # Use the client instance to make the API call
-    completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system",
-             "content": "You are translating a Slovenian dictionary into "
-                        "English."},
-            {"role": "user", "content": prompt}
-        ]
-    )
     try:
-        1
-    except:
+        # Use the client instance to make the API call
+        completion = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system",
+                 "content": "You are translating a Slovenian dictionary into "
+                            "English."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+    except Exception as e:
+        logging.critical(f'{e} --- user_input: {user_input}')
         return [], None
 
     if completion.choices and completion.choices[0].message and \
@@ -172,16 +168,13 @@ def translate_and_save(
     obj_response, raw_response = slo_to_en_gpt(
         user_input=batch,
         connect=_connect,
-        verify=_verify,
-        error_log_path=error_logging_path,
-        log_file_path=std_logging_path
+        verify=_verify
     )
-
 
     log_input_output(
         log_file_path=std_logging_path,
         inpt=batch,
-        outpt=raw_response
+        output=raw_response
     )
 
     # Handle different call/response situations
@@ -224,9 +217,13 @@ def main_translate_sequence() -> None:
         pass
 
     ids.sort()
+
+    # to run dual opposite direction translations for faster processing
     if get_os() == "mac":
-        ids.reverse()
-    ids = [None if id in translated_ids else id for id in ids]
+        # ids.reverse()
+        pass
+
+    ids = [None if i in translated_ids else i for i in ids]
 
     batch_and_process(
         data=ids,
