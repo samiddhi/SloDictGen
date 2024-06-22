@@ -93,17 +93,19 @@ def slo_to_en_gpt(
         blank_response = [{key: "" for key in entry} for entry in user_input]
         return blank_response, blank_response.__str__()
 
+
+    # Use the client instance to make the API call
+    completion = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system",
+             "content": "You are translating a Slovenian dictionary into "
+                        "English."},
+            {"role": "user", "content": prompt}
+        ]
+    )
     try:
-        # Use the client instance to make the API call
-        completion = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system",
-                 "content": "You are translating a Slovenian dictionary into "
-                            "English."},
-                {"role": "user", "content": prompt}
-            ]
-        )
+        1
     except:
         return [], None
 
@@ -117,6 +119,7 @@ def slo_to_en_gpt(
         gtf = gtf.replace("{'", '{\"').replace(" '", ' "')
         gtf = gtf.replace("' :", '" :').replace("':", '":')
         gtf = gtf.replace("\\", "\\\\").replace('\n', ' ')
+        gtf = gtf.replace('of "to', "of 'to")
         generated_text_fixed = gtf.replace(': None', ': null')
 
         try:
