@@ -2,6 +2,7 @@
 
 from openai import OpenAI
 import tiktoken
+from tqdm import tqdm
 
 import json
 import sqlite3
@@ -12,7 +13,7 @@ from utils.html_utils import extract_htmltext_except
 from utils.sqlite_utils import fetch_by_id, sskj_entries_db
 from utils.py_utils import batch_and_process, get_os
 from utils.grammar_utils import has_chars, de_critic
-from utils.json_utils import extend_json_array, add_to_json_array
+from utils.json_utils import extend_json_array, add_to_json_array, add_to_json_object
 
 from dotenv import load_dotenv
 
@@ -20,7 +21,7 @@ dotenv_path = os.path.join(proj_dir, '.env')
 load_dotenv(dotenv_path)
 
 # Set up the client with API key from environment variable
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+#client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 def log_input_output(log_file_path: str, inpt: any, output: any):
@@ -243,6 +244,31 @@ def main_translate_sequence() -> None:
     )
 
 
+
+def untranslation_sequence() -> None:
+    """entrytext maker"""
+    station = os.path.abspath(os.path.join(
+        proj_dir, 'data', 'translations', 'merged_station'))
+
+    output = os.path.abspath(os.path.join(
+        station, 'id_entrytext.json'))
+
+    conn = sqlite3.connect(sskj_entries_db)
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id FROM sskj_entries")
+    ids: List = [row[0] for row in cursor.fetchall()]
+    ids.sort()
+
+    d: dict = {}
+    id_process = tqdm(ids)
+    for i in id_process:
+        id_process.set_description(f'I have {len(ids)-int(i)} left!')
+        d[i] = id_html_text_entry_sequence(i, cursor)
+
+    add_to_json_object(output, d)
+
+
 # Example usage
 if __name__ == "__main__":
-    main_translate_sequence()
+

@@ -49,19 +49,28 @@ def add_to_json_array(json_path: str, new_object: Any):
             json.dump([new_object], f, ensure_ascii=False, indent=4)
 
 
-def add_to_json_object(json_path: str, new_pairs: Dict[Any, Any]):
+def add_to_json_object(json_path: str, new_pairs: Dict[Any, Any],
+                       update: bool = True):
     """
     Adds key-value pairs to the JSON object in the specified file.
 
     :param json_path: Path to the JSON file.
     :param new_pairs: Dictionary of key-value pairs to be added to the JSON object.
+    :param update: If True, updates existing keys. If False, only adds new keys.
     """
     try:
         with open(json_path, 'r+', encoding='utf-8') as f:
             data = json.load(f)
             if not isinstance(data, dict):
                 raise ValueError("JSON file does not contain a dictionary")
-            data.update(new_pairs)
+
+            if update:
+                data.update(new_pairs)
+            else:
+                for key, value in new_pairs.items():
+                    if key not in data:
+                        data[key] = value
+
             f.seek(0)
             json.dump(data, f, ensure_ascii=False, indent=4)
             f.truncate()
